@@ -2,7 +2,7 @@
 
 ### Venue: Facility of Rare Isotope Beams and National Superconducting Cyclotron Laboratory, 640 S. Shaw Lane, Michigan State University, East Lansing, 48824 Michigan
 
-All learning material and teaching schedule pertinent to the course is avaliable at this GitHub address. A simple _git clone_ of the material gives you access to all lecture notes and program examples. Similarly, running a _git pull_ gives you immediately the latest updates.
+All learning material and teaching schedule pertinent to the course is avaliable at this GitHub address. A simple _git clone_ of the material gives you access to all lecture notes and program examples. Similarly, running a _git pull_ gives you immediately the latest updates. For an easy visualization of the learning material (html, jupyter-notebooks or plain pdf files), see https://compphysics.github.io/MachineLearningMSU/doc/web/course.html
 
 ## Course content
 
