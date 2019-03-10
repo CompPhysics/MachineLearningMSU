@@ -52,6 +52,7 @@ _General Machine Learning Books_:
 ## Schedule
 _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
+- 8am-9am: Welcome and registration
 - 9am-10am: Introduction to Machine Learning and various Python packages
 - 10am-11am: Linear Regression
 - 11am-12pm: Logistic Regression
