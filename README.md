@@ -50,39 +50,39 @@ _General Machine Learning Books_:
 - David Barber, Bayesian Reasoning and Machine Learning, Cambridge University Press 
 
 ## Schedule
-_Monday May 20, 2019_:
+_Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
-- 9am-10am:
-- 10am-11am:
-- 11am-12pm:
+- 9am-10am: Introduction to Machine Learning and various Python packages
+- 10am-11am: Linear Regression
+- 11am-12pm: Logistic Regression
 - 12pm-1pm: Lunch
-- 1pm-2pm:
-- 2pm-3pm:
-- 3pm-6pm: Hands-on sessions
+- 1pm-2pm: Optimization of functions, gradient descent and stochastic gradient descent
+- 2pm-3pm: Decision Trees and Random Forests
+- 3pm-6pm: Hands-on sessions with selected Physics examples
 
 _Tuesday May 21, 2019_:
 
-- 9am-10am:
-- 10am-11am:
-- 11am-12pm:
+- 9am-10am: Neural networks
+- 10am-11am: Neural networks and deep learning
+- 11am-12pm: Convolutional Neural Networks (CNNs)
 - 12pm-1pm: Lunch
-- 1pm-2pm:
-- 2pm-3pm:
-- 3pm-6pm: Hands-on sessions
+- 1pm-2pm: CNNs
+- 2pm-3pm: Autoenconders and recurrent neural networks
+- 3pm-6pm: Hands-on sessions with examples from nuclear physics experiments
 
 _Wednesday May 22, 2019_:
 
-- 9am-10am:
-- 10am-11am:
-- 11am-12pm:
+- 9am-10am: Reinforcement learning and dimensionality reduction
+- 10am-11am: Solving quantum mechanical problems with Machine Learning
+- 11am-12pm: Quantum mechanics and Machine Learning 
 - 12pm-1pm: Lunch
-- 1pm-2pm:
-- 2pm-3pm:
-- 3pm-6pm: Hands-on sessions
+- 1pm-2pm:  More quantum mechanics and Machine Learning
+- 2pm-3pm:  Boltzmann machines and many-body problems
+- 3pm-6pm: Hands-on sessions with examples from quantum mechanical many-body problems
 
 _Thursday May 23, 2019_:
 
-- 9am-12pm: Hands-on sessions
+- 9am-12pm: Hands-on sessions with examples from nuclear physics, experiment and theory 
 - 12pm-1pm: Lunch
-- 1pm-5pm: Hands-on sessions
+- 1pm-5pm: Hands-on sessions with examples from nuclear physics, experiment and theory
 
