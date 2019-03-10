@@ -49,3 +49,40 @@ _General Machine Learning Books_:
 - David J.C. MacKay, Information Theory, Inference, and Learning Algorithms, Cambridge University Press
 - David Barber, Bayesian Reasoning and Machine Learning, Cambridge University Press 
 
+## Schedule
+_Monday May 20, 2019_:
+
+- 9am-10am:
+- 10am-11am:
+- 11am-12pm:
+- 12pm-1pm: Lunch
+- 1pm-2pm:
+- 2pm-3pm:
+- 3pm-6pm: Hands-on sessions
+
+_Tuesday May 21, 2019_:
+
+- 9am-10am:
+- 10am-11am:
+- 11am-12pm:
+- 12pm-1pm: Lunch
+- 1pm-2pm:
+- 2pm-3pm:
+- 3pm-6pm: Hands-on sessions
+
+_Wednesday May 22, 2019_:
+
+- 9am-10am:
+- 10am-11am:
+- 11am-12pm:
+- 12pm-1pm: Lunch
+- 1pm-2pm:
+- 2pm-3pm:
+- 3pm-6pm: Hands-on sessions
+
+_Thursday May 23, 2019_:
+
+- 9am-12pm: Hands-on sessions
+- 12pm-1pm: Lunch
+- 1pm-5pm: Hands-on sessions
+
