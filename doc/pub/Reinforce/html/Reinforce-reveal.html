@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="DocOnce: https://github.com/hplgit/doconce/" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Data Analysis and Machine Learning: Reinforcement Learning">
+
+<title>Data Analysis and Machine Learning: Reinforcement Learning</title>
+
+
+
+
+
+
+
+<!-- reveal.js: http://lab.hakim.se/reveal-js/ -->
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+<link rel="stylesheet" href="reveal.js/css/reveal.css">
+<link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme">
+<!--
+<link rel="stylesheet" href="reveal.js/css/reveal.css">
+<link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/beigesmall.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/solarized.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/serif.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/night.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/moon.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/sky.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/darkgray.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/default.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/cbc.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/simula.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/black.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/white.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/league.css" id="theme">
+-->
+
+<!-- For syntax highlighting -->
+<link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+<style type="text/css">
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    p.caption { width: 80%; font-size: 60%; font-style: italic; text-align: left; }
+    hr.figure { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .reveal .alert-text-small   { font-size: 80%;  }
+    .reveal .alert-text-large   { font-size: 130%; }
+    .reveal .alert-text-normal  { font-size: 90%;  }
+    .reveal .alert {
+             padding:8px 35px 8px 14px; margin-bottom:18px;
+             text-shadow:0 1px 0 rgba(255,255,255,0.5);
+             border:5px solid #bababa;
+             -webkit-border-radius: 14px; -moz-border-radius: 14px;
+             border-radius:14px;
+             background-position: 10px 10px;
+             background-repeat: no-repeat;
+             background-size: 38px;
+             padding-left: 30px; /* 55px; if icon */
+     }
+     .reveal .alert-block {padding-top:14px; padding-bottom:14px}
+     .reveal .alert-block > p, .alert-block > ul {margin-bottom:1em}
+     /*.reveal .alert li {margin-top: 1em}*/
+     .reveal .alert-block p+p {margin-top:5px}
+     /*.reveal .alert-notice { background-image: url(http://hplgit.github.io/doconce/bundled/html_images/small_gray_notice.png); }
+     .reveal .alert-summary  { background-image:url(http://hplgit.github.io/doconce/bundled/html_images/small_gray_summary.png); }
+     .reveal .alert-warning { background-image: url(http://hplgit.github.io/doconce/bundled/html_images/small_gray_warning.png); }
+     .reveal .alert-question {background-image:url(http://hplgit.github.io/doconce/bundled/html_images/small_gray_question.png); } */
+
+</style>
+
+
+
+<!-- Styles for table layout of slides -->
+<style type="text/css">
+td.padding {
+  padding-top:20px;
+  padding-bottom:20px;
+  padding-right:50px;
+  padding-left:50px;
+}
+</style>
+
+</head>
+
+<body>
+<div class="reveal">
+
+<!-- Any section element inside the <div class="slides"> container
+     is displayed as a slide -->
+
+<div class="slides">
+
+
+
+    
+
+
+
+<section>
+<!-- ------------------- main content ---------------------- -->
+
+
+
+<center><h1 style="text-align: center;">Data Analysis and Machine Learning: Reinforcement Learning </h1></center>  <!-- document title -->
+
+<p>
+<!-- author(s): Morten Hjorth-Jensen -->
+
+<center>
+<b>Morten Hjorth-Jensen</b> [1, 2]
+</center>
+
+<p>&nbsp;<br>
+<!-- institution(s) -->
+
+<center>[1] <b>Department of Physics, University of Oslo</b></center>
+<center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
+<br>
+<p>&nbsp;<br>
+<center><h4>Mar 11, 2019</h4></center> <!-- date -->
+<br>
+<p>
+
+<center style="font-size:80%">
+<!-- copyright --> &copy; 1999-2019, Morten Hjorth-Jensen. Released under CC Attribution-NonCommercial 4.0 license
+</center>
+</section>
+
+
+<section>
+<h2 id="___sec0">Reinforcement Learning: Overarching view </h2>
+
+<p>
+Reinforcement Learning (RL) is one of the most exciting fields of Machine Learning today, and also one
+of the oldest. It has been around since the 1950s, producing many interesting applications over the years.
+</section>
+
+
+<section>
+<h2 id="___sec1">Code example </h2>
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #CD5555">&quot;&quot;&quot;</span>
+<span style="color: #CD5555">A simple example for Reinforcement Learning using table lookup Q-learning method.</span>
+<span style="color: #CD5555">An agent &quot;o&quot; is on the left of a 1 dimensional world, the treasure is on the rightmost location.</span>
+<span style="color: #CD5555">Run this program and to see how the agent will improve its strategy of finding the treasure.</span>
+<span style="color: #CD5555">View more on my tutorial page: https://morvanzhou.github.io/tutorials/</span>
+<span style="color: #CD5555">&quot;&quot;&quot;</span>
+
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">time</span>
+
+np.random.seed(<span style="color: #B452CD">2</span>)  <span style="color: #228B22"># reproducible</span>
+
+
+N_STATES = <span style="color: #B452CD">6</span>   <span style="color: #228B22"># the length of the 1 dimensional world</span>
+ACTIONS = [<span style="color: #CD5555">&#39;left&#39;</span>, <span style="color: #CD5555">&#39;right&#39;</span>]     <span style="color: #228B22"># available actions</span>
+EPSILON = <span style="color: #B452CD">0.9</span>   <span style="color: #228B22"># greedy police</span>
+ALPHA = <span style="color: #B452CD">0.1</span>     <span style="color: #228B22"># learning rate</span>
+GAMMA = <span style="color: #B452CD">0.9</span>    <span style="color: #228B22"># discount factor</span>
+MAX_EPISODES = <span style="color: #B452CD">13</span>   <span style="color: #228B22"># maximum episodes</span>
+FRESH_TIME = <span style="color: #B452CD">0.3</span>    <span style="color: #228B22"># fresh time for one move</span>
+
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">build_q_table</span>(n_states, actions):
+    table = pd.DataFrame(
+        np.zeros((n_states, <span style="color: #658b00">len</span>(actions))),     <span style="color: #228B22"># q_table initial values</span>
+        columns=actions,    <span style="color: #228B22"># actions&#39;s name</span>
+    )
+    <span style="color: #228B22"># print(table)    # show table</span>
+    <span style="color: #8B008B; font-weight: bold">return</span> table
+
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">choose_action</span>(state, q_table):
+    <span style="color: #228B22"># This is how to choose an action</span>
+    state_actions = q_table.iloc[state, :]
+    <span style="color: #8B008B; font-weight: bold">if</span> (np.random.uniform() &gt; EPSILON) <span style="color: #8B008B">or</span> ((state_actions == <span style="color: #B452CD">0</span>).all()):  <span style="color: #228B22"># act non-greedy or state-action have no value</span>
+        action_name = np.random.choice(ACTIONS)
+    <span style="color: #8B008B; font-weight: bold">else</span>:   <span style="color: #228B22"># act greedy</span>
+        action_name = state_actions.idxmax()    <span style="color: #228B22"># replace argmax to idxmax as argmax means a different function in newer version of pandas</span>
+    <span style="color: #8B008B; font-weight: bold">return</span> action_name
+
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">get_env_feedback</span>(S, A):
+    <span style="color: #228B22"># This is how agent will interact with the environment</span>
+    <span style="color: #8B008B; font-weight: bold">if</span> A == <span style="color: #CD5555">&#39;right&#39;</span>:    <span style="color: #228B22"># move right</span>
+        <span style="color: #8B008B; font-weight: bold">if</span> S == N_STATES - <span style="color: #B452CD">2</span>:   <span style="color: #228B22"># terminate</span>
+            S_ = <span style="color: #CD5555">&#39;terminal&#39;</span>
+            R = <span style="color: #B452CD">1</span>
+        <span style="color: #8B008B; font-weight: bold">else</span>:
+            S_ = S + <span style="color: #B452CD">1</span>
+            R = <span style="color: #B452CD">0</span>
+    <span style="color: #8B008B; font-weight: bold">else</span>:   <span style="color: #228B22"># move left</span>
+        R = <span style="color: #B452CD">0</span>
+        <span style="color: #8B008B; font-weight: bold">if</span> S == <span style="color: #B452CD">0</span>:
+            S_ = S  <span style="color: #228B22"># reach the wall</span>
+        <span style="color: #8B008B; font-weight: bold">else</span>:
+            S_ = S - <span style="color: #B452CD">1</span>
+    <span style="color: #8B008B; font-weight: bold">return</span> S_, R
+
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">update_env</span>(S, episode, step_counter):
+    <span style="color: #228B22"># This is how environment be updated</span>
+    env_list = [<span style="color: #CD5555">&#39;-&#39;</span>]*(N_STATES-<span style="color: #B452CD">1</span>) + [<span style="color: #CD5555">&#39;T&#39;</span>]   <span style="color: #228B22"># &#39;---------T&#39; our environment</span>
+    <span style="color: #8B008B; font-weight: bold">if</span> S == <span style="color: #CD5555">&#39;terminal&#39;</span>:
+        interaction = <span style="color: #CD5555">&#39;Episode %s: total_steps = %s&#39;</span> % (episode+<span style="color: #B452CD">1</span>, step_counter)
+        <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;\r{}&#39;</span>.format(interaction), end=<span style="color: #CD5555">&#39;&#39;</span>)
+        time.sleep(<span style="color: #B452CD">2</span>)
+        <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;\r                                &#39;</span>, end=<span style="color: #CD5555">&#39;&#39;</span>)
+    <span style="color: #8B008B; font-weight: bold">else</span>:
+        env_list[S] = <span style="color: #CD5555">&#39;o&#39;</span>
+        interaction = <span style="color: #CD5555">&#39;&#39;</span>.join(env_list)
+        <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;\r{}&#39;</span>.format(interaction), end=<span style="color: #CD5555">&#39;&#39;</span>)
+        time.sleep(FRESH_TIME)
+
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">rl</span>():
+    <span style="color: #228B22"># main part of RL loop</span>
+    q_table = build_q_table(N_STATES, ACTIONS)
+    <span style="color: #8B008B; font-weight: bold">for</span> episode <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(MAX_EPISODES):
+        step_counter = <span style="color: #B452CD">0</span>
+        S = <span style="color: #B452CD">0</span>
+        is_terminated = <span style="color: #658b00">False</span>
+        update_env(S, episode, step_counter)
+        <span style="color: #8B008B; font-weight: bold">while</span> <span style="color: #8B008B">not</span> is_terminated:
+
+            A = choose_action(S, q_table)
+            S_, R = get_env_feedback(S, A)  <span style="color: #228B22"># take action &amp; get next state and reward</span>
+            q_predict = q_table.loc[S, A]
+            <span style="color: #8B008B; font-weight: bold">if</span> S_ != <span style="color: #CD5555">&#39;terminal&#39;</span>:
+                q_target = R + GAMMA * q_table.iloc[S_, :].max()   <span style="color: #228B22"># next state is not terminal</span>
+            <span style="color: #8B008B; font-weight: bold">else</span>:
+                q_target = R     <span style="color: #228B22"># next state is terminal</span>
+                is_terminated = <span style="color: #658b00">True</span>    <span style="color: #228B22"># terminate this episode</span>
+
+            q_table.loc[S, A] += ALPHA * (q_target - q_predict)  <span style="color: #228B22"># update</span>
+            S = S_  <span style="color: #228B22"># move to next state</span>
+
+            update_env(S, episode, step_counter+<span style="color: #B452CD">1</span>)
+            step_counter += <span style="color: #B452CD">1</span>
+    <span style="color: #8B008B; font-weight: bold">return</span> q_table
+
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #00688B">__name__</span> == <span style="color: #CD5555">&quot;__main__&quot;</span>:
+    q_table = rl()
+    <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;\r\nQ-table:\n&#39;</span>)
+<span style="color: #8B008B; font-weight: bold">print</span>(q_table)
+</pre></div>
+</section>
+
+
+
+</div> <!-- class="slides" -->
+</div> <!-- class="reveal" -->
+
+<script src="reveal.js/lib/js/head.min.js"></script>
+<script src="reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+    // Display navigation controls in the bottom right corner
+    controls: true,
+
+    // Display progress bar (below the horiz. slider)
+    progress: true,
+
+    // Display the page number of the current slide
+    slideNumber: true,
+
+    // Push each slide change to the browser history
+    history: false,
+
+    // Enable keyboard shortcuts for navigation
+    keyboard: true,
+
+    // Enable the slide overview mode
+    overview: true,
+
+    // Vertical centering of slides
+    //center: true,
+    center: false,
+
+    // Enables touch navigation on devices with touch input
+    touch: true,
+
+    // Loop the presentation
+    loop: false,
+
+    // Change the presentation direction to be RTL
+    rtl: false,
+
+    // Turns fragments on and off globally
+    fragments: true,
+
+    // Flags if the presentation is running in an embedded mode,
+    // i.e. contained within a limited portion of the screen
+    embedded: false,
+
+    // Number of milliseconds between automatically proceeding to the
+    // next slide, disabled when set to 0, this value can be overwritten
+    // by using a data-autoslide attribute on your slides
+    autoSlide: 0,
+
+    // Stop auto-sliding after user input
+    autoSlideStoppable: true,
+
+    // Enable slide navigation via mouse wheel
+    mouseWheel: false,
+
+    // Hides the address bar on mobile devices
+    hideAddressBar: true,
+
+    // Opens links in an iframe preview overlay
+    previewLinks: false,
+
+    // Transition style
+    transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+    // Transition speed
+    transitionSpeed: 'default', // default/fast/slow
+
+    // Transition style for full page slide backgrounds
+    backgroundTransition: 'default', // default/none/slide/concave/convex/zoom
+
+    // Number of slides away from the current that are visible
+    viewDistance: 3,
+
+    // Parallax background image
+    //parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
+
+    // Parallax background size
+    //parallaxBackgroundSize: '' // CSS syntax, e.g. "2100px 900px"
+
+    theme: Reveal.getQueryHash().theme, // available themes are in reveal.js/css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+
+});
+
+Reveal.initialize({
+    dependencies: [
+        // Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
+        { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+
+        // Interpret Markdown in <section> elements
+        { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+
+        // Syntax highlight for <code> elements
+        { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+
+        // Zoom in and out with Alt+click
+        { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        // Speaker notes
+        { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        // Remote control your reveal.js presentation using a touch device
+        //{ src: 'reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        // MathJax
+        //{ src: 'reveal.js/plugin/math/math.js', async: true }
+    ]
+});
+
+Reveal.initialize({
+
+    // The "normal" size of the presentation, aspect ratio will be preserved
+    // when the presentation is scaled to fit different resolutions. Can be
+    // specified using percentage units.
+    width: 1170,  // original: 960,
+    height: 700,
+
+    // Factor of the display size that should remain empty around the content
+    margin: 0.1,
+
+    // Bounds for smallest/largest possible scale to apply to content
+    minScale: 0.2,
+    maxScale: 1.0
+
+});
+</script>
+
+<!-- begin footer logo
+<div style="position: absolute; bottom: 0px; left: 0; margin-left: 0px">
+<img src="somelogo.png">
+</div>
+     end footer logo -->
+
+
+
+</body>
+</html>
