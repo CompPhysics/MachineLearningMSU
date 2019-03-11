@@ -34,6 +34,32 @@ p { text-indent: 0px; }
 hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
 p.caption { width: 80%; font-style: normal; text-align: left; }
 hr.figure { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+.alert-text-small   { font-size: 80%;  }
+.alert-text-large   { font-size: 130%; }
+.alert-text-normal  { font-size: 90%;  }
+.alert {
+  padding:8px 35px 8px 14px; margin-bottom:18px;
+  text-shadow:0 1px 0 rgba(255,255,255,0.5);
+  border:1px solid #bababa;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  color: #555;
+  background-color: #f8f8f8;
+  background-position: 10px 5px;
+  background-repeat: no-repeat;
+  background-size: 38px;
+  padding-left: 55px;
+  width: 75%;
+ }
+.alert-block {padding-top:14px; padding-bottom:14px}
+.alert-block > p, .alert-block > ul {margin-bottom:1em}
+.alert li {margin-top: 1em}
+.alert-block p+p {margin-top:5px}
+.alert-notice { background-image: url(https://cdn.rawgit.com/hplgit/doconce/master/bundled/html_images/small_gray_notice.png); }
+.alert-summary  { background-image:url(https://cdn.rawgit.com/hplgit/doconce/master/bundled/html_images/small_gray_summary.png); }
+.alert-warning { background-image: url(https://cdn.rawgit.com/hplgit/doconce/master/bundled/html_images/small_gray_warning.png); }
+.alert-question {background-image:url(https://cdn.rawgit.com/hplgit/doconce/master/bundled/html_images/small_gray_question.png); }
 
 div { text-align: justify; text-justify: inter-word; }
 </style>
@@ -60,8 +86,10 @@ div { text-align: justify; text-justify: inter-word; }
               ('Recurrent Neural Networks', 2, None, '___sec8'),
               ('Autoencoders', 2, None, '___sec9'),
               ('Reinforcement Learning', 2, None, '___sec10'),
-              ('Summary', 2, None, '___sec11'),
-              ('Python and Scikit Learn, a short guide', 2, None, '___sec12')]}
+              ('Python and Scikit Learn, a short guide', 2, None, '___sec11'),
+              ('Practicalities', 2, None, '___sec12'),
+              ('Recommended textbook', 3, None, '___sec13'),
+              ('Schedule', 3, None, '___sec14')]}
 end of tocinfo -->
 
 <body>
@@ -74,10 +102,10 @@ end of tocinfo -->
 <center><h1>FRIB-TA Summer School on Machine Learning in Nuclear Experiment and Theory</h1></center>  <!-- document title -->
 
 <p>
-<!-- author(s): <a href="http://mhjgit.github.io/info/doc/web/" target="_self">Matthew Hirn</a>, <a href="http://mhjgit.github.io/info/doc/web/" target="_self">Morten Hjorth-Jensen</a>, and <a href="http://mhjgit.github.io/info/doc/web/" target="_self">Michelle Kuchera</a> -->
+<!-- author(s): <a href="https://cmse.msu.edu/directory/faculty/matthew-j-hirn/about-me/" target="_self">Matthew Hirn</a>, <a href="http://mhjgit.github.io/info/doc/web/" target="_self">Morten Hjorth-Jensen</a>, and <a href="https://www.davidson.edu/academics/physics/faculty-and-staff/michelle-kuchera" target="_self">Michelle Kuchera</a> -->
 
 <center>
-<b><a href="http://mhjgit.github.io/info/doc/web/" target="_self">Matthew Hirn</a></b> [1]
+<b><a href="https://cmse.msu.edu/directory/faculty/matthew-j-hirn/about-me/" target="_self">Matthew Hirn</a></b> [1]
 </center>
 
 <center>
@@ -85,15 +113,15 @@ end of tocinfo -->
 </center>
 
 <center>
-<b><a href="http://mhjgit.github.io/info/doc/web/" target="_self">Michelle Kuchera</a></b> [3]
+<b><a href="https://www.davidson.edu/academics/physics/faculty-and-staff/michelle-kuchera" target="_self">Michelle Kuchera</a></b> [3]
 </center>
 
 <p>
 <!-- institution(s) -->
 
-<center>[1] <b>Department of Computational Science, Mathematics and Engineering, Michigan State University, USA</b></center>
-<center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University, USA</b></center>
-<center>[3] <b>Department of Physics, Davidson College, USA</b></center>
+<center>[1] <b>Department of Mathematics and Department of Computational Science, Mathematics and Engineering, Michigan State University, East Lansing, Michigan, USA</b></center>
+<center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University, East Lansing, Michigan, USA</b></center>
+<center>[3] <b>Physics Department, Davidson College, Davidson, North Carolina, USA</b></center>
 <br>
 
 <h2 id="___sec0">Introduction to Data Analysis and Machine Learning </h2>
@@ -415,38 +443,7 @@ end of tocinfo -->
 
 </ul>
 
-<h2 id="___sec11">Summary </h2>
-
-<ul>
- <li> LaTeX PDF:</li>
-
-<ul>
-   <li> For printing:</li>
-
-<ul>
-     <li> <a href="https://compphysics.github.io/MachineLearningMSU/doc/pub/summary/pdf/summary-minted.pdf" target="_self">Standard one-page format</a></li>
-</ul>
-
-</ul>
-
- <li> HTML:</li>
-
-<ul>
-   <li> <a href="https://compphysics.github.io/MachineLearningMSU/doc/pub/summary/html/summary.html" target="_self">Plain html</a></li>
-   <li> <a href="https://compphysics.github.io/MachineLearningMSU/doc/pub/summary/html/summary-bs.html" target="_self">Bootstrap  slide style, easy for reading on mobile devices</a></li>
-</ul>
-
- <li> Jupyter notebook:</li>
-
-<ul>
-   <li> <a href="https://compphysics.github.io/MachineLearningMSU/doc/pub/summary/ipynb/summary.ipynb" target="_self">ipynb file</a></li>
-</ul>
-
-</ul>
-
-<!-- !split -->
-
-<h2 id="___sec12">Python and Scikit Learn, a short guide  </h2>
+<h2 id="___sec11">Python and Scikit Learn, a short guide  </h2>
 
 <ul>
  <li> HTML format only:</li>
@@ -455,6 +452,123 @@ end of tocinfo -->
    <li> <a href="http://compphysics.github.io/ComputationalPhysics/doc/pub/learningpython/html/learningpython-bs.html" target="_self">Bootstrap  slide style, easy for reading on mobile devices</a></li>
 </ul>
 
+</ul>
+
+<h2 id="___sec12">Practicalities </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+
+<ol>
+<li> Five lectures per day Monday through Wednesday, starting at 830am, see schedule below</li>
+<li> Hands-on sessions in the afternoons till 6pm</li>
+<li> The last day, Thursday, is dedicated to solving explicit problems with hands-on guidance and relevant examples.</li>
+</ol>
+</div>
+
+
+<h3 id="___sec13">Recommended textbook </h3>
+
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+
+<ul>
+<li> Aurelien Geron, Hands&#8209;On Machine Learning with Scikit&#8209;Learn and TensorFlow, O'Reilly</li>
+</ul>
+</div>
+
+
+<p>
+<div class="alert alert-block alert-block alert-text-normal">
+<b>General learning book on statistical analysis:</b>
+<p>
+
+<ul>
+<li> Christian Robert and George Casella, Monte Carlo Statistical Methods, Springer</li>
+<li> Peter Hoff, A first course in Bayesian statistical models, Springer</li>
+<li> Trevor Hastie, Robert Tibshirani, Jerome H. Friedman, The Elements of Statistical Learning, Springer</li>
+</ul>
+</div>
+
+
+<p>
+<div class="alert alert-block alert-block alert-text-normal">
+<b>General Machine Learning Books:</b>
+<p>
+
+<ul>
+<li> Kevin Murphy, Machine Learning: A Probabilistic Perspective, MIT Press</li>
+<li> Christopher M. Bishop, Pattern Recognition and Machine Learning, Springer</li>
+<li> David J.C. MacKay, Information Theory, Inference, and Learning Algorithms, Cambridge University Press</li>
+<li> David Barber, Bayesian Reasoning and Machine Learning, Cambridge University Press</li> 
+</ul>
+</div>
+
+
+<h3 id="___sec14">Schedule </h3>
+
+<p>
+Lectures are 50 min and there is a small break of 10 min between each lecture. Longer breaks at 1030am-11am and 3pm-330pm.
+Acronyms for teachers
+
+<ul>
+<li> MH = Matthew Hirn</li>
+<li> MHJ = Morten Hjorth-Jensen</li>
+<li> MK = Michelle Kuchera</li>
+</ul>
+
+<b>Monday May 20, 2019</b>:  (breaks of 10 min for every lecture)
+
+<ul>
+<li> 8am-830am: Welcome and registration</li>
+<li> 830am-930am: Introduction to Machine Learning and various Python packages</li>
+<li> 930am-1030am: Linear Regression</li>
+<li> 1030am-11am: Break, coffee, tea etc</li>
+<li> 11am-12pm: Logistic Regression</li>
+<li> 12pm-1pm: Lunch</li>
+<li> 1pm-2pm: Optimization of functions, gradient descent and stochastic gradient descent</li>
+<li> 2pm-3pm: Decision Trees and Random Forests</li>
+<li> 3pm-330pm: Break, coffee, tea etc</li>
+<li> 330pm-6pm: Hands-on sessions with selected Physics examples</li>
+</ul>
+
+<b>Tuesday May 21, 2019</b>:
+
+<ul>
+<li> 830am-930am: Neural networks</li>
+<li> 930am-1030am: Neural networks and deep learning</li>
+<li> 1030am-11am: Break, coffee, tea etc</li>
+<li> 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments</li>
+<li> 12pm-1pm: Lunch</li>
+<li> 1pm-2pm: CNNs</li>
+<li> 2pm-3pm: Autoenconders and recurrent neural networks and examples from nuclear physics experiments</li>
+<li> 3pm-330pm: Break, coffee, tea etc</li>
+<li> 330pm-6pm: Hands-on sessions with examples from nuclear physics experiments</li>
+</ul>
+
+<b>Wednesday May 22, 2019</b>:
+
+<ul>
+<li> 830am-930am: Reinforcement learning and dimensionality reduction</li>
+<li> 930am-1030am: Solving quantum mechanical problems with Machine Learning</li>
+<li> 1030am-11am: Break, coffee, tea etc</li>
+<li> 11am-12pm: Quantum mechanics and Machine Learning</li> 
+<li> 12pm-1pm: Lunch</li>
+<li> 1pm-2pm:  More quantum mechanics and Machine Learning</li>
+<li> 2pm-3pm:  Boltzmann machines and many-body problems</li>
+<li> 3pm-330pm: Break, coffee, tea etc</li>
+<li> 3pm-6pm: Hands-on sessions with examples from quantum mechanical many-body problems</li>
+</ul>
+
+<b>Thursday May 23, 2019</b>:
+
+<ul>
+<li> 9am-12pm: Hands-on sessions with examples from nuclear physics, experiment and theory</li>
+<li> Coffee, tea etc at 1030am</li>
+<li> 12pm-1pm: Lunch</li>
+<li> 1pm-5pm: Hands-on sessions with examples from nuclear physics, experiment and theory.</li> 
+<li> Coffee, tea, etc at 3pm</li>
 </ul>
 
 

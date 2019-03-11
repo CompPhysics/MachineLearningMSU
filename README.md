@@ -29,7 +29,7 @@ All the above topics will be supported by examples, hands-on exercises and proje
 
 ## Practicalities
 
-1. Five lectures per day Monday through Wednesday, starting at 9am, see schedule below
+1. Five lectures per day Monday through Wednesday, starting at 830am, see schedule below
 2. Hands-on sessions in the afternoons till 6pm
 3. The last day, Thursday, is dedicated to solving explicit problems with hands-on guidance and relevant examples.
 
