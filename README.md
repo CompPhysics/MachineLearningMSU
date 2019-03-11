@@ -59,37 +59,37 @@ MK = Michelle Kuchera
 _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
 - 8am-830am: Welcome and registration
-- 830am-930am: Introduction to Machine Learning and various Python packages
-- 930am-1030am: Linear Regression
+- 830am-930am: Introduction to Machine Learning and various Python packages (MHJ)
+- 930am-1030am: Linear Regression  (MHJ)
 - 1030am-11am: Break, coffee, tea etc
-- 11am-12pm: Logistic Regression
+- 11am-12pm: Logistic Regression (MHJ)
 - 12pm-1pm: Lunch
-- 1pm-2pm: Optimization of functions, gradient descent and stochastic gradient descent
-- 2pm-3pm: Decision Trees and Random Forests
+- 1pm-2pm: Optimization of functions, gradient descent and stochastic gradient descent (MHJ?)
+- 2pm-3pm: Decision Trees and Random Forests  (MH or MK or MHJ?)
 - 3pm-330pm: Break, coffee, tea etc
 - 330pm-6pm: Hands-on sessions with selected Physics examples
 
 _Tuesday May 21, 2019_:
 
-- 830am-930am: Neural networks
-- 930am-1030am: Neural networks and deep learning
+- 830am-930am: Neural networks  (MHJ?)
+- 930am-1030am: Neural networks and deep learning  (MK?)
 - 1030am-11am: Break, coffee, tea etc
-- 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments
+- 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments (MK)
 - 12pm-1pm: Lunch
-- 1pm-2pm: CNNs
-- 2pm-3pm: Autoenconders and recurrent neural networks and examples from nuclear physics experiments
+- 1pm-2pm: CNNs (MK)
+- 2pm-3pm: Autoenconders and recurrent neural networks and examples from nuclear physics experiments  (MK)
 - 3pm-330pm: Break, coffee, tea etc
 - 330pm-6pm: Hands-on sessions with examples from nuclear physics experiments
 
 _Wednesday May 22, 2019_:
 
-- 830am-930am: Reinforcement learning and dimensionality reduction
-- 930am-1030am: Solving quantum mechanical problems with Machine Learning
+- 830am-930am: Reinforcement learning and dimensionality reduction  (MK or MH?)
+- 930am-1030am: Solving quantum mechanical problems with Machine Learning  (MH)
 - 1030am-11am: Break, coffee, tea etc
-- 11am-12pm: Quantum mechanics and Machine Learning 
+- 11am-12pm: Quantum mechanics and Machine Learning (MH)
 - 12pm-1pm: Lunch
-- 1pm-2pm:  More quantum mechanics and Machine Learning
-- 2pm-3pm:  Boltzmann machines and many-body problems
+- 1pm-2pm:  More quantum mechanics and Machine Learning  (MH)
+- 2pm-3pm:  Boltzmann machines and many-body problems  (MHJ or MH?)
 - 3pm-330pm: Break, coffee, tea etc
 - 3pm-6pm: Hands-on sessions with examples from quantum mechanical many-body problems
 
