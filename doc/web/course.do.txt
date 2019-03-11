@@ -6,19 +6,19 @@ AUTHOR: "Michelle Kuchera":"http://mhjgit.github.io/info/doc/web/" at Department
 
 <%
 pub_url = 'https://compphysics.github.io/MachineLearningMSU/doc/pub'
-published = ['Introduction', 'Regression', 'LogReg', 'NeuralNet', 'DecisionTrees', 'BM', 'Recurrent', 'Autoencoders', 'Reinforce', 'summary',]
+published = ['Introduction', 'Regression', 'LogReg', 'GradientOptim', 'DecisionTrees', 'NeuralNet',  'CNN', 'BM', 'Recurrent', 'Autoencoders', 'Reinforce', 'summary',]
 chapters = {
  'Introduction': 'Introduction to Data Analysis and Machine Learning',
  'Regression': 'Regression Methods',
  'LogReg': 'Logistic Regression',
- 'NeuralNet': 'Neural Networks',
+ 'GradientOptim': 'Gradient Methods and Optimization',
  'DecisionTrees': 'Decision trees, from simple to random ones',
+ 'NeuralNet': 'Neural Networks',
+ 'CNN': 'Convolutional Neural Networks',
  'BM': 'Unsupervised Learning, Boltzmann Machines',
  'Recurrent': 'Recurrent Neural Networks',
  'Autoencoders': 'Autoencoders',
  'Reinforce': 'Reinforcement Learning',
- 'odenn': 'Solving ordinary and partial differential equations with Neural Networks',
- 'Bayesian': 'Elements of Bayesian theory',
  'summary': 'Summary',
 }
 %>
