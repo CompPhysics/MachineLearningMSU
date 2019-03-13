@@ -1,6 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
-\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{numpy} \PYGdefault{k+kn}{as} \PYGdefault{n+nn}{np}
-\PYGdefault{n}{A} \PYGdefault{o}{=} \PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{log}\PYGdefault{p}{(}\PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{array}\PYGdefault{p}{([} \PYGdefault{p}{[}\PYGdefault{l+m+mf}{4.0}\PYGdefault{p}{,} \PYGdefault{l+m+mf}{7.0}\PYGdefault{p}{,} \PYGdefault{l+m+mf}{8.0}\PYGdefault{p}{],} \PYGdefault{p}{[}\PYGdefault{l+m+mf}{3.0}\PYGdefault{p}{,} \PYGdefault{l+m+mf}{10.0}\PYGdefault{p}{,} \PYGdefault{l+m+mf}{11.0}\PYGdefault{p}{],} \PYGdefault{p}{[}\PYGdefault{l+m+mf}{4.0}\PYGdefault{p}{,} \PYGdefault{l+m+mf}{5.0}\PYGdefault{p}{,} \PYGdefault{l+m+mf}{7.0}\PYGdefault{p}{]} \PYGdefault{p}{]))}
-\PYGdefault{c+c1}{\PYGdefaultZsh{} print the first column, row\PYGdefaultZhy{}major order and elements start with 0}
-\PYGdefault{k}{print}\PYGdefault{p}{(}\PYGdefault{n}{A}\PYGdefault{p}{[}\PYGdefault{l+m+mi}{1}\PYGdefault{p}{,:])}
-\end{Verbatim}

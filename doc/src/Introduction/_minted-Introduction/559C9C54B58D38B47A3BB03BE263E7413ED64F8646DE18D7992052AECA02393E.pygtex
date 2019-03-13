@@ -1,7 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
-\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{numpy} \PYGdefault{k+kn}{as} \PYGdefault{n+nn}{np}
-\PYGdefault{n}{n} \PYGdefault{o}{=} \PYGdefault{l+m+mi}{10}
-\PYGdefault{c+c1}{\PYGdefaultZsh{} define a matrix of dimension 10 x 10 and set all elements to random numbers with x \PYGdefaultZbs{}in [0, 1]}
-\PYGdefault{n}{A} \PYGdefault{o}{=} \PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{random}\PYGdefault{o}{.}\PYGdefault{n}{rand}\PYGdefault{p}{(}\PYGdefault{n}{n}\PYGdefault{p}{,} \PYGdefault{n}{n}\PYGdefault{p}{)}
-\PYGdefault{k}{print}\PYGdefault{p}{(}\PYGdefault{n}{A}\PYGdefault{p}{)}
-\end{Verbatim}
