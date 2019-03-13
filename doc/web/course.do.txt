@@ -6,13 +6,14 @@ AUTHOR: "Michelle Kuchera":"https://www.davidson.edu/academics/physics/faculty-a
 
 <%
 pub_url = 'https://compphysics.github.io/MachineLearningMSU/doc/pub'
-published = ['Introduction', 'Regression', 'LogReg', 'GradientOptim', 'DecisionTrees', 'NeuralNet',  'CNN', 'BM', 'Recurrent', 'Autoencoders', 'Reinforce',]
+published = ['Introduction', 'Regression', 'LogReg', 'GradientOptim', 'DecisionTrees', 'svm', 'NeuralNet',  'CNN', 'BM', 'Recurrent', 'Autoencoders', 'Reinforce',]
 chapters = {
  'Introduction': 'Introduction to Data Analysis and Machine Learning',
  'Regression': 'Regression Methods',
  'LogReg': 'Logistic Regression',
  'GradientOptim': 'Gradient Methods and Optimization',
  'DecisionTrees': 'Decision trees, from simple to random ones',
+ 'svm': 'Suppoert Vector Machines',
  'NeuralNet': 'Neural Networks',
  'CNN': 'Convolutional Neural Networks',
  'BM': 'Unsupervised Learning, Boltzmann Machines',
