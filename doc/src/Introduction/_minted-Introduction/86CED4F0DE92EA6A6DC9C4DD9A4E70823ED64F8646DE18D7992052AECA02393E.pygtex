@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYGdefault{c+c1}{\PYGdefaultZsh{} Importing various packages}
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{numpy} \PYGdefault{k+kn}{as} \PYGdefault{n+nn}{np}
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{matplotlib.pyplot} \PYGdefault{k+kn}{as} \PYGdefault{n+nn}{plt}
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{sklearn.linear\PYGdefaultZus{}model} \PYGdefault{k+kn}{import} \PYGdefault{n}{LinearRegression}
+
+\PYGdefault{n}{x} \PYGdefault{o}{=} \PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{random}\PYGdefault{o}{.}\PYGdefault{n}{rand}\PYGdefault{p}{(}\PYGdefault{l+m+mi}{100}\PYGdefault{p}{,}\PYGdefault{l+m+mi}{1}\PYGdefault{p}{)}
+\PYGdefault{n}{y} \PYGdefault{o}{=} \PYGdefault{l+m+mi}{2}\PYGdefault{o}{*}\PYGdefault{n}{x}\PYGdefault{o}{+}\PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{random}\PYGdefault{o}{.}\PYGdefault{n}{randn}\PYGdefault{p}{(}\PYGdefault{l+m+mi}{100}\PYGdefault{p}{,}\PYGdefault{l+m+mi}{1}\PYGdefault{p}{)}
+\PYGdefault{n}{linreg} \PYGdefault{o}{=} \PYGdefault{n}{LinearRegression}\PYGdefault{p}{()}
+\PYGdefault{n}{linreg}\PYGdefault{o}{.}\PYGdefault{n}{fit}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{,}\PYGdefault{n}{y}\PYGdefault{p}{)}
+\PYGdefault{n}{xnew} \PYGdefault{o}{=} \PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{array}\PYGdefault{p}{([[}\PYGdefault{l+m+mi}{0}\PYGdefault{p}{],[}\PYGdefault{l+m+mi}{1}\PYGdefault{p}{]])}
+\PYGdefault{n}{ypredict} \PYGdefault{o}{=} \PYGdefault{n}{linreg}\PYGdefault{o}{.}\PYGdefault{n}{predict}\PYGdefault{p}{(}\PYGdefault{n}{xnew}\PYGdefault{p}{)}
+
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{plot}\PYGdefault{p}{(}\PYGdefault{n}{xnew}\PYGdefault{p}{,} \PYGdefault{n}{ypredict}\PYGdefault{p}{,} \PYGdefault{l+s+s2}{\PYGdefaultZdq{}r\PYGdefaultZhy{}\PYGdefaultZdq{}}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{plot}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{,} \PYGdefault{n}{y} \PYGdefault{p}{,}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}ro\PYGdefaultZsq{}}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{axis}\PYGdefault{p}{([}\PYGdefault{l+m+mi}{0}\PYGdefault{p}{,}\PYGdefault{l+m+mf}{1.0}\PYGdefault{p}{,}\PYGdefault{l+m+mi}{0}\PYGdefault{p}{,} \PYGdefault{l+m+mf}{5.0}\PYGdefault{p}{])}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{xlabel}\PYGdefault{p}{(}\PYGdefault{l+s+sa}{r}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}\PYGdefaultZdl{}x\PYGdefaultZdl{}\PYGdefaultZsq{}}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{ylabel}\PYGdefault{p}{(}\PYGdefault{l+s+sa}{r}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}\PYGdefaultZdl{}y\PYGdefaultZdl{}\PYGdefaultZsq{}}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{title}\PYGdefault{p}{(}\PYGdefault{l+s+sa}{r}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}Simple Linear Regression\PYGdefaultZsq{}}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{show}\PYGdefault{p}{()}
+\end{Verbatim}

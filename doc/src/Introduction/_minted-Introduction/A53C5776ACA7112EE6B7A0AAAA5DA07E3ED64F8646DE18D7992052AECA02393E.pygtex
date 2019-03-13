@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{numpy} \PYGdefault{k+kn}{as} \PYGdefault{n+nn}{np}
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{matplotlib.pyplot} \PYGdefault{k+kn}{as} \PYGdefault{n+nn}{plt}
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{scipy} \PYGdefault{k+kn}{import} \PYGdefault{n}{sparse}
+\PYGdefault{n}{eye} \PYGdefault{o}{=} \PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{eye}\PYGdefault{p}{(}\PYGdefault{l+m+mi}{4}\PYGdefault{p}{)}
+\PYGdefault{k}{print}\PYGdefault{p}{(}\PYGdefault{n}{eye}\PYGdefault{p}{)}
+\PYGdefault{n}{sparse\PYGdefaultZus{}mtx} \PYGdefault{o}{=} \PYGdefault{n}{sparse}\PYGdefault{o}{.}\PYGdefault{n}{csr\PYGdefaultZus{}matrix}\PYGdefault{p}{(}\PYGdefault{n}{eye}\PYGdefault{p}{)}
+\PYGdefault{k}{print}\PYGdefault{p}{(}\PYGdefault{n}{sparse\PYGdefaultZus{}mtx}\PYGdefault{p}{)}
+\PYGdefault{n}{x} \PYGdefault{o}{=} \PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{linspace}\PYGdefault{p}{(}\PYGdefault{o}{\PYGdefaultZhy{}}\PYGdefault{l+m+mi}{10}\PYGdefault{p}{,}\PYGdefault{l+m+mi}{10}\PYGdefault{p}{,}\PYGdefault{l+m+mi}{100}\PYGdefault{p}{)}
+\PYGdefault{n}{y} \PYGdefault{o}{=} \PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{sin}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{plot}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{,}\PYGdefault{n}{y}\PYGdefault{p}{,}\PYGdefault{n}{marker}\PYGdefault{o}{=}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}x\PYGdefaultZsq{}}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{show}\PYGdefault{p}{()}
+\end{Verbatim}

@@ -747,16 +747,16 @@ display(data_pandas)
 
 Here are other examples where we use the _DataFrame_ functionality to handle arrays
 !bc pycod
-import numpy as np                                                                                        
+import numpy as np                                                                               
 import pandas as pd
 from IPython.display import display
-np.random.seed(100)                                                                                       
+np.random.seed(100)                                                                          
 # setting up a 9 x 4 matrix
-a = np.random.randn((9,4)) 
+a = np.random.randn(9,4)
 df = pd.DataFrame(a)   
 display(df)
-df.mean() 
-df.std()
+print(df.mean())
+print(df.std())
 display(df**2)
 !ec
 

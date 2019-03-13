@@ -1,0 +1,32 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{matplotlib.pyplot} \PYGdefault{k+kn}{as} \PYGdefault{n+nn}{plt}
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{numpy} \PYGdefault{k+kn}{as} \PYGdefault{n+nn}{np}
+\PYGdefault{k+kn}{import} \PYGdefault{n+nn}{random}
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{sklearn.linear\PYGdefaultZus{}model} \PYGdefault{k+kn}{import} \PYGdefault{n}{Ridge}
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{sklearn.preprocessing} \PYGdefault{k+kn}{import} \PYGdefault{n}{PolynomialFeatures}
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{sklearn.pipeline} \PYGdefault{k+kn}{import} \PYGdefault{n}{make\PYGdefaultZus{}pipeline}
+\PYGdefault{k+kn}{from} \PYGdefault{n+nn}{sklearn.linear\PYGdefaultZus{}model} \PYGdefault{k+kn}{import} \PYGdefault{n}{LinearRegression}
+
+\PYGdefault{n}{x}\PYGdefault{o}{=}\PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{linspace}\PYGdefault{p}{(}\PYGdefault{l+m+mf}{0.02}\PYGdefault{p}{,}\PYGdefault{l+m+mf}{0.98}\PYGdefault{p}{,}\PYGdefault{l+m+mi}{200}\PYGdefault{p}{)}
+\PYGdefault{n}{noise} \PYGdefault{o}{=} \PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{asarray}\PYGdefault{p}{(}\PYGdefault{n}{random}\PYGdefault{o}{.}\PYGdefault{n}{sample}\PYGdefault{p}{((}\PYGdefault{n+nb}{range}\PYGdefault{p}{(}\PYGdefault{l+m+mi}{200}\PYGdefault{p}{)),}\PYGdefault{l+m+mi}{200}\PYGdefault{p}{))}
+\PYGdefault{n}{y}\PYGdefault{o}{=}\PYGdefault{n}{x}\PYGdefault{o}{**}\PYGdefault{l+m+mi}{3}\PYGdefault{o}{*}\PYGdefault{n}{noise}
+\PYGdefault{n}{yn}\PYGdefault{o}{=}\PYGdefault{n}{x}\PYGdefault{o}{**}\PYGdefault{l+m+mi}{3}\PYGdefault{o}{*}\PYGdefault{l+m+mi}{100}
+\PYGdefault{n}{poly3} \PYGdefault{o}{=} \PYGdefault{n}{PolynomialFeatures}\PYGdefault{p}{(}\PYGdefault{n}{degree}\PYGdefault{o}{=}\PYGdefault{l+m+mi}{3}\PYGdefault{p}{)}
+\PYGdefault{n}{X} \PYGdefault{o}{=} \PYGdefault{n}{poly3}\PYGdefault{o}{.}\PYGdefault{n}{fit\PYGdefaultZus{}transform}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{[:,}\PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{newaxis}\PYGdefault{p}{])}
+\PYGdefault{n}{clf3} \PYGdefault{o}{=} \PYGdefault{n}{LinearRegression}\PYGdefault{p}{()}
+\PYGdefault{n}{clf3}\PYGdefault{o}{.}\PYGdefault{n}{fit}\PYGdefault{p}{(}\PYGdefault{n}{X}\PYGdefault{p}{,}\PYGdefault{n}{y}\PYGdefault{p}{)}
+
+\PYGdefault{n}{Xplot}\PYGdefault{o}{=}\PYGdefault{n}{poly3}\PYGdefault{o}{.}\PYGdefault{n}{fit\PYGdefaultZus{}transform}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{[:,}\PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{newaxis}\PYGdefault{p}{])}
+\PYGdefault{n}{poly3\PYGdefaultZus{}plot}\PYGdefault{o}{=}\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{plot}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{,} \PYGdefault{n}{clf3}\PYGdefault{o}{.}\PYGdefault{n}{predict}\PYGdefault{p}{(}\PYGdefault{n}{Xplot}\PYGdefault{p}{),} \PYGdefault{n}{label}\PYGdefault{o}{=}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}Cubic Fit\PYGdefaultZsq{}}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{plot}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{,}\PYGdefault{n}{yn}\PYGdefault{p}{,} \PYGdefault{n}{color}\PYGdefault{o}{=}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}red\PYGdefaultZsq{}}\PYGdefault{p}{,} \PYGdefault{n}{label}\PYGdefault{o}{=}\PYGdefault{l+s+s2}{\PYGdefaultZdq{}True Cubic\PYGdefaultZdq{}}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{scatter}\PYGdefault{p}{(}\PYGdefault{n}{x}\PYGdefault{p}{,} \PYGdefault{n}{y}\PYGdefault{p}{,} \PYGdefault{n}{label}\PYGdefault{o}{=}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}Data\PYGdefaultZsq{}}\PYGdefault{p}{,} \PYGdefault{n}{color}\PYGdefault{o}{=}\PYGdefault{l+s+s1}{\PYGdefaultZsq{}orange\PYGdefaultZsq{}}\PYGdefault{p}{,} \PYGdefault{n}{s}\PYGdefault{o}{=}\PYGdefault{l+m+mi}{15}\PYGdefault{p}{)}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{legend}\PYGdefault{p}{()}
+\PYGdefault{n}{plt}\PYGdefault{o}{.}\PYGdefault{n}{show}\PYGdefault{p}{()}
+
+\PYGdefault{k}{def} \PYGdefault{n+nf}{error}\PYGdefault{p}{(}\PYGdefault{n}{a}\PYGdefault{p}{):}
+    \PYGdefault{k}{for} \PYGdefault{n}{i} \PYGdefault{o+ow}{in} \PYGdefault{n}{y}\PYGdefault{p}{:}
+        \PYGdefault{n}{err}\PYGdefault{o}{=}\PYGdefault{p}{(}\PYGdefault{n}{y}\PYGdefault{o}{\PYGdefaultZhy{}}\PYGdefault{n}{yn}\PYGdefault{p}{)}\PYGdefault{o}{/}\PYGdefault{n}{yn}
+    \PYGdefault{k}{return} \PYGdefault{n+nb}{abs}\PYGdefault{p}{(}\PYGdefault{n}{np}\PYGdefault{o}{.}\PYGdefault{n}{sum}\PYGdefault{p}{(}\PYGdefault{n}{err}\PYGdefault{p}{))}\PYGdefault{o}{/}\PYGdefault{n+nb}{len}\PYGdefault{p}{(}\PYGdefault{n}{err}\PYGdefault{p}{)}
+
+\PYGdefault{k}{print} \PYGdefault{p}{(}\PYGdefault{n}{error}\PYGdefault{p}{(}\PYGdefault{n}{y}\PYGdefault{p}{))}
+\end{Verbatim}
