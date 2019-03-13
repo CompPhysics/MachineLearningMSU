@@ -148,7 +148,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>&nbsp;<br>
-<center><h4>Mar 8, 2019</h4></center> <!-- date -->
+<center><h4>Mar 13, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -323,7 +323,365 @@ Finally, if you wish to use the light mark-up language
 <a href="https://github.com/hplgit/doconce" target="_blank">doconce</a> you can convert a standard ascii text file into various HTML 
 formats, ipython notebooks, latex files, pdf files etc with minimal edits.
 
-<h2 id="___sec6">Simple linear regression model using <b>scikit-learn</b> </h2>
+<h2 id="___sec6">Numpy examples and Important Matrix and vector handling packages </h2>
+
+<p>
+There are several central software packages for linear algebra and eigenvalue problems. Several of the more
+popular ones have been wrapped into ofter software packages like those from the widely used text <b>Numerical Recipes</b>. The original source codes in many of the available packages are often taken from the widely used
+software package LAPACK, which follows two other popular packages
+developed in the 1970s, namely EISPACK and LINPACK.  We describe them shortly here.
+
+<ul>
+
+<p><li> LINPACK: package for linear equations and least square problems.</li>
+
+<p><li> LAPACK:package for solving symmetric, unsymmetric and generalized eigenvalue problems. From LAPACK's website <a href="http://www.netlib.org" target="_blank"><tt>http://www.netlib.org</tt></a> it is possible to download for free all source codes from this library. Both C/C++ and Fortran versions are available.</li>
+
+<p><li> BLAS (I, II and III): (Basic Linear Algebra Subprograms) are routines that provide standard building blocks for performing basic vector and matrix operations. Blas I is vector operations, II vector-matrix operations and III matrix-matrix operations. Highly parallelized and efficient codes, all available for download from <a href="http://www.netlib.org" target="_blank"><tt>http://www.netlib.org</tt></a>.</li>
+</ul>
+<p>
+
+When dealing with matrices and vectors a central issue is memory
+handling and allocation. If our code is written in Python the way we
+declare these objects and the way they are handled, interpreted and
+used by say a linear algebra library, requires codes that interface
+our Python program with such libraries. For Python programmers,
+<b>Numpy</b> is by now the standard Python package for numerical arrays in
+Python as well as the source of functions which act on these
+arrays. These functions span from eigenvalue solvers to functions that
+compute the mean value, variance or the covariance matrix. If you are
+not familiar with how arrays are handled in say Python or compiled
+languages like C++ and Fortran, the sections in this chapter may be
+useful. For C++ programmer, <b>Armadillo</b> is widely used library for
+linear algebra and eigenvalue problems. In addition it offers a
+convenient way to handle and organize arrays. We discuss this library
+as well.   Before we proceed we believe  it may be convenient to repeat some basic features of 
+ matrices and vectors.
+
+<h2 id="___sec7">Basic Matrix Features </h2>
+
+<p>
+<div class="alert alert-block alert-block alert-text-normal">
+<b>Matrix properties reminder.</b>
+<p>&nbsp;<br>
+$$
+ \mathbf{A} =
+      \begin{bmatrix} a_{11} & a_{12} & a_{13} & a_{14} \\
+                                 a_{21} & a_{22} & a_{23} & a_{24} \\
+                                   a_{31} & a_{32} & a_{33} & a_{34} \\
+                                  a_{41} & a_{42} & a_{43} & a_{44}
+             \end{bmatrix}\qquad
+\mathbf{I} =
+      \begin{bmatrix} 1 & 0 & 0 & 0 \\
+                                 0 & 1 & 0 & 0 \\
+                                 0 & 0 & 1 & 0 \\
+                                 0 & 0 & 0 & 1
+             \end{bmatrix}
+$$
+<p>&nbsp;<br>
+</div>
+
+<h2 id="___sec8">Basic Matrix Features </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+The inverse of a matrix is defined by
+
+<p>&nbsp;<br>
+$$
+\mathbf{A}^{-1} \cdot \mathbf{A} = I
+$$
+<p>&nbsp;<br>
+</div>
+
+<h2 id="___sec9">Basic Matrix Features </h2>
+
+<p>
+<div class="alert alert-block alert-block alert-text-normal">
+<b>Matrix Properties Reminder.</b>
+<p>
+<table border="1">
+<thead>
+<tr><th align="center">                Relations                 </th> <th align="center">      Name     </th> <th align="center">                              matrix elements                              </th> </tr>
+</thead>
+<tbody>
+<tr><td align="center">   \( A = A^{T} \)                               </td> <td align="center">   symmetric          </td> <td align="center">   \( a_{ij} = a_{ji} \)                                                          </td> </tr>
+<tr><td align="center">   \( A = \left (A^{T} \right )^{-1} \)          </td> <td align="center">   real orthogonal    </td> <td align="center">   \( \sum_k a_{ik} a_{jk} = \sum_k a_{ki} a_{kj} = \delta_{ij} \)                </td> </tr>
+<tr><td align="center">   \( A = A^{ * } \)                             </td> <td align="center">   real matrix        </td> <td align="center">   \( a_{ij} = a_{ij}^{ * } \)                                                    </td> </tr>
+<tr><td align="center">   \( A = A^{\dagger} \)                         </td> <td align="center">   hermitian          </td> <td align="center">   \( a_{ij} = a_{ji}^{ * } \)                                                    </td> </tr>
+<tr><td align="center">   \( A = \left (A^{\dagger} \right )^{-1} \)    </td> <td align="center">   unitary            </td> <td align="center">   \( \sum_k a_{ik} a_{jk}^{ * } = \sum_k a_{ki}^{ * } a_{kj} = \delta_{ij} \)    </td> </tr>
+</tbody>
+</table>
+
+</div>
+
+<h2 id="___sec10">Some famous Matrices </h2>
+
+<ul>
+
+<p><li> Diagonal if \( a_{ij}=0 \) for \( i\ne j \)</li>
+
+<p><li> Upper triangular if \( a_{ij}=0 \) for \( i > j \)</li>
+
+<p><li> Lower triangular if \( a_{ij}=0 \) for \( i < j \)</li>
+
+<p><li> Upper Hessenberg if \( a_{ij}=0 \) for \( i > j+1 \)</li>
+
+<p><li> Lower Hessenberg if \( a_{ij}=0 \) for \( i < j+1 \)</li>
+
+<p><li> Tridiagonal if \( a_{ij}=0 \) for \( |i -j| > 1 \)</li>
+
+<p><li> Lower banded with bandwidth \( p \): \( a_{ij}=0 \) for \( i > j+p \)</li>
+
+<p><li> Upper banded with bandwidth \( p \): \( a_{ij}=0 \) for \( i < j+p \)</li>
+
+<p><li> Banded, block upper triangular, block lower triangular....</li>
+</ul>
+
+<h2 id="___sec11">Basic Matrix Features </h2>
+
+<p>
+<div class="alert alert-block alert-block alert-text-normal">
+<b>Some Equivalent Statements.</b>
+<p>
+For an \( N\times N \) matrix  \( \mathbf{A} \) the following properties are all equivalent
+
+<ul>
+
+<p><li> If the inverse of \( \mathbf{A} \) exists, \( \mathbf{A} \) is nonsingular.</li>
+
+<p><li> The equation \( \mathbf{Ax}=0 \) implies \( \mathbf{x}=0 \).</li>
+
+<p><li> The rows of \( \mathbf{A} \) form a basis of \( R^N \).</li>
+
+<p><li> The columns of \( \mathbf{A} \) form a basis of \( R^N \).</li>
+
+<p><li> \( \mathbf{A} \) is a product of elementary matrices.</li>
+
+<p><li> \( 0 \) is not eigenvalue of \( \mathbf{A} \).</li>
+</ul>
+</div>
+
+<h2 id="___sec12">Numpy and arrays </h2>
+<a href="http://www.numpy.org/" target="_blank">Numpy</a> provides an easy way to handle arrays in Python. The standard way to import this library is as
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+n = <span style="color: #B452CD">10</span>
+x = np.random.normal(size=n)
+<span style="color: #8B008B; font-weight: bold">print</span>(x)
+</pre></div>
+<p>
+Here we have defined a vector \( x \) with \( n=10 \) elements with its values given by the Normal distribution \( N(0,1) \).
+Another alternative is to declare a vector as follows
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+x = np.array([<span style="color: #B452CD">1</span>, <span style="color: #B452CD">2</span>, <span style="color: #B452CD">3</span>])
+<span style="color: #8B008B; font-weight: bold">print</span>(x)
+</pre></div>
+<p>
+Here we have defined a vector with three elements, with \( x_0=1 \), \( x_1=2 \) and \( x_2=3 \). Note that both Python and C++
+start numbering array elements from \( 0 \) and on. This means that a vector with \( n \) elements has a sequence of entities \( x_0, x_1, x_2, \dots, x_{n-1} \). We could also let (recommended) Numpy to compute the logarithms of a specific array as
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+x = np.log(np.array([<span style="color: #B452CD">4</span>, <span style="color: #B452CD">7</span>, <span style="color: #B452CD">8</span>]))
+<span style="color: #8B008B; font-weight: bold">print</span>(x)
+</pre></div>
+<p>
+Here we have used Numpy's unary function \( np.log \). This function is
+highly tuned to compute array elements since the code is vectorized
+and does not require looping. We normaly recommend that you use the
+Numpy intrinsic functions instead of the corresponding <b>log</b> function
+from Python's <b>math</b> module. The looping is done explicitely by the
+<b>np.log</b> function. The alternative, and slower way to compute the
+logarithms of a vector would be to write
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">math</span> <span style="color: #8B008B; font-weight: bold">import</span> log
+x = np.array([<span style="color: #B452CD">4</span>, <span style="color: #B452CD">7</span>, <span style="color: #B452CD">8</span>])
+<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(<span style="color: #B452CD">0</span>, <span style="color: #658b00">len</span>(x)):
+    x[i] = log(x[i])
+<span style="color: #8B008B; font-weight: bold">print</span>(x)
+</pre></div>
+<p>
+We note that our code is much longer already and we need to import the <b>log</b> function from the <b>math</b> module. 
+The attentive reader will also notice that the output is \( [1, 1, 2] \). Python interprets automacally our numbers as integers (like the <b>automatic</b> keyword in C++). To change this we could define our array elements to be double precision numbers as
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+x = np.log(np.array([<span style="color: #B452CD">4</span>, <span style="color: #B452CD">7</span>, <span style="color: #B452CD">8</span>], dtype = np.float64))
+<span style="color: #8B008B; font-weight: bold">print</span>(x)
+</pre></div>
+<p>
+or simply write them as double precision numbers (Python uses 64 bits as default for floating point type variables), that is
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+x = np.log(np.array([<span style="color: #B452CD">4.0</span>, <span style="color: #B452CD">7.0</span>, <span style="color: #B452CD">8.0</span>])
+<span style="color: #8B008B; font-weight: bold">print</span>(x)
+</pre></div>
+<p>
+To check the number of bytes (remember that one byte contains eight bits for double precision variables), you can use simple use the <b>itemsize</b> functionality (the array \( x \) is actually an object which inherits the functionalities defined in Numpy) as 
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+x = np.log(np.array([<span style="color: #B452CD">4.0</span>, <span style="color: #B452CD">7.0</span>, <span style="color: #B452CD">8.0</span>])
+<span style="color: #8B008B; font-weight: bold">print</span>(x.itemsize)
+</pre></div>
+
+<h2 id="___sec13">Matrices in Python </h2>
+Having defined vectors, we are now ready to try out matrices. We can define a \( 3 \times 3  \) real matrix \( \hat{A} \)
+as (recall that we user lowercase letters for vectors and uppercase letters for matrices)
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+A = np.log(np.array([ [<span style="color: #B452CD">4.0</span>, <span style="color: #B452CD">7.0</span>, <span style="color: #B452CD">8.0</span>], [<span style="color: #B452CD">3.0</span>, <span style="color: #B452CD">10.0</span>, <span style="color: #B452CD">11.0</span>], [<span style="color: #B452CD">4.0</span>, <span style="color: #B452CD">5.0</span>, <span style="color: #B452CD">7.0</span>] ]))
+<span style="color: #8B008B; font-weight: bold">print</span>(A)
+</pre></div>
+<p>
+If we use the <b>shape</b> function we would get \( (3, 3) \) as output, that is verifying that our matrix is a \( 3\times 3 \) matrix. We can slice the matrix and print for example the first column (Python organized matrix elements in a row-major order, see below) as
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+A = np.log(np.array([ [<span style="color: #B452CD">4.0</span>, <span style="color: #B452CD">7.0</span>, <span style="color: #B452CD">8.0</span>], [<span style="color: #B452CD">3.0</span>, <span style="color: #B452CD">10.0</span>, <span style="color: #B452CD">11.0</span>], [<span style="color: #B452CD">4.0</span>, <span style="color: #B452CD">5.0</span>, <span style="color: #B452CD">7.0</span>] ]))
+<span style="color: #228B22"># print the first column, row-major order and elements start with 0</span>
+<span style="color: #8B008B; font-weight: bold">print</span>(A[:,<span style="color: #B452CD">0</span>]) 
+</pre></div>
+<p>
+We can continue this was by printing out other columns or rows. The example here prints out the second column
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+A = np.log(np.array([ [<span style="color: #B452CD">4.0</span>, <span style="color: #B452CD">7.0</span>, <span style="color: #B452CD">8.0</span>], [<span style="color: #B452CD">3.0</span>, <span style="color: #B452CD">10.0</span>, <span style="color: #B452CD">11.0</span>], [<span style="color: #B452CD">4.0</span>, <span style="color: #B452CD">5.0</span>, <span style="color: #B452CD">7.0</span>] ]))
+<span style="color: #228B22"># print the first column, row-major order and elements start with 0</span>
+<span style="color: #8B008B; font-weight: bold">print</span>(A[<span style="color: #B452CD">1</span>,:]) 
+</pre></div>
+<p>
+Numpy contains many other functionalities that allow us to slice, subdivide etc etc arrays. We strongly recommend that you look up the <a href="http://www.numpy.org/" target="_blank">Numpy website for more details</a>. Useful functions when defining a matrix are the <b>np.zeros</b> function which declares a matrix of a given dimension and sets all elements to zero
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+n = <span style="color: #B452CD">10</span>
+<span style="color: #228B22"># define a matrix of dimension 10 x 10 and set all elements to zero</span>
+A = np.zeros( (n, n) )
+<span style="color: #8B008B; font-weight: bold">print</span>(A) 
+</pre></div>
+<p>
+or initializing all elements to 
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+n = <span style="color: #B452CD">10</span>
+<span style="color: #228B22"># define a matrix of dimension 10 x 10 and set all elements to one</span>
+A = np.ones( (n, n) )
+<span style="color: #8B008B; font-weight: bold">print</span>(A) 
+</pre></div>
+<p>
+or as unitarily distributed random numbers (see the material on random number generators in the statistics part)
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+n = <span style="color: #B452CD">10</span>
+<span style="color: #228B22"># define a matrix of dimension 10 x 10 and set all elements to random numbers with x \in [0, 1]</span>
+A = np.random.rand(n, n)
+<span style="color: #8B008B; font-weight: bold">print</span>(A) 
+</pre></div>
+<p>
+As we will see throughout these lectures, there are several extremely useful functionalities in Numpy.
+As an example, consider the discussion of the covariance matrix. Suppose we have defined three vectors
+\( \hat{x}, \hat{y}, \hat{z} \) with \( n \) elements each. The covariance matrix is defined as 
+<p>&nbsp;<br>
+$$
+\hat{\Sigma} = \begin{bmatrix} \sigma_{xx} & \sigma_{xy} & \sigma_{xz} \\
+                              \sigma_{yx} & \sigma_{yy} & \sigma_{yz} \\
+                              \sigma_{zx} & \sigma_{zy} & \sigma_{zz} 
+             \end{bmatrix},
+$$
+<p>&nbsp;<br>
+
+where for example
+<p>&nbsp;<br>
+$$
+\sigma_{xy} =\frac{1}{n} \sum_{i=0}^{n-1}(x_i- \overline{x})(y_i- \overline{y}).
+$$
+<p>&nbsp;<br>
+
+The Numpy function <b>np.cov</b> calculates the covariance elements using the factor \( 1/(n-1) \) instead of \( 1/n \) since it assumes we do not have the exact mean values. For a more in-depth discussion of the covariance and covariance matrix and its meaning, we refer you to the lectures on statistics. 
+The following simple function uses the <b>np.vstack</b> function which takes each vector of dimension \( 1\times n \) and produces a $ 3\times n$ matrix \( \hat{W} \)
+<p>&nbsp;<br>
+$$
+\hat{W} = \begin{bmatrix} x_0 & y_0 & z_0 \\
+                          x_1 & y_1 & z_1 \\
+                          x_2 & y_2 & z_2 \\
+                          \dots & \dots & \dots \\
+                          x_{n-2} & y_{n-2} & z_{n-2} \\
+                          x_{n-1} & y_{n-1} & z_{n-1}
+             \end{bmatrix},
+$$
+<p>&nbsp;<br>
+
+<p>
+which in turn is converted into into the \( 3 times 3 \) covariance matrix
+\( \hat{\Sigma} \) via the Numpy function <b>np.cov()</b>. In our review of
+statistical functions and quantities we will discuss more about the
+meaning of the covariance matrix. Here we note that we can calculate
+the mean value of each set of samples \( \hat{x} \) etc using the Numpy
+function <b>np.mean(x)</b>. We can also extract the eigenvalues of the
+covariance matrix through the <b>np.linalg.eig()</b> function.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Importing various packages</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+
+n = <span style="color: #B452CD">100</span>
+x = np.random.normal(size=n)
+<span style="color: #8B008B; font-weight: bold">print</span>(np.mean(x))
+y = <span style="color: #B452CD">4</span>+<span style="color: #B452CD">3</span>*x+np.random.normal(size=n)
+<span style="color: #8B008B; font-weight: bold">print</span>(np.mean(y))
+z = x**<span style="color: #B452CD">3</span>+np.random.normal(size=n)
+<span style="color: #8B008B; font-weight: bold">print</span>(np.mean(z))
+W = np.vstack((x, y, z))
+Sigma = np.cov(W)
+<span style="color: #8B008B; font-weight: bold">print</span>(Sigma)
+Eigvals, Eigvecs = np.linalg.eig(Sigma)
+<span style="color: #8B008B; font-weight: bold">print</span>(Eigvals)
+</pre></div>
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">scipy</span> <span style="color: #8B008B; font-weight: bold">import</span> sparse
+eye = np.eye(<span style="color: #B452CD">4</span>)
+<span style="color: #8B008B; font-weight: bold">print</span>(eye)
+sparse_mtx = sparse.csr_matrix(eye)
+<span style="color: #8B008B; font-weight: bold">print</span>(sparse_mtx)
+x = np.linspace(-<span style="color: #B452CD">10</span>,<span style="color: #B452CD">10</span>,<span style="color: #B452CD">100</span>)
+y = np.sin(x)
+plt.plot(x,y,marker=<span style="color: #CD5555">&#39;x&#39;</span>)
+plt.show()
+</pre></div>
+
+<h2 id="___sec14">Simple linear regression model using <b>scikit-learn</b> </h2>
 
 <p>
 We start with perhaps our simplest possible example, using <b>scikit-learn</b> to perform linear regression analysis on a data set produced by us. 
@@ -626,40 +984,7 @@ plt.show()
 <span style="color: #8B008B; font-weight: bold">print</span> (error(y))
 </pre></div>
 <p>
-Similarly, using <b>R</b>, we can perform similar studies. The following <b>R</b> code illustrates this.
-(more details on <b>R</b> will be inserted later).
-
-<h2 id="___sec7">Non-Linear Least squares in R  </h2>
-<div class="alert alert-block alert-block alert-text-normal">
-<b></b>
-<p>
-
-<!-- code=r (!bc r) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">set.seed</span>(<span style="color: #B452CD">1485</span>)
-len = <span style="color: #B452CD">24</span>
-x = runif(len)
-y = x^<span style="color: #B452CD">3</span>+rnorm(len, <span style="color: #B452CD">0</span>,<span style="color: #B452CD">0.06</span>)
-ds = <span style="color: #00688B; font-weight: bold">data.frame</span>(x = x, y = y)
-str(ds)
-plot( y ~ x, main =<span style="color: #CD5555">&quot;Known cubic with noise&quot;</span>)
-s  = <span style="color: #8B008B; font-weight: bold">seq</span>(<span style="color: #B452CD">0</span>,<span style="color: #B452CD">1</span>,length =<span style="color: #B452CD">100</span>)
-lines(s, s^<span style="color: #B452CD">3</span>, lty =<span style="color: #B452CD">2</span>, col =<span style="color: #CD5555">&quot;green&quot;</span>)
-m = nls(y ~ <span style="color: #8B008B; font-weight: bold">I</span>(x^power), data = ds, start = <span style="color: #00688B; font-weight: bold">list</span>(power=<span style="color: #B452CD">1</span>), trace = <span style="color: #658b00">T</span>)
-<span style="color: #8B008B; font-weight: bold">class</span>(m)
-<span style="color: #8B008B; font-weight: bold">summary</span>(m)
-power = <span style="color: #8B008B; font-weight: bold">round</span>(<span style="color: #8B008B; font-weight: bold">summary</span>(m)$coefficients[<span style="color: #B452CD">1</span>], <span style="color: #B452CD">3</span>)
-power.se = <span style="color: #8B008B; font-weight: bold">round</span>(<span style="color: #8B008B; font-weight: bold">summary</span>(m)$coefficients[<span style="color: #B452CD">2</span>], <span style="color: #B452CD">3</span>)
-plot(y ~ x, main = <span style="color: #CD5555">&quot;Fitted power model&quot;</span>, sub = <span style="color: #CD5555">&quot;Blue: fit; green: known&quot;</span>)
-s = <span style="color: #8B008B; font-weight: bold">seq</span>(<span style="color: #B452CD">0</span>, <span style="color: #B452CD">1</span>, length = <span style="color: #B452CD">100</span>)
-lines(s, s^<span style="color: #B452CD">3</span>, lty = <span style="color: #B452CD">2</span>, col = <span style="color: #CD5555">&quot;green&quot;</span>)
-lines(s, predict(m, <span style="color: #00688B; font-weight: bold">list</span>(x = s)), lty = <span style="color: #B452CD">1</span>, col = <span style="color: #CD5555">&quot;blue&quot;</span>)
-text(<span style="color: #B452CD">0</span>, <span style="color: #B452CD">0.5</span>, <span style="color: #8B008B; font-weight: bold">paste</span>(<span style="color: #CD5555">&quot;y =x^ (&quot;</span>, power, <span style="color: #CD5555">&quot; +/- &quot;</span>, power.se, <span style="color: #CD5555">&quot;)&quot;</span>, sep = <span style="color: #CD5555">&quot;&quot;</span>), pos = <span style="color: #B452CD">4</span>)
-</pre></div>
-
-</div>
-
-<p>
-In our lectures on regression analysis (and other ones as well), we will discuss in more details various <b>R</b> functionalities.
+Similarly, using <b>R</b>, we can perform similar studies.
 
 <p>
 Another useful Python package is
@@ -676,703 +1001,27 @@ data = {<span style="color: #CD5555">&#39;Name&#39;</span>: [<span style="color:
 data_pandas = pd.DataFrame(data)
 display(data_pandas)
 </pre></div>
-
-<h2 id="___sec8">Examples </h2>
-
 <p>
-We present here several examples, with pertinent Python codes that we
-will use to illustrate various machine learning methods and ways to
-analyze, from simple to complex, various data sets. Many of these
-examples allow us to generate the data we want to analyze, following
-much of the same philosophy we discussed above when
-fitting various polynomials.
-
-<p>
-We start with a simple exponential growth model that is meant to mimick an ecoli lab experiment.
-We can easily model this system and then produce the data used to train various machine learning algorithms.
-Another model from the life sciences is the so-called predator-prey model from ecology. Thereafter we present 
-a simple model for financial transactions before moving to a random walk model and ending with 
-the simulation of velocities of a non-interacting atom or molecule confined to move in  a one-dimensional region.
-
-<h3 id="___sec9">Ecoli lab experiment </h3>
-
-<p>
-A typical pattern seen in population models is that the population grows faster and faster. <a href="http://www.zo.utexas.edu/courses/Thoc/PopGrowth.html" target="_blank">Why? Is there an underlying (general) mechanism</a>?
-Here we will construct a model for cell growth based on a simple difference equation for the growth. We make the following assumptions
-<div class="alert alert-block alert-block alert-text-normal">
-<b></b>
-<ol>
-<p><li> Cells divide after \( T \) seconds on average (one generation)</li>
-<p><li> \( 2N \) celles divide into twice as many new cells \( \Delta N \) in a time
-   interval \( \Delta t \) as \( N \) cells would: \( \Delta N \propto N \)</li>
-<p><li> \( N \) cells result in twice as many new individuals \( \Delta N \) in
-   time \( 2\Delta t \) as in time \( \Delta t \): \( \Delta N \propto\Delta t \)</li>
-<p><li> Same proportionality with respect to  death</li> 
-<p><li> Proposed model: \( \Delta N = b\Delta t N - d\Delta tN \) for some unknown
-   constants \( b \) (births) and \( d \) (deaths)</li>
-<p><li> Describe evolution in discrete time: \( t_n=n\Delta t \)</li>
-<p><li> Program-friendly notation: \( N \) at \( t_n \) is \( N^n \)</li>
-<p><li> Math model: \( N^{n+1} = N^n + r\Delta t\, N \) (with \( \ r=b-d \))</li>
-<p><li> Program model: <code>N[n+1] = N[n] + r*dt*N[n]</code></li>
-</ol>
-</div>
-
-<p>
-The difference equation can be programmed in a simple way, and in order to get started we
-set \( r=1.5 \), \( N^0=1 \), \( \Delta t=0.5 \). The program reads
-
+Here are other examples where we use the <b>DataFrame</b> functionality to handle arrays
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-
-t = np.linspace(<span style="color: #B452CD">0</span>, <span style="color: #B452CD">10</span>, <span style="color: #B452CD">21</span>)  <span style="color: #228B22"># 20 intervals in [0, 10]</span>
-dt = t[<span style="color: #B452CD">1</span>] - t[<span style="color: #B452CD">0</span>]
-N = np.zeros(t.size)
-N[<span style="color: #B452CD">0</span>] = <span style="color: #B452CD">1</span>
-r = <span style="color: #B452CD">0.5</span>
-
-<span style="color: #8B008B; font-weight: bold">for</span> n <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(<span style="color: #B452CD">0</span>, N.size-<span style="color: #B452CD">1</span>, <span style="color: #B452CD">1</span>):
-    N[n+<span style="color: #B452CD">1</span>] = N[n] + r*dt*N[n]
-    <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;N[%d]=%.1f&#39;</span> % (n+<span style="color: #B452CD">1</span>, N[n+<span style="color: #B452CD">1</span>]))
-</pre></div>
-<p>
-and it generates the following output
-<p>
-
-<!-- code=text typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>N[1]=1.2
-N[2]=1.6
-N[3]=2.0
-N[4]=2.4
-N[5]=3.1
-N[6]=3.8
-N[7]=4.8
-N[8]=6.0
-N[9]=7.5
-N[10]=9.3
-N[11]=11.6
-N[12]=14.6
-N[13]=18.2
-N[14]=22.7
-N[15]=28.4
-N[16]=35.5
-N[17]=44.4
-N[18]=55.5
-N[19]=69.4
-N[20]=86.7
-</pre></div>
-<p>
-This forms our data which later will define our training set. 
-In this case we defined the value of the parameter \( r \). We could alternatively assume that we just received the 
-above data file and where asked to find \( r \). How can we estimate \( r \) from data? This will be one of our tasks later.
-
-<p>
-We can use the difference equation with the experimental data
-<p>&nbsp;<br>
-$$ N^{n+1} = N^n + r\Delta t N^n$$
-<p>&nbsp;<br>
-
-Suppose now that  \( N^{n+1} \) and \( N^n \) are known from data. Then we could solve with respect to  \( r \) as follows
-<p>&nbsp;<br>
-$$ r = \frac{N^{n+1}-N^n}{N^n\Delta t} $$
-<p>&nbsp;<br>
-
-Suppose we set \( t_1=600 \), \( t_2=1200 \),
-\( N^1=140 \) and \( N^2=250 \). 
-The following code plots the data 
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-
-<span style="color: #228B22"># Estimate r</span>
-data = np.loadtxt(<span style="color: #CD5555">&#39;ecoli.csv&#39;</span>, delimiter=<span style="color: #CD5555">&#39;,&#39;</span>)
-t_e = data[:,<span style="color: #B452CD">0</span>]
-N_e = data[:,<span style="color: #B452CD">1</span>]
-i = <span style="color: #B452CD">2</span>  <span style="color: #228B22"># Data point (i,i+1) used to estimate r</span>
-r = (N_e[i+<span style="color: #B452CD">1</span>] - N_e[i])/(N_e[i]*(t_e[i+<span style="color: #B452CD">1</span>] - t_e[i]))
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Estimated r=%.5f&#39;</span> % r)
-<span style="color: #228B22"># Can experiment with r values and see if the model can</span>
-<span style="color: #228B22"># match the data better</span>
-T = <span style="color: #B452CD">1200</span>     <span style="color: #228B22"># cell can divide after T sec</span>
-t_max = <span style="color: #B452CD">5</span>*T  <span style="color: #228B22"># 5 generations in experiment</span>
-t = np.linspace(<span style="color: #B452CD">0</span>, t_max, <span style="color: #B452CD">1000</span>)
-dt = t[<span style="color: #B452CD">1</span>] - t[<span style="color: #B452CD">0</span>]
-N = np.zeros(t.size)
-
-N[<span style="color: #B452CD">0</span>] = <span style="color: #B452CD">100</span>
-<span style="color: #8B008B; font-weight: bold">for</span> n <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(<span style="color: #B452CD">0</span>, <span style="color: #658b00">len</span>(t)-<span style="color: #B452CD">1</span>, <span style="color: #B452CD">1</span>):
-    N[n+<span style="color: #B452CD">1</span>] = N[n] + r*dt*N[n]
-
-plt.plot(t, N, <span style="color: #CD5555">&#39;r-&#39;</span>, t_e, N_e, <span style="color: #CD5555">&#39;bo&#39;</span>)
-plt.xlabel(<span style="color: #CD5555">&#39;time [s]&#39;</span>);  plt.ylabel(<span style="color: #CD5555">&#39;N&#39;</span>)
-plt.legend([<span style="color: #CD5555">&#39;model&#39;</span>, <span style="color: #CD5555">&#39;experiment&#39;</span>], loc=<span style="color: #CD5555">&#39;upper left&#39;</span>)
-plt.show()
-</pre></div>
-<p>
-We can then change the parameter \( r \) in the program and play around to make a better fit. By now we know that this
-'search bythe eye' approach is not the most optimal one.
-
-<h3 id="___sec10">Predator-Prey model from ecology </h3>
-
-<p>
-The population dynamics of a simple predator-prey system is a
-classical example shown in many biology textbooks when ecological
-systems are discussed. The system contains all elements of the
-scientific method:
-
-<ul>
- <p><li> The set up of a specific hypothesis combined with</li>
- <p><li> the experimental methods needed (one can study existing data or perform experiments)</li>
- <p><li> analyzing and interpreting the data and performing further experiments if needed</li>
- <p><li> trying to extract general behaviors and extract eventual laws or patterns</li>
- <p><li> develop mathematical relations for the uncovered regularities/laws and test these by per forming new experiments</li>
-</ul>
-<p>
-
-Lots of data about populations of hares and lynx collected from furs in Hudson Bay, Canada, are available. It is known that the populations oscillate. Why?
-Here we start by
-
-<ol>
-<p><li> plotting the data</li>
-<p><li> derive a simple model for the population dynamics</li>
-<p><li> (fitting parameters in the model to the data)</li>
-<p><li> using the model predict the evolution other predator-pray systems</li>
-</ol>
-<p>
-
-Most mammalian predators rely on a variety of prey, which complicates mathematical modeling; however, a few predators have become highly specialized and seek almost exclusively a single prey species. An example of this simplified predator-prey interaction is seen in Canadian northern forests, where the populations of the lynx and the snowshoe hare are intertwined in a life and death struggle.
-
-<p>
-One reason that this particular system has been so extensively studied is that the Hudson Bay company kept careful records of all furs from the early 1800s into the 1900s. The records for the furs collected by the Hudson Bay company showed distinct oscillations (approximately 12 year periods), suggesting that these species caused almost periodic fluctuations of each other's populations. The table here shows data from 1900 to 1920.
-
-<p>
-<table border="1">
-<thead>
-<tr><th align="center">Year</th> <th align="center">Hares (x1000)</th> <th align="center">Lynx (x1000)</th> </tr>
-</thead>
-<tbody>
-<tr><td align="left">   1900    </td> <td align="right">   30.0             </td> <td align="right">   4.0             </td> </tr>
-<tr><td align="left">   1901    </td> <td align="right">   47.2             </td> <td align="right">   6.1             </td> </tr>
-<tr><td align="left">   1902    </td> <td align="right">   70.2             </td> <td align="right">   9.8             </td> </tr>
-<tr><td align="left">   1903    </td> <td align="right">   77.4             </td> <td align="right">   35.2            </td> </tr>
-<tr><td align="left">   1904    </td> <td align="right">   36.3             </td> <td align="right">   59.4            </td> </tr>
-<tr><td align="left">   1905    </td> <td align="right">   20.6             </td> <td align="right">   41.7            </td> </tr>
-<tr><td align="left">   1906    </td> <td align="right">   18.1             </td> <td align="right">   19.0            </td> </tr>
-<tr><td align="left">   1907    </td> <td align="right">   21.4             </td> <td align="right">   13.0            </td> </tr>
-<tr><td align="left">   1908    </td> <td align="right">   22.0             </td> <td align="right">   8.3             </td> </tr>
-<tr><td align="left">   1909    </td> <td align="right">   25.4             </td> <td align="right">   9.1             </td> </tr>
-<tr><td align="left">   1910    </td> <td align="right">   27.1             </td> <td align="right">   7.4             </td> </tr>
-<tr><td align="left">   1911    </td> <td align="right">   40.3             </td> <td align="right">   8.0             </td> </tr>
-<tr><td align="left">   1912    </td> <td align="right">   57               </td> <td align="right">   12.3            </td> </tr>
-<tr><td align="left">   1913    </td> <td align="right">   76.6             </td> <td align="right">   19.5            </td> </tr>
-<tr><td align="left">   1914    </td> <td align="right">   52.3             </td> <td align="right">   45.7            </td> </tr>
-<tr><td align="left">   1915    </td> <td align="right">   19.5             </td> <td align="right">   51.1            </td> </tr>
-<tr><td align="left">   1916    </td> <td align="right">   11.2             </td> <td align="right">   29.7            </td> </tr>
-<tr><td align="left">   1917    </td> <td align="right">   7.6              </td> <td align="right">   15.8            </td> </tr>
-<tr><td align="left">   1918    </td> <td align="right">   14.6             </td> <td align="right">   9.7             </td> </tr>
-<tr><td align="left">   1919    </td> <td align="right">   16.2             </td> <td align="right">   10.1            </td> </tr>
-<tr><td align="left">   1920    </td> <td align="right">   24.7             </td> <td align="right">   8.6             </td> </tr>
-</tbody>
-</table>
-<p>
-
-<!-- code=python (!bc pypro) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">from</span>  <span style="color: #008b45; text-decoration: underline">matplotlib</span> <span style="color: #8B008B; font-weight: bold">import</span> pyplot <span style="color: #8B008B; font-weight: bold">as</span> plt
-
-<span style="color: #228B22"># Load in data file</span>
-data = np.loadtxt(<span style="color: #CD5555">&#39;src/Hudson_Bay.csv&#39;</span>, delimiter=<span style="color: #CD5555">&#39;,&#39;</span>, skiprows=<span style="color: #B452CD">1</span>)
-<span style="color: #228B22"># Make arrays containing x-axis and hares and lynx populations</span>
-year = data[:,<span style="color: #B452CD">0</span>]
-hares = data[:,<span style="color: #B452CD">1</span>]
-lynx = data[:,<span style="color: #B452CD">2</span>]
-
-plt.plot(year, hares ,<span style="color: #CD5555">&#39;b-+&#39;</span>, year, lynx, <span style="color: #CD5555">&#39;r-o&#39;</span>)
-plt.axis([<span style="color: #B452CD">1900</span>,<span style="color: #B452CD">1920</span>,<span style="color: #B452CD">0</span>, <span style="color: #B452CD">100.0</span>])
-plt.xlabel(<span style="color: #CD5555">r&#39;Year&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">r&#39;Numbers of hares and lynx &#39;</span>)
-plt.legend((<span style="color: #CD5555">&#39;Hares&#39;</span>,<span style="color: #CD5555">&#39;Lynx&#39;</span>), loc=<span style="color: #CD5555">&#39;upper right&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Population of hares and lynx from 1900-1920 (x1000)}&#39;</span>)
-plt.savefig(<span style="color: #CD5555">&#39;Hudson_Bay_data.pdf&#39;</span>)
-plt.savefig(<span style="color: #CD5555">&#39;Hudson_Bay_data.png&#39;</span>)
-plt.show()
-</pre></div>
-<p>
-<br /><br /><center><p><img src="fig/Hudson_Bay_data.png" align="bottom" width=700></p></center><br /><br />
-
-<p>
-We see from the plot that there are indeed fluctuations.
-We would like to create a mathematical model that explains these
-population fluctuations. Ecologists have predicted that in a simple
-predator-prey system that a rise in prey population is followed (with
-a lag) by a rise in the predator population. When the predator
-population is sufficiently high, then the prey population begins
-dropping. After the prey population falls, then the predator
-population falls, which allows the prey population to recover and
-complete one cycle of this interaction. Thus, we see that
-qualitatively oscillations occur. Can a mathematical model predict
-this? What causes cycles to slow or speed up? What affects the
-amplitude of the oscillation or do you expect to see the oscillations
-damp to a stable equilibrium? The models tend to ignore factors like
-climate and other complicating factors. How significant are these?
-
-<ul>
- <p><li> We see oscillations in the data</li>
- <p><li> What causes cycles to slow or speed up?</li>
- <p><li> What affects the amplitude of the oscillation or do you expect to see the oscillations damp to a stable equilibrium?</li>
- <p><li> With a model we can better <em>understand the data</em></li>
- <p><li> More important: Can we understand the ecology dynamics of predator-pray populations?</li>
-</ul>
-<p>
-
-The classical way (in all books) is to present the Lotka-Volterra equations:
-
-<p>&nbsp;<br>
-$$
-\begin{align*}
-\frac{dH}{dt} &= H(a - b L)\\
-\frac{dL}{dt} &= - L(d - c  H)
-\end{align*}
-$$
-<p>&nbsp;<br>
-
-<p>
-Here,
-
-<ul>
- <p><li> \( H \) is the number of preys</li>
- <p><li> \( L \) the number of predators</li>
- <p><li> \( a \), \( b \), \( d \), \( c \) are parameters</li>
-</ul>
-<p>
-
-The population of hares evolves due to births and deaths exactly as a bacteria population:
-
-<p>&nbsp;<br>
-$$
-\Delta H = a \Delta t H^n
-$$
-<p>&nbsp;<br>
-
-However, hares have an additional loss in the population because
-they are eaten by lynx.
-All the hares and lynx can form
-\( H\cdot L \) pairs in total. When such pairs meet during a time
-interval \( \Delta t \), there is some
-small probablity that the lynx will eat the hare.
-So in fraction \( b\Delta t HL \), the lynx eat hares. This
-loss of hares must be accounted for. Subtracted in the equation for hares:
-
-<p>&nbsp;<br>
-$$ \Delta H = a\Delta t H^n - b \Delta t H^nL^n$$
-<p>&nbsp;<br>
-
-<p>
-We assume that the primary growth for the lynx population depends on sufficient food for raising lynx kittens, which implies an adequate source of nutrients from predation on hares. Thus, the growth of the lynx population does not only depend of how many lynx there are, but on how many hares they can eat.
-In a time interval \( \Delta t HL \) hares and lynx can meet, and in a
-fraction \( b\Delta t HL \) the lynx eats the hare. All of this does not
-contribute to the growth of lynx, again just a fraction of
-\( b\Delta t HL \) that we write as
-\( d\Delta t HL \). In addition, lynx die just as in the population
-dynamics with one isolated animal population, leading to a loss
-\( -c\Delta t L \).
-The accounting of lynx then looks like
-<p>&nbsp;<br>
-$$ \Delta L = d\Delta t H^nL^n - c\Delta t L^n$$
-<p>&nbsp;<br>
-
-<p>
-By writing up the definition of \( \Delta H \) and \( \Delta L \), and putting
-all assumed known terms \( H^n \) and \( L^n \) on the right-hand side, we have
-
-<p>&nbsp;<br>
-$$ H^{n+1} = H^n + a\Delta t H^n - b\Delta t H^n L^n $$
-<p>&nbsp;<br>
-
-<p>&nbsp;<br>
-$$ L^{n+1} = L^n + d\Delta t H^nL^n - c\Delta t L^n $$
-<p>&nbsp;<br>
-
-<p>
-Note:
-
-<ul>
- <p><li> These equations are ready to be implemented!</li>
- <p><li> But to start, we need \( H^0 \) and \( L^0 \) (which we can get from the data)</li>
- <p><li> We also need values for \( a \), \( b \), \( d \), \( c \)</li>
- <p><li> As always, models tend to be general - as here, applicable
-   to &quot;all&quot; predator-pray systems</li>
- <p><li> The critical issue is whether the <em>interaction</em> between hares and lynx
-   is sufficiently well modeled by \( \hbox{const}HL \)</li>
- <p><li> The parameters \( a \), \( b \), \( d \), and \( c \) must be
-   estimated from data</li>
-</ul>
-<p>
-
-<div class="alert alert-block alert-block alert-text-normal">
-<b></b>
-<p>
-
-<!-- code=python (!bc pypro) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-
-<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">solver</span>(m, H0, L0, dt, a, b, c, d, t0):
-    <span style="color: #CD5555">&quot;&quot;&quot;Solve the difference equations for H and L over m years</span>
-<span style="color: #CD5555">    with time step dt (measured in years.&quot;&quot;&quot;</span>
-
-    num_intervals = <span style="color: #658b00">int</span>(m/<span style="color: #658b00">float</span>(dt))
-    t = np.linspace(t0, t0 + m, num_intervals+<span style="color: #B452CD">1</span>)
-    H = np.zeros(t.size)
-    L = np.zeros(t.size)
-
-    <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Init:&#39;</span>, H0, L0, dt)
-    H[<span style="color: #B452CD">0</span>] = H0
-    L[<span style="color: #B452CD">0</span>] = L0
-
-    <span style="color: #8B008B; font-weight: bold">for</span> n <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(<span style="color: #B452CD">0</span>, <span style="color: #658b00">len</span>(t)-<span style="color: #B452CD">1</span>):
-        H[n+<span style="color: #B452CD">1</span>] = H[n] + a*dt*H[n] - b*dt*H[n]*L[n]
-        L[n+<span style="color: #B452CD">1</span>] = L[n] + d*dt*H[n]*L[n] - c*dt*L[n]
-    <span style="color: #8B008B; font-weight: bold">return</span> H, L, t
-
-<span style="color: #228B22"># Load in data file</span>
-data = np.loadtxt(<span style="color: #CD5555">&#39;src/Hudson_Bay.csv&#39;</span>, delimiter=<span style="color: #CD5555">&#39;,&#39;</span>, skiprows=<span style="color: #B452CD">1</span>)
-<span style="color: #228B22"># Make arrays containing x-axis and hares and lynx populations</span>
-t_e = data[:,<span style="color: #B452CD">0</span>]
-H_e = data[:,<span style="color: #B452CD">1</span>]
-L_e = data[:,<span style="color: #B452CD">2</span>]
-
-<span style="color: #228B22"># Simulate using the model</span>
-H, L, t = solver(m=<span style="color: #B452CD">20</span>, H0=<span style="color: #B452CD">34.91</span>, L0=<span style="color: #B452CD">3.857</span>, dt=<span style="color: #B452CD">0.1</span>,
-                 a=<span style="color: #B452CD">0.4807</span>, b=<span style="color: #B452CD">0.02482</span>, c=<span style="color: #B452CD">0.9272</span>, d=<span style="color: #B452CD">0.02756</span>,
-                 t0=<span style="color: #B452CD">1900</span>)
-
-<span style="color: #228B22"># Visualize simulations and data</span>
-plt.plot(t_e, H_e, <span style="color: #CD5555">&#39;b-+&#39;</span>, t_e, L_e, <span style="color: #CD5555">&#39;r-o&#39;</span>, t, H, <span style="color: #CD5555">&#39;m--&#39;</span>, t, L, <span style="color: #CD5555">&#39;k--&#39;</span>)
-plt.xlabel(<span style="color: #CD5555">&#39;Year&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">&#39;Numbers of hares and lynx&#39;</span>)
-plt.axis([<span style="color: #B452CD">1900</span>, <span style="color: #B452CD">1920</span>, <span style="color: #B452CD">0</span>, <span style="color: #B452CD">140</span>])
-plt.title(<span style="color: #CD5555">r&#39;Population of hares and lynx 1900-1920 (x1000)&#39;</span>)
-plt.legend((<span style="color: #CD5555">&#39;H_e&#39;</span>, <span style="color: #CD5555">&#39;L_e&#39;</span>, <span style="color: #CD5555">&#39;H&#39;</span>, <span style="color: #CD5555">&#39;L&#39;</span>), loc=<span style="color: #CD5555">&#39;upper left&#39;</span>)
-plt.savefig(<span style="color: #CD5555">&#39;Hudson_Bay_sim.pdf&#39;</span>)
-plt.savefig(<span style="color: #CD5555">&#39;Hudson_Bay_sim.png&#39;</span>)
-plt.show()
-</pre></div>
-
-</div>
-
-<p>
-<br /><br /><center><p><img src="fig/Hudson_Bay_sim.png" align="bottom" width=700></p></center><br /><br />
-
-<p>
-We will later perform a least-square fitting. Then we can find optimal
-values for the parameters \( a \), \( b \), \( d \), \( c \). In our calculations here
-we set \( a=0.4807 \), \( b=0.02482 \), \( d=0.9272 \) and \( c=0.02756 \). These
-parameters result in a slightly modified initial conditions, namely
-\( H(0) = 34.91 \) and \( L(0)=3.857 \).
-
-<p>
-The following Python code demonstrates how we can use linear regression to fit for example the population of lynx.
-Similarly, we have also used a decision tree algorithm to fit the lynx population data. As expected, the linear regression is not exactly impressive 
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>                                                                                        
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
 <span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">sklearn</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.tree</span> <span style="color: #8B008B; font-weight: bold">import</span> DecisionTreeRegressor
-
-
-data = np.loadtxt(<span style="color: #CD5555">&#39;src/Hudson_Bay.csv&#39;</span>, delimiter=<span style="color: #CD5555">&#39;,&#39;</span>, skiprows=<span style="color: #B452CD">1</span>)
-x = data[:,<span style="color: #B452CD">0</span>]
-y = data[:,<span style="color: #B452CD">1</span>]
-line = np.linspace(<span style="color: #B452CD">1900</span>,<span style="color: #B452CD">1920</span>,<span style="color: #B452CD">1000</span>,endpoint=<span style="color: #658b00">False</span>).reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>)
-reg = DecisionTreeRegressor(min_samples_split=<span style="color: #B452CD">3</span>).fit(x.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>),y.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>))
-plt.plot(line, reg.predict(line), label=<span style="color: #CD5555">&quot;decision tree&quot;</span>)
-regline = LinearRegression().fit(x.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>),y.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>))
-plt.plot(line, regline.predict(line), label= <span style="color: #CD5555">&quot;Linear Regression&quot;</span>)
-plt.plot(x, y, label= <span style="color: #CD5555">&quot;Linear Regression&quot;</span>)
-plt.show()
-</pre></div>
-<p>
-The similar code for linear regression in <b>R</b> reads (more details to come)
-<p>
-
-<!-- code=r (!bc r) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>HudsonBay = read.csv(<span style="color: #CD5555">&quot;src/Hudson_Bay.csv&quot;</span>,header=<span style="color: #658b00">T</span>)
-fix(HudsonBay)
-<span style="color: #8B008B; font-weight: bold">dim</span>(HudsonBay)
-<span style="color: #8B008B; font-weight: bold">names</span>(HudsonBay)
-plot(HudsonBay$Year, HudsonBay$Hares..x1000.)
-<span style="color: #8B008B; font-weight: bold">attach</span>(HudsonBay)
-plot(Year, Hares..x1000.)
-plot(Year, Hares..x1000., col=<span style="color: #CD5555">&quot;red&quot;</span>, varwidth=<span style="color: #658b00">T</span>, xlab=<span style="color: #CD5555">&quot;Years&quot;</span>, ylab=<span style="color: #CD5555">&quot;Haresx 1000&quot;</span>)
-<span style="color: #8B008B; font-weight: bold">summary</span>(HudsonBay)
-<span style="color: #8B008B; font-weight: bold">summary</span>(Hares..x1000.)
-<span style="color: #8B008B; font-weight: bold">library</span>(MASS)
-<span style="color: #8B008B; font-weight: bold">library</span>(ISLR)
-scatter.smooth(x=Year, y = Hares..x1000.)
-linearMod = lm(Hares..x1000. ~ Year)
-<span style="color: #8B008B; font-weight: bold">print</span>(linearMod)
-<span style="color: #8B008B; font-weight: bold">summary</span>(linearMod)
-plot(linearMod)
-confint(linearMod)
-predict(linearMod,<span style="color: #00688B; font-weight: bold">data.frame</span>(Year=<span style="color: #00688B; font-weight: bold">c</span>(<span style="color: #B452CD">1910</span>,<span style="color: #B452CD">1914</span>,<span style="color: #B452CD">1920</span>)),interval=<span style="color: #CD5555">&quot;confidence&quot;</span>)
+np.random.seed(<span style="color: #B452CD">100</span>)                                                                                       
+<span style="color: #228B22"># setting up a 9 x 4 matrix</span>
+a = np.random.randn((<span style="color: #B452CD">9</span>,<span style="color: #B452CD">4</span>)) 
+df = pd.DataFrame(a)   
+display(df)
+df.mean() 
+df.std()
+display(df**<span style="color: #B452CD">2</span>)
 </pre></div>
 
-<h3 id="___sec11">Simulating financial transactions </h3>
+<h3 id="___sec15">Random walk model </h3>
 
-<p>
-The aim here is to simulate financial transactions among financial agents
-using Monte Carlo methods. The final goal is to extract a distribution of income  as function
-of the income \( m \).   From Pareto's work (<a href="http://www.institutcoppet.org/2012/05/08/cours-deconomie-politique-1896-de-vilfredo-pareto" target="_blank">V.&nbsp;Pareto, 1897</a>) it is known from empirical studies
-that the higher end of the distribution of money follows a distribution 
-<p>&nbsp;<br>
-$$
-w_m\propto m^{-1-\alpha},
-$$
-<p>&nbsp;<br>
-
-with \( \alpha\in [1,2] \). We will here follow the analysis made by <a href="http://www.sciencedirect.com/science/article/pii/S0378437104004327" target="_blank">Patriarca and collaborators</a>.
-
-<p>
-Here we will study numerically the relation between the micro-dynamic relations among financial 
-agents and the  resulting macroscopic money distribution.
-
-<p>
-We assume we have \( N \) agents that exchange money in pairs \( (i,j) \). We assume also that all agents
-start with the same amount of money \( m_0 > 0 \). At a given 'time step', we choose randomly a pair
-of agents \( (i,j) \) and let a transaction take place. This means that agent \( i \)'s money \( m_i \) changes
-to \( m_i' \) and similarly we have \( m_j\rightarrow m_j' \). 
-Money is conserved during a transaction, meaning that
-<p>&nbsp;<br>
-$$
-\begin{equation}
-  m_i+m_j=m_i'+m_j'.
-\tag{1}
-\end{equation}
-$$
-<p>&nbsp;<br>
-
-The change is done via a random reassignement (a random number) \( \epsilon \), meaning that
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-m_i' = \epsilon(m_i+m_j),
-\end{equation*}
-$$
-<p>&nbsp;<br>
-
-leading to
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-m_j'= (1-\epsilon)(m_i+m_j).
-\end{equation*}
-$$
-<p>&nbsp;<br>
-
-The number \( \epsilon \) is extracted from a uniform distribution.
-In this simple model, no agents are left with a debt, that is \( m\ge 0 \).
-Due to the conservation law above, one can show that the system relaxes toward an equilibrium
-state given by a Gibbs distribution
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-w_m=\beta \exp{(-\beta m)},
-\end{equation*}
-$$
-<p>&nbsp;<br>
-
-with
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-\beta = \frac{1}{\langle m\rangle},
-\end{equation*}
-$$
-<p>&nbsp;<br>
-
-and \( \langle m\rangle=\sum_i m_i/N=m_0 \), the average money.
-It means that after equilibrium has been reached that the majority of agents is left with a small
-number of money, while the number of richest agents, those with \( m \) larger than a specific value \( m' \),
-exponentially decreases with \( m' \).
-
-<p>
-We assume that we have \( N=500 \) agents.   In each simulation, we need a sufficiently large number of transactions, say \( 10^7 \). Our aim is find the final equilibrium distribution \( w_m \). In order to do that we would need
-several runs of the above simulations, at least \( 10^3-10^4 \) runs (experiments).
-
-<p>
-Our task is to first set up an algorithm which simulates the above transactions with an initial
-  amount \( m_0 \).
-  The challenge here is to figure out a Monte Carlo  simulation  based on the
-  above equations.
-  You will in particular need to make an algorithm which sets up a histogram as function of \( m \).
-  This histogram contains the number of times a value \( m \) is registered and represents
-  \( w_m\Delta m \). You will need to set up a value for the interval \( \Delta m \)  (typically \( 0.01-0.05 \)).
-  That means you need to account for the number of times you register an income in the interval
-  \( m,m+\Delta m \). The number of times you register this income, represents the value that enters the histogram.
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22">#!/usr/bin/env python</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.mlab</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">mlab</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">random</span>
-
-<span style="color: #228B22"># initialize the rng with a seed</span>
-random.seed()
-<span style="color: #228B22"># Hard coding of input parameters</span>
-Agents  = <span style="color: #B452CD">500</span>
-MCcounts = <span style="color: #B452CD">1000</span>
-Transactions = <span style="color: #B452CD">100000</span>
-startMoney = <span style="color: #B452CD">1.0</span>
-Lambda = <span style="color: #B452CD">0.0</span>
-FinancialAgents = startMoney*np.ones(Agents)
-<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span> (<span style="color: #B452CD">1</span>, MCcounts, <span style="color: #B452CD">1</span>):
-    <span style="color: #8B008B; font-weight: bold">for</span> j <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span> (<span style="color: #B452CD">1</span>, Transactions, <span style="color: #B452CD">1</span>):
-        agent_i = <span style="color: #658b00">int</span>(Agents*random.random())
-        agent_j = <span style="color: #658b00">int</span>(Agents*random.random())
-        epsilon = random.random()
-        <span style="color: #8B008B; font-weight: bold">if</span> agent_i != agent_j:
-           m1 = Lambda*FinancialAgents[agent_i] + (<span style="color: #B452CD">1</span>-Lambda)*epsilon*(FinancialAgents[agent_i] + FinancialAgents[agent_j])
-           m2 = Lambda*FinancialAgents[agent_j] + (<span style="color: #B452CD">1</span>-Lambda)*(<span style="color: #B452CD">1</span>-epsilon)*(FinancialAgents[agent_i] + FinancialAgents[agent_j])
-           FinancialAgents[agent_i] = m1
-           FinancialAgents[agent_j] = m2
-
-<span style="color: #228B22"># the histogram of the data</span>
-n, bins, patches = plt.hist(FinancialAgents, <span style="color: #B452CD">50</span>, facecolor=<span style="color: #CD5555">&#39;green&#39;</span>)
-
-plt.xlabel(<span style="color: #CD5555">&#39;$x$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">&#39;Distribution of wealth&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Money&#39;</span>)
-plt.axis([<span style="color: #B452CD">0</span>, <span style="color: #B452CD">10</span>, <span style="color: #B452CD">0</span>, <span style="color: #B452CD">500</span>])
-plt.grid(<span style="color: #658b00">True</span>)
-plt.show()
-</pre></div>
-<p>
-We can then change our model to allow for a saving criterion, meaning that the agents save
-  a fraction \( \lambda \) of the money they have before the transaction is made. The final distribution will then no longer be given by Gibbs distribution. It could also include a taxation on financial transactions.
-
-<p>
-  The conservation law of Eq. <a href="#mjx-eqn-1">(1)</a> holds, but the money to be shared in a transaction between
-  agent \( i \) and agent \( j \) is now \( (1-\lambda)(m_i+m_j) \). This means that we have
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-  m_i' = \lambda m_i+\epsilon(1-\lambda)(m_i+m_j),
-  \end{equation*}
-$$
-<p>&nbsp;<br>
-
-  and
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-  m_j' = \lambda m_j+(1-\epsilon)(1-\lambda)(m_i+m_j),
-  \end{equation*}
-$$
-<p>&nbsp;<br>
-
-  which can be written as
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-  m_i'=m_i+\delta m
-  \end{equation*}
-$$
-<p>&nbsp;<br>
-
-  and
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-  m_j'=m_j-\delta m,
-  \end{equation*}
-$$
-<p>&nbsp;<br>
-
-  with
-
-<p>&nbsp;<br>
-$$
-\begin{equation*}
-  \delta m=(1-\lambda)(\epsilon m_j-(1-\epsilon)m_i),
-  \end{equation*}
-$$
-<p>&nbsp;<br>
-
-  showing how money is conserved during a transaction.
-  Select values of \( \lambda =0.25,0.5 \) and \( \lambda=0.9 \) and try to extract the corresponding
-  equilibrium distributions and compare these with the Gibbs distribution. We will use this model to 
-extract a parametrization of the above curves, see for example <a href="http://www.sciencedirect.com/science/article/pii/S0378437104004327" target="_blank">Patriarca and collaborators</a>.
-
-<h3 id="___sec12">Particle in one dimension and velocity distribution </h3>
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Program to test the Metropolis algorithm with one particle at given temp in one dimension</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.mlab</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">mlab</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">random</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">math</span> <span style="color: #8B008B; font-weight: bold">import</span> sqrt, exp, log
-<span style="color: #228B22"># initialize the rng with a seed</span>
-random.seed()
-<span style="color: #228B22"># Hard coding of input parameters</span>
-MCcycles = <span style="color: #B452CD">100000</span>
-Temperature = <span style="color: #B452CD">2.0</span>
-beta = <span style="color: #B452CD">1.</span>/Temperature
-InitialVelocity = -<span style="color: #B452CD">2.0</span>
-CurrentVelocity = InitialVelocity
-Energy = <span style="color: #B452CD">0.5</span>*InitialVelocity*InitialVelocity
-VelocityRange = <span style="color: #B452CD">10</span>*sqrt(Temperature)
-VelocityStep = <span style="color: #B452CD">2</span>*VelocityRange/<span style="color: #B452CD">10.</span>
-AverageEnergy = Energy
-AverageEnergy2 = Energy*Energy
-VelocityValues = np.zeros(MCcycles)
-<span style="color: #228B22"># The Monte Carlo sampling with Metropolis starts here</span>
-<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span> (<span style="color: #B452CD">1</span>, MCcycles, <span style="color: #B452CD">1</span>):
-    TrialVelocity = CurrentVelocity + (<span style="color: #B452CD">2.0</span>*random.random() - <span style="color: #B452CD">1.0</span>)*VelocityStep
-    EnergyChange = <span style="color: #B452CD">0.5</span>*(TrialVelocity*TrialVelocity -CurrentVelocity*CurrentVelocity);
-    <span style="color: #8B008B; font-weight: bold">if</span> random.random() &lt;= exp(-beta*EnergyChange):
-        CurrentVelocity = TrialVelocity
-        Energy += EnergyChange
-        VelocityValues[i] = CurrentVelocity
-    AverageEnergy += Energy
-    AverageEnergy2 += Energy*Energy
-<span style="color: #228B22">#Final averages</span>
-AverageEnergy = AverageEnergy/MCcycles
-AverageEnergy2 = AverageEnergy2/MCcycles
-Variance = AverageEnergy2 - AverageEnergy*AverageEnergy
-<span style="color: #8B008B; font-weight: bold">print</span>(AverageEnergy, Variance)
-n, bins, patches = plt.hist(VelocityValues, <span style="color: #B452CD">400</span>, facecolor=<span style="color: #CD5555">&#39;green&#39;</span>)
-
-plt.xlabel(<span style="color: #CD5555">&#39;$v$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">&#39;Velocity distribution P(v)&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Velocity histogram at $k_BT=2$&#39;</span>)
-plt.axis([-<span style="color: #B452CD">5</span>, <span style="color: #B452CD">5</span>, <span style="color: #B452CD">0</span>, <span style="color: #B452CD">600</span>])
-plt.grid(<span style="color: #658b00">True</span>)
-plt.show()
-</pre></div>
-
-<h3 id="___sec13">Random walk model </h3>
+We end with a  teaser on how to fit a random walk with up to tenth-order polynomial as well as using decision trees as algorithm.
 
 <p>
 
@@ -1464,6 +1113,50 @@ plt.xlabel(<span style="color: #CD5555">&quot;Data&quot;</span>)
 plt.ylabel(<span style="color: #CD5555">&quot;Darget&quot;</span>)
 plt.title(<span style="color: #CD5555">&quot;Decision Tree Regression&quot;</span>)
 plt.legend()
+plt.show()
+</pre></div>
+
+<h2 id="___sec16">Concluding with another teaser, \( k \)-nearest neighbors with scikit-learn </h2>
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">sklearn</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.tree</span> <span style="color: #8B008B; font-weight: bold">import</span> DecisionTreeRegressor
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.model_selection</span> <span style="color: #8B008B; font-weight: bold">import</span> train_test_split
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">mglearn</span>
+X, y = mglearn.datasets.make_forge()
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=<span style="color: #B452CD">0</span>)
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.neighbors</span> <span style="color: #8B008B; font-weight: bold">import</span> KNeighborsClassifier
+clf = KNeighborsClassifier(n_neighbors=<span style="color: #B452CD">3</span>)
+clf.fit(X_train, y_train)
+KNeighborsClassifier(algorithm=<span style="color: #CD5555">&#39;auto&#39;</span>, leaf_size=<span style="color: #B452CD">30</span>, metric=<span style="color: #CD5555">&#39;minkowski&#39;</span>,metric_params=<span style="color: #658b00">None</span>, n_jobs=<span style="color: #B452CD">1</span>, n_neighbors=<span style="color: #B452CD">3</span>, p=<span style="color: #B452CD">2</span>,weights=<span style="color: #CD5555">&#39;uniform&#39;</span>)
+
+clf.predict(X_test)
+
+clf.score(X_test, y_test)
+fig, axes = plt.subplots(<span style="color: #B452CD">1</span>, <span style="color: #B452CD">3</span>, figsize=(<span style="color: #B452CD">10</span>, <span style="color: #B452CD">3</span>))
+<span style="color: #8B008B; font-weight: bold">for</span> n_neighbors, ax <span style="color: #8B008B">in</span> <span style="color: #658b00">zip</span>([<span style="color: #B452CD">1</span>, <span style="color: #B452CD">3</span>, <span style="color: #B452CD">9</span>], axes):
+        clf = KNeighborsClassifier(n_neighbors=n_neighbors).fit(X, y)
+        mglearn.plots.plot_2d_separator(clf, X, fill=<span style="color: #658b00">True</span>, eps=<span style="color: #B452CD">0.5</span>, ax=ax, alpha=.<span style="color: #B452CD">4</span>)
+        ax.scatter(X[:, <span style="color: #B452CD">0</span>], X[:, <span style="color: #B452CD">1</span>], c=y, s=<span style="color: #B452CD">60</span>, cmap=mglearn.cm2)
+        ax.set_title(<span style="color: #CD5555">&quot;%d neighbor(s)&quot;</span> % n_neighbors)
+
+
+data = np.loadtxt(<span style="color: #CD5555">&#39;src/Hudson_Bay.csv&#39;</span>, delimiter=<span style="color: #CD5555">&#39;,&#39;</span>, skiprows=<span style="color: #B452CD">1</span>)
+x = data[:,<span style="color: #B452CD">0</span>]
+y = data[:,<span style="color: #B452CD">1</span>]
+<span style="color: #228B22">#x_train,  y_train = train_test_split(x, y, random_state=0)</span>
+line = np.linspace(<span style="color: #B452CD">1900</span>,<span style="color: #B452CD">1930</span>,<span style="color: #B452CD">1000</span>,endpoint=<span style="color: #658b00">False</span>).reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>)
+reg = DecisionTreeRegressor(min_samples_split=<span style="color: #B452CD">3</span>).fit(x.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>),y.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>))
+plt.plot(line, reg.predict(line), label=<span style="color: #CD5555">&quot;decision tree&quot;</span>)
+regline = LinearRegression().fit(x.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>),y.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>))
+plt.plot(line, regline.predict(line), label= <span style="color: #CD5555">&quot;Linear Regression&quot;</span>)
+plt.plot(x, y, label= <span style="color: #CD5555">&quot;Linear Regression&quot;</span>)
 plt.show()
 </pre></div>
 <p>
