@@ -2,7 +2,7 @@ TITLE: Data Analysis and Machine Learning: Linear Regression and more Advanced R
 AUTHOR: Morten Hjorth-Jensen {copyright, 1999-present|CC BY-NC} at Department of Physics, University of Oslo & Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University
 DATE: today
 
-# todo: add example with nuclear mass
+# todo: add example with nuclear mass, use this as an example to read data with pandas
 # add example of fit of EoS for infinite matter
 
 
