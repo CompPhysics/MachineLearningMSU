@@ -79,16 +79,17 @@ div { text-align: justify; text-justify: inter-word; }
               ('Basic Matrix Features', 2, None, '___sec11'),
               ('Numpy and arrays', 2, None, '___sec12'),
               ('Matrices in Python', 2, None, '___sec13'),
+              ('Reading Data', 2, None, '___sec14'),
               ('Simple linear regression model using _scikit-learn_',
                2,
                None,
-               '___sec14'),
-              ('Random walk model', 3, None, '___sec15'),
+               '___sec15'),
+              ('Random walk model', 3, None, '___sec16'),
               ('Concluding with another teaser, $k$-nearest neighbors with '
                'scikit-learn',
                2,
                None,
-               '___sec16')]}
+               '___sec17')]}
 end of tocinfo -->
 
 <body>
@@ -130,7 +131,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Mar 13, 2019</h4></center> <!-- date -->
+<center><h4>Mar 18, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -476,7 +477,7 @@ x = np.array([<span style="color: #B452CD">4</span>, <span style="color: #B452CD
 </pre></div>
 <p>
 We note that our code is much longer already and we need to import the <b>log</b> function from the <b>math</b> module. 
-The attentive reader will also notice that the output is \( [1, 1, 2] \). Python interprets automacally our numbers as integers (like the <b>automatic</b> keyword in C++). To change this we could define our array elements to be double precision numbers as
+The attentive reader will also notice that the output is \( [1, 1, 2] \). Python interprets automagically our numbers as integers (like the <b>automatic</b> keyword in C++). To change this we could define our array elements to be double precision numbers as
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -637,8 +638,154 @@ y = np.sin(x)
 plt.plot(x,y,marker=<span style="color: #CD5555">&#39;x&#39;</span>)
 plt.show()
 </pre></div>
+<p>
+Another useful Python package is
+<a href="https://pandas.pydata.org/" target="_blank">pandas</a>, which is an open source library
+providing high-performance, easy-to-use data structures and data
+analysis tools for Python. The following simple example shows how we can, in an easy way make tables of our data. Here we define a data set which includes names, city of residence and age, and displays the data in an easy to read way. We will see repeated use of <b>pandas</b>, in particular in connection with classification of data.
 
-<h2 id="___sec14">Simple linear regression model using <b>scikit-learn</b> </h2>
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
+data = {<span style="color: #CD5555">&#39;Name&#39;</span>: [<span style="color: #CD5555">&quot;John&quot;</span>, <span style="color: #CD5555">&quot;Anna&quot;</span>, <span style="color: #CD5555">&quot;Peter&quot;</span>, <span style="color: #CD5555">&quot;Linda&quot;</span>], <span style="color: #CD5555">&#39;Location&#39;</span>: [<span style="color: #CD5555">&quot;Nairobi&quot;</span>, <span style="color: #CD5555">&quot;Napoli&quot;</span>, <span style="color: #CD5555">&quot;London&quot;</span>, <span style="color: #CD5555">&quot;Buenos Aires&quot;</span>], <span style="color: #CD5555">&#39;Age&#39;</span>:[<span style="color: #B452CD">51</span>, <span style="color: #B452CD">21</span>, <span style="color: #B452CD">34</span>, <span style="color: #B452CD">45</span>]}
+data_pandas = pd.DataFrame(data)
+display(data_pandas)
+</pre></div>
+<p>
+Here are other examples where we use the <b>DataFrame</b> functionality to handle arrays
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>                                                                               
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
+np.random.seed(<span style="color: #B452CD">100</span>)                                                                          
+<span style="color: #228B22"># setting up a 9 x 4 matrix</span>
+a = np.random.randn(<span style="color: #B452CD">9</span>,<span style="color: #B452CD">4</span>)
+df = pd.DataFrame(a)   
+display(df)
+<span style="color: #8B008B; font-weight: bold">print</span>(df.mean())
+<span style="color: #8B008B; font-weight: bold">print</span>(df.std())
+display(df**<span style="color: #B452CD">2</span>)
+</pre></div>
+
+<h2 id="___sec14">Reading Data </h2>
+
+<p>
+In order to study various Machine Learning algorithms, we need to
+access data. Acccessing data is an essential step in all machine
+learning algorithms. In particular, setting up the so-called <b>design
+matrix</b> (to be defined below) is often the first element we need in
+order to perform our calculations. To set up the design matrix means
+reading (and later, when the calculations are done, writing data) data
+in various formats, The formats span from reading files from disk,
+loading data from databases and interacting with online sources
+like web application programming interfaces (APIs).
+
+<p>
+In handling various input formats, we will mainly stay with <b>pandas</b>,
+a Python package which allows us in a seamless and painless way to
+deal with a multitude of formats, from standars <b>csv</b> (comma separated
+values) files, via <b>excel</b>, <b>html</b> to <b>hdf5</b> formats.  With <b>pandas</b>
+and the <b>DataFrame</b> functionality we are able to convert text data
+into the calculational formats we need for a specific algorithm.
+
+<p>
+We are going to start with a classic from nuclear physics, namely all
+available data on binding energies. We will then show some of the
+strength of packages like <b>scikitlearn</b> in fitting binding energies to
+specific functions using linear regression.
+
+<p>
+But let us start with reading and organizing our data. This will also allow us to present <b>matplotlib</b>, 
+a powerful Python package for plotting. The OECD and its <a href="http://www.oecd-nea.org/dbdata/data/" target="_blank">Nuclear Energy Agency</a>
+have posted the full list of masses from the compilation of <a href="https://www.sciencedirect.com/science/article/pii/S0375947403018086?via%3Dihub" target="_blank">Audi and Wapstra from 2003</a>. Later versions are also available.
+
+<p>
+After having downloaded this file to our own computer, we are now ready to read the file and start structuring our data.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">SEMF</span>(Z, N):
+    <span style="color: #CD5555">&quot;&quot;&quot;Calculate the average binding energy per nucleon for nucleus Z, N.</span>
+
+<span style="color: #CD5555">    Calculate the average nuclear binding energy per nucleon for a nucleus</span>
+<span style="color: #CD5555">    with Z protons and N neutrons, using the semi-empirical mass formula and</span>
+<span style="color: #CD5555">    parameters of J. W. Rohlf, &quot;Modern Physics from alpha to Z0&quot;, Wiley (1994).</span>
+
+<span style="color: #CD5555">    Z and N can be NumPy arrays or scalar values.</span>
+
+<span style="color: #CD5555">    &quot;&quot;&quot;</span>
+
+    <span style="color: #228B22"># The parameterization of the SEMF to use.</span>
+    aV, aS, aC, aA, delta = <span style="color: #B452CD">15.75</span>, <span style="color: #B452CD">17.8</span>, <span style="color: #B452CD">0.711</span>, <span style="color: #B452CD">23.7</span>, <span style="color: #B452CD">11.18</span>
+
+    <span style="color: #228B22"># Convert Z and N to NumPy arrays if they aren&#39;t already</span>
+    Z, N = np.atleast_1d(Z), np.atleast_1d(N)
+    <span style="color: #228B22"># Total number of nucleons</span>
+    A = Z + N
+
+    <span style="color: #228B22"># The pairing term is -delta for Z and N both odd, +delta for Z and N both</span>
+    <span style="color: #228B22"># even, and 0 otherwise. Create an array of the sign of this term so that</span>
+    <span style="color: #228B22"># we can vectorize the calculation across the arrays Z and N.</span>
+    sgn = np.zeros(Z.shape)
+    sgn[(Z%<span style="color: #B452CD">2</span>) &amp; (N%<span style="color: #B452CD">2</span>)] = -<span style="color: #B452CD">1</span>
+    sgn[~(Z%<span style="color: #B452CD">2</span>) &amp; ~(N%<span style="color: #B452CD">2</span>)] = +<span style="color: #B452CD">1</span>
+
+    <span style="color: #228B22"># The SEMF for the average binding energy per nucleon.</span>
+    E = (aV - aS / A**(<span style="color: #B452CD">1</span>/<span style="color: #B452CD">3</span>) - aC * Z**<span style="color: #B452CD">2</span> / A**(<span style="color: #B452CD">4</span>/<span style="color: #B452CD">3</span>) -
+         aA * (A-<span style="color: #B452CD">2</span>*Z)**<span style="color: #B452CD">2</span>/A**<span style="color: #B452CD">2</span> + sgn * delta/A**(<span style="color: #B452CD">3</span>/<span style="color: #B452CD">2</span>))
+
+    <span style="color: #228B22"># Return E as a scalar or array as appropriate to the input Z.</span>
+    <span style="color: #8B008B; font-weight: bold">if</span> Z.shape[<span style="color: #B452CD">0</span>] == <span style="color: #B452CD">1</span>:
+        <span style="color: #8B008B; font-weight: bold">return</span> <span style="color: #658b00">float</span>(E)
+    <span style="color: #8B008B; font-weight: bold">return</span> E
+
+<span style="color: #228B22"># Read the experimental data into a Pandas DataFrame.</span>
+df = pd.read_fwf(<span style="color: #CD5555">&#39;mass.mas03&#39;</span>, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">11</span>),
+              names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;avEbind&#39;</span>),
+              widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
+              header=<span style="color: #B452CD">39</span>,
+              index_col=<span style="color: #658b00">False</span>)
+
+<span style="color: #228B22"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
+<span style="color: #228B22"># the avEbind column won&#39;t be numeric. Coerce to float and drop these entries.</span>
+df[<span style="color: #CD5555">&#39;avEbind&#39;</span>] = pd.to_numeric(df[<span style="color: #CD5555">&#39;avEbind&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
+df = df.dropna()
+<span style="color: #228B22"># Also convert from keV to MeV.</span>
+df[<span style="color: #CD5555">&#39;avEbind&#39;</span>] /= <span style="color: #B452CD">1000</span>
+
+<span style="color: #228B22"># Group the DataFrame by nucleon number, A.</span>
+gdf = df.groupby(<span style="color: #CD5555">&#39;A&#39;</span>)
+<span style="color: #228B22"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
+maxavEbind = gdf.apply(<span style="color: #8B008B; font-weight: bold">lambda</span> t: t[t.avEbind==t.avEbind.max()])
+
+<span style="color: #228B22"># Add a column of estimated binding energies calculated using the SEMF.</span>
+maxavEbind[<span style="color: #CD5555">&#39;Eapprox&#39;</span>] = SEMF(maxavEbind[<span style="color: #CD5555">&#39;Z&#39;</span>], maxavEbind[<span style="color: #CD5555">&#39;N&#39;</span>])
+
+<span style="color: #228B22"># Generate a plot comparing the experimental with the SEMF values.</span>
+fig, ax = plt.subplots()
+ax.plot(maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>], maxavEbind[<span style="color: #CD5555">&#39;avEbind&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>,
+            label=<span style="color: #CD5555">&#39;Ame2003&#39;</span>)
+ax.plot(maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>], maxavEbind[<span style="color: #CD5555">&#39;Eapprox&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>, c=<span style="color: #CD5555">&#39;m&#39;</span>,
+            label=<span style="color: #CD5555">&#39;SEMF&#39;</span>)
+ax.set_xlabel(<span style="color: #CD5555">r&#39;$A = N + Z$&#39;</span>)
+ax.set_ylabel(<span style="color: #CD5555">r&#39;$E_\mathrm{bind}\,/\mathrm{MeV}$&#39;</span>)
+ax.legend()
+<span style="color: #228B22"># We don&#39;t expect the SEMF to work very well for light nuclei with small</span>
+<span style="color: #228B22"># average binding energies, so display only data relevant to avEbind &gt; 7 MeV.</span>
+ax.set_ylim(<span style="color: #B452CD">7</span>,<span style="color: #B452CD">9</span>)
+plt.show()
+</pre></div>
+
+<h2 id="___sec15">Simple linear regression model using <b>scikit-learn</b> </h2>
 
 <p>
 We start with perhaps our simplest possible example, using <b>scikit-learn</b> to perform linear regression analysis on a data set produced by us. 
@@ -925,40 +1072,7 @@ plt.show()
 <p>
 Similarly, using <b>R</b>, we can perform similar studies.
 
-<p>
-Another useful Python package is
-<a href="https://pandas.pydata.org/" target="_blank">pandas</a>, which is an open source library
-providing high-performance, easy-to-use data structures and data
-analysis tools for Python. The following simple example shows how we can, in an easy way make tables of our data. Here we define a data set which includes names, city of residence and age, and displays the data in an easy to read way. We will see repeated use of <b>pandas</b>, in particular in connection with classification of data.
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
-data = {<span style="color: #CD5555">&#39;Name&#39;</span>: [<span style="color: #CD5555">&quot;John&quot;</span>, <span style="color: #CD5555">&quot;Anna&quot;</span>, <span style="color: #CD5555">&quot;Peter&quot;</span>, <span style="color: #CD5555">&quot;Linda&quot;</span>], <span style="color: #CD5555">&#39;Location&#39;</span>: [<span style="color: #CD5555">&quot;Nairobi&quot;</span>, <span style="color: #CD5555">&quot;Napoli&quot;</span>, <span style="color: #CD5555">&quot;London&quot;</span>, <span style="color: #CD5555">&quot;Buenos Aires&quot;</span>], <span style="color: #CD5555">&#39;Age&#39;</span>:[<span style="color: #B452CD">51</span>, <span style="color: #B452CD">21</span>, <span style="color: #B452CD">34</span>, <span style="color: #B452CD">45</span>]}
-data_pandas = pd.DataFrame(data)
-display(data_pandas)
-</pre></div>
-<p>
-Here are other examples where we use the <b>DataFrame</b> functionality to handle arrays
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>                                                                               
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
-np.random.seed(<span style="color: #B452CD">100</span>)                                                                          
-<span style="color: #228B22"># setting up a 9 x 4 matrix</span>
-a = np.random.randn(<span style="color: #B452CD">9</span>,<span style="color: #B452CD">4</span>)
-df = pd.DataFrame(a)   
-display(df)
-<span style="color: #8B008B; font-weight: bold">print</span>(df.mean())
-<span style="color: #8B008B; font-weight: bold">print</span>(df.std())
-display(df**<span style="color: #B452CD">2</span>)
-</pre></div>
-
-<h3 id="___sec15">Random walk model </h3>
+<h3 id="___sec16">Random walk model </h3>
 
 We end with a  teaser on how to fit a random walk with up to tenth-order polynomial as well as using decision trees as algorithm.
 
@@ -1055,7 +1169,7 @@ plt.legend()
 plt.show()
 </pre></div>
 
-<h2 id="___sec16">Concluding with another teaser, \( k \)-nearest neighbors with scikit-learn </h2>
+<h2 id="___sec17">Concluding with another teaser, \( k \)-nearest neighbors with scikit-learn </h2>
 
 <p>
 
