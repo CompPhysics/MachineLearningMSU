@@ -38,7 +38,7 @@ def SEMF(Z, N):
     return E
 
 # Read the experimental data into a Pandas DataFrame.
-df = pd.read_fwf('mass.mas03', usecols=(2,3,4,11),
+df = pd.read_fwf('MassEval2016.dat', usecols=(2,3,4,11),
               names=('N', 'Z', 'A', 'avEbind'),
               widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
               header=39,
