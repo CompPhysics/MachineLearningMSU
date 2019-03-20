@@ -508,7 +508,7 @@ After having downloaded this file to our own computer, we are now ready to read 
 
 # to do, make a general read and write files to folders. prepare these folders 
 # Look at different ways of handling data, make also csv file
-
+# Have additional plot of separation energies etc
 
 !bc pycod
 import numpy as np
