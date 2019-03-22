@@ -1,3 +1,31 @@
+# Common imports
+import os
+
+# Where to save the figures and data files
+PROJECT_ROOT_DIR = "Results"
+FIGURE_ID = "Results/FigureFiles"
+DATA_ID = "DataFiles/"
+
+if not os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+if not os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+if not os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+def image_path(fig_id):
+    return os.path.join(FIGURE_ID, fig_id)
+
+def data_path(dat_id):
+    return os.path.join(DATA_ID, dat_id)
+
+def save_fig(fig_id):
+    plt.savefig(image_path(fig_id) + ".png", format='png')
+
+infile = open(data_path("MassEval2016.dat"),'r')
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -38,7 +66,7 @@ def SEMF(Z, N):
     return E
 
 # Read the experimental data into a Pandas DataFrame.
-df = pd.read_fwf('MassEval2016.dat', usecols=(2,3,4,11),
+df = pd.read_fwf(infile, usecols=(2,3,4,11),
               names=('N', 'Z', 'A', 'avEbind'),
               widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
               header=39,
@@ -71,4 +99,5 @@ ax.legend()
 # We don't expect the SEMF to work very well for light nuclei with small
 # average binding energies, so display only data relevant to avEbind > 7 MeV.
 ax.set_ylim(7,9)
+save_fig("Masses2016")
 plt.show()

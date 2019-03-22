@@ -136,7 +136,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Mar 20, 2019</h4></center> <!-- date -->
+<center><h4>Mar 22, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -719,7 +719,35 @@ After having downloaded this file to our own computer, we are now ready to read 
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic"># Common imports</span>
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">os</span>
+
+<span style="color: #408080; font-style: italic"># Where to save the figures and data files</span>
+PROJECT_ROOT_DIR <span style="color: #666666">=</span> <span style="color: #BA2121">&quot;Results&quot;</span>
+FIGURE_ID <span style="color: #666666">=</span> <span style="color: #BA2121">&quot;Results/FigureFiles&quot;</span>
+DATA_ID <span style="color: #666666">=</span> <span style="color: #BA2121">&quot;DataFiles/&quot;</span>
+
+<span style="color: #008000; font-weight: bold">if</span> <span style="color: #AA22FF; font-weight: bold">not</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>exists(PROJECT_ROOT_DIR):
+    os<span style="color: #666666">.</span>mkdir(PROJECT_ROOT_DIR)
+
+<span style="color: #008000; font-weight: bold">if</span> <span style="color: #AA22FF; font-weight: bold">not</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>exists(FIGURE_ID):
+    os<span style="color: #666666">.</span>makedirs(FIGURE_ID)
+
+<span style="color: #008000; font-weight: bold">if</span> <span style="color: #AA22FF; font-weight: bold">not</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>exists(DATA_ID):
+    os<span style="color: #666666">.</span>makedirs(DATA_ID)
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">image_path</span>(fig_id):
+    <span style="color: #008000; font-weight: bold">return</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>join(FIGURE_ID, fig_id)
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">data_path</span>(dat_id):
+    <span style="color: #008000; font-weight: bold">return</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>join(DATA_ID, dat_id)
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">save_fig</span>(fig_id):
+    plt<span style="color: #666666">.</span>savefig(image_path(fig_id) <span style="color: #666666">+</span> <span style="color: #BA2121">&quot;.png&quot;</span>, format<span style="color: #666666">=</span><span style="color: #BA2121">&#39;png&#39;</span>)
+
+infile <span style="color: #666666">=</span> <span style="color: #008000">open</span>(data_path(<span style="color: #BA2121">&quot;MassEval2016.dat&quot;</span>),<span style="color: #BA2121">&#39;r&#39;</span>)
+
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
 <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
 <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">matplotlib.pyplot</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">plt</span>
 
@@ -737,7 +765,7 @@ After having downloaded this file to our own computer, we are now ready to read 
     <span style="color: #408080; font-style: italic"># The parameterization of the SEMF to use.</span>
     aV, aS, aC, aA, delta <span style="color: #666666">=</span> <span style="color: #666666">15.75</span>, <span style="color: #666666">17.8</span>, <span style="color: #666666">0.711</span>, <span style="color: #666666">23.7</span>, <span style="color: #666666">11.18</span>
 
-    <span style="color: #408080; font-style: italic"># Convert Z and N to NumPy arrays if they aren&#39;t already</span>
+    <span style="color: #408080; font-style: italic"># Covert Z and N to NumPy arrays if they aren&#39;t already</span>
     Z, N <span style="color: #666666">=</span> np<span style="color: #666666">.</span>atleast_1d(Z), np<span style="color: #666666">.</span>atleast_1d(N)
     <span style="color: #408080; font-style: italic"># Total number of nucleons</span>
     A <span style="color: #666666">=</span> Z <span style="color: #666666">+</span> N
@@ -759,7 +787,7 @@ After having downloaded this file to our own computer, we are now ready to read 
     <span style="color: #008000; font-weight: bold">return</span> E
 
 <span style="color: #408080; font-style: italic"># Read the experimental data into a Pandas DataFrame.</span>
-df <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>read_fwf(<span style="color: #BA2121">&#39;mass.mas03&#39;</span>, usecols<span style="color: #666666">=</span>(<span style="color: #666666">2</span>,<span style="color: #666666">3</span>,<span style="color: #666666">4</span>,<span style="color: #666666">11</span>),
+df <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>read_fwf(infile, usecols<span style="color: #666666">=</span>(<span style="color: #666666">2</span>,<span style="color: #666666">3</span>,<span style="color: #666666">4</span>,<span style="color: #666666">11</span>),
               names<span style="color: #666666">=</span>(<span style="color: #BA2121">&#39;N&#39;</span>, <span style="color: #BA2121">&#39;Z&#39;</span>, <span style="color: #BA2121">&#39;A&#39;</span>, <span style="color: #BA2121">&#39;avEbind&#39;</span>),
               widths<span style="color: #666666">=</span>(<span style="color: #666666">1</span>,<span style="color: #666666">3</span>,<span style="color: #666666">5</span>,<span style="color: #666666">5</span>,<span style="color: #666666">5</span>,<span style="color: #666666">1</span>,<span style="color: #666666">3</span>,<span style="color: #666666">4</span>,<span style="color: #666666">1</span>,<span style="color: #666666">13</span>,<span style="color: #666666">11</span>,<span style="color: #666666">11</span>,<span style="color: #666666">9</span>,<span style="color: #666666">1</span>,<span style="color: #666666">2</span>,<span style="color: #666666">11</span>,<span style="color: #666666">9</span>,<span style="color: #666666">1</span>,<span style="color: #666666">3</span>,<span style="color: #666666">1</span>,<span style="color: #666666">12</span>,<span style="color: #666666">11</span>,<span style="color: #666666">1</span>),
               header<span style="color: #666666">=39</span>,
@@ -792,6 +820,7 @@ ax<span style="color: #666666">.</span>legend()
 <span style="color: #408080; font-style: italic"># We don&#39;t expect the SEMF to work very well for light nuclei with small</span>
 <span style="color: #408080; font-style: italic"># average binding energies, so display only data relevant to avEbind &gt; 7 MeV.</span>
 ax<span style="color: #666666">.</span>set_ylim(<span style="color: #666666">7</span>,<span style="color: #666666">9</span>)
+save_fig(<span style="color: #BA2121">&quot;Masses2016&quot;</span>)
 plt<span style="color: #666666">.</span>show()
 </pre></div>
 

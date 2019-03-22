@@ -148,7 +148,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>&nbsp;<br>
-<center><h4>Mar 20, 2019</h4></center> <!-- date -->
+<center><h4>Mar 22, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -756,7 +756,35 @@ After having downloaded this file to our own computer, we are now ready to read 
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Common imports</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">os</span>
+
+<span style="color: #228B22"># Where to save the figures and data files</span>
+PROJECT_ROOT_DIR = <span style="color: #CD5555">&quot;Results&quot;</span>
+FIGURE_ID = <span style="color: #CD5555">&quot;Results/FigureFiles&quot;</span>
+DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">image_path</span>(fig_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(FIGURE_ID, fig_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">data_path</span>(dat_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(DATA_ID, dat_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">save_fig</span>(fig_id):
+    plt.savefig(image_path(fig_id) + <span style="color: #CD5555">&quot;.png&quot;</span>, format=<span style="color: #CD5555">&#39;png&#39;</span>)
+
+infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;MassEval2016.dat&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
+
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
 <span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
 <span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
 
@@ -774,7 +802,7 @@ After having downloaded this file to our own computer, we are now ready to read 
     <span style="color: #228B22"># The parameterization of the SEMF to use.</span>
     aV, aS, aC, aA, delta = <span style="color: #B452CD">15.75</span>, <span style="color: #B452CD">17.8</span>, <span style="color: #B452CD">0.711</span>, <span style="color: #B452CD">23.7</span>, <span style="color: #B452CD">11.18</span>
 
-    <span style="color: #228B22"># Convert Z and N to NumPy arrays if they aren&#39;t already</span>
+    <span style="color: #228B22"># Covert Z and N to NumPy arrays if they aren&#39;t already</span>
     Z, N = np.atleast_1d(Z), np.atleast_1d(N)
     <span style="color: #228B22"># Total number of nucleons</span>
     A = Z + N
@@ -796,7 +824,7 @@ After having downloaded this file to our own computer, we are now ready to read 
     <span style="color: #8B008B; font-weight: bold">return</span> E
 
 <span style="color: #228B22"># Read the experimental data into a Pandas DataFrame.</span>
-df = pd.read_fwf(<span style="color: #CD5555">&#39;mass.mas03&#39;</span>, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">11</span>),
+df = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">11</span>),
               names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;avEbind&#39;</span>),
               widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
               header=<span style="color: #B452CD">39</span>,
@@ -829,6 +857,7 @@ ax.legend()
 <span style="color: #228B22"># We don&#39;t expect the SEMF to work very well for light nuclei with small</span>
 <span style="color: #228B22"># average binding energies, so display only data relevant to avEbind &gt; 7 MeV.</span>
 ax.set_ylim(<span style="color: #B452CD">7</span>,<span style="color: #B452CD">9</span>)
+save_fig(<span style="color: #CD5555">&quot;Masses2016&quot;</span>)
 plt.show()
 </pre></div>
 
