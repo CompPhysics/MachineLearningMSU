@@ -623,6 +623,11 @@ plt.show()
 
 
 
+# to do  make plots of separation energies
+# make fit using standard linreg in numpy
+# show functionality like mean, covariance and variance
+# don't use ML wordings before we switch to the linreg chapter
+
 ===== Simple linear regression model using _scikit-learn_ =====
 
 We start with perhaps our simplest possible example, using _scikit-learn_ to perform linear regression analysis on a data set produced by us. 
