@@ -136,7 +136,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Mar 22, 2019</h4></center> <!-- date -->
+<center><h4>Mar 23, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -684,7 +684,7 @@ access data. Acccessing data is an essential step in all machine
 learning algorithms. In particular, setting up the so-called <b>design
 matrix</b> (to be defined below) is often the first element we need in
 order to perform our calculations. To set up the design matrix means
-reading (and later, when the calculations are done, writing data) data
+reading (and later, when the calculations are done, writing) data
 in various formats, The formats span from reading files from disk,
 loading data from databases and interacting with online sources
 like web application programming interfaces (APIs).
@@ -692,9 +692,9 @@ like web application programming interfaces (APIs).
 <p>
 In handling various input formats, we will mainly stay with <b>pandas</b>,
 a Python package which allows us in a seamless and painless way to
-deal with a multitude of formats, from standars <b>csv</b> (comma separated
+deal with a multitude of formats, from standard <b>csv</b> (comma separated
 values) files, via <b>excel</b>, <b>html</b> to <b>hdf5</b> formats.  With <b>pandas</b>
-and the <b>DataFrame</b> functionality we are able to convert text data
+and the <b>DataFrame</b>  and <b>Series</b> functionalities we are able to convert text data
 into the calculational formats we need for a specific algorithm.
 
 <p>
@@ -705,10 +705,8 @@ specific functions using linear regression.
 
 <p>
 But let us start with reading and organizing our data. This will also allow us to present <b>matplotlib</b>, 
-a powerful Python package for plotting. The OECD and its <a href="http://www.oecd-nea.org/dbdata/data/" target="_blank">Nuclear Energy Agency</a>
-have posted the full list of masses from the compilation of <a href="https://www.sciencedirect.com/science/article/pii/S0375947403018086?via%3Dihub" target="_blank">Audi and Wapstra from 2003</a>. Later versions are also available.
-
-<p>
+a powerful Python package for plotting.  We start with the compilation of masses and binding energies from 2016.
+<!-- To do add new link to files -->
 After having downloaded this file to our own computer, we are now ready to read the file and start structuring our data.
 
 <p>
@@ -716,6 +714,8 @@ After having downloaded this file to our own computer, we are now ready to read 
 <!-- Look at different ways of handling data, make also csv file -->
 <!-- Have additional plot of separation energies etc -->
 
+<p>
+We start with preparing folders for storing our calculations and the data file over masses and binding energies.
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
@@ -746,8 +746,13 @@ DATA_ID <span style="color: #666666">=</span> <span style="color: #BA2121">&quot
     plt<span style="color: #666666">.</span>savefig(image_path(fig_id) <span style="color: #666666">+</span> <span style="color: #BA2121">&quot;.png&quot;</span>, format<span style="color: #666666">=</span><span style="color: #BA2121">&#39;png&#39;</span>)
 
 infile <span style="color: #666666">=</span> <span style="color: #008000">open</span>(data_path(<span style="color: #BA2121">&quot;MassEval2016.dat&quot;</span>),<span style="color: #BA2121">&#39;r&#39;</span>)
+</pre></div>
+<p>
+Thereafter we import <b>numpy</b>, <b>pandas</b> and <b>matpplotlib</b> and plot the data
+<p>
 
-<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
 <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
 <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">matplotlib.pyplot</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">plt</span>
 

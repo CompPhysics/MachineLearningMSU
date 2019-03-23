@@ -483,16 +483,16 @@ access data. Acccessing data is an essential step in all machine
 learning algorithms. In particular, setting up the so-called _design
 matrix_ (to be defined below) is often the first element we need in
 order to perform our calculations. To set up the design matrix means
-reading (and later, when the calculations are done, writing data) data
+reading (and later, when the calculations are done, writing) data
 in various formats, The formats span from reading files from disk,
 loading data from databases and interacting with online sources
 like web application programming interfaces (APIs).
 
 In handling various input formats, we will mainly stay with _pandas_,
 a Python package which allows us in a seamless and painless way to
-deal with a multitude of formats, from standars _csv_ (comma separated
+deal with a multitude of formats, from standard _csv_ (comma separated
 values) files, via _excel_, _html_ to _hdf5_ formats.  With _pandas_
-and the _DataFrame_ functionality we are able to convert text data
+and the _DataFrame_  and _Series_ functionalities we are able to convert text data
 into the calculational formats we need for a specific algorithm.
 
 We are going to start with a classic from nuclear physics, namely all
@@ -501,15 +501,16 @@ strength of packages like _scikitlearn_ in fitting binding energies to
 specific functions using linear regression.
 
 But let us start with reading and organizing our data. This will also allow us to present _matplotlib_, 
-a powerful Python package for plotting. The OECD and its "Nuclear Energy Agency":"http://www.oecd-nea.org/dbdata/data/"
-have posted the full list of masses from the compilation of "Audi and Wapstra from 2003":"https://www.sciencedirect.com/science/article/pii/S0375947403018086?via%3Dihub". Later versions are also available.
-
+a powerful Python package for plotting.  We start with the compilation of masses and binding energies from 2016.
+# To do add new link to files
 After having downloaded this file to our own computer, we are now ready to read the file and start structuring our data.
 
 # to do, make a general read and write files to folders. prepare these folders 
 # Look at different ways of handling data, make also csv file
 # Have additional plot of separation energies etc
 
+
+We start with preparing folders for storing our calculations and the data file over masses and binding energies.
 !bc pycod
 # Common imports
 import os
@@ -538,7 +539,10 @@ def save_fig(fig_id):
     plt.savefig(image_path(fig_id) + ".png", format='png')
 
 infile = open(data_path("MassEval2016.dat"),'r')
+!ec
 
+Thereafter we import _numpy_, _pandas_ and _matpplotlib_ and plot the data
+!bc pycod
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
