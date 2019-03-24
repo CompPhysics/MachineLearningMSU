@@ -90,14 +90,12 @@ maxavEbind['Eapprox'] = SEMF(maxavEbind['Z'], maxavEbind['N'])
 # Generate a plot comparing the experimental with the SEMF values.
 fig, ax = plt.subplots()
 ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
-            label='Ame2003')
-ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
-            label='SEMF')
+            label='Ame2016')
+#ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
+#            label='SEMF')
 ax.set_xlabel(r'$A = N + Z$')
 ax.set_ylabel(r'$E_\mathrm{bind}\,/\mathrm{MeV}$')
 ax.legend()
-# We don't expect the SEMF to work very well for light nuclei with small
-# average binding energies, so display only data relevant to avEbind > 7 MeV.
-ax.set_ylim(7,9)
+#ax.set_ylim(7,9)
 save_fig("Masses2016")
 plt.show()
