@@ -136,7 +136,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Mar 23, 2019</h4></center> <!-- date -->
+<center><h4>Mar 24, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -756,40 +756,6 @@ Thereafter we import <b>numpy</b>, <b>pandas</b> and <b>matpplotlib</b> and plot
 <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
 <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">matplotlib.pyplot</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">plt</span>
 
-<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">SEMF</span>(Z, N):
-    <span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;Calculate the average binding energy per nucleon for nucleus Z, N.</span>
-
-<span style="color: #BA2121; font-style: italic">    Calculate the average nuclear binding energy per nucleon for a nucleus</span>
-<span style="color: #BA2121; font-style: italic">    with Z protons and N neutrons, using the semi-empirical mass formula and</span>
-<span style="color: #BA2121; font-style: italic">    parameters of J. W. Rohlf, &quot;Modern Physics from alpha to Z0&quot;, Wiley (1994).</span>
-
-<span style="color: #BA2121; font-style: italic">    Z and N can be NumPy arrays or scalar values.</span>
-
-<span style="color: #BA2121; font-style: italic">    &quot;&quot;&quot;</span>
-
-    <span style="color: #408080; font-style: italic"># The parameterization of the SEMF to use.</span>
-    aV, aS, aC, aA, delta <span style="color: #666666">=</span> <span style="color: #666666">15.75</span>, <span style="color: #666666">17.8</span>, <span style="color: #666666">0.711</span>, <span style="color: #666666">23.7</span>, <span style="color: #666666">11.18</span>
-
-    <span style="color: #408080; font-style: italic"># Covert Z and N to NumPy arrays if they aren&#39;t already</span>
-    Z, N <span style="color: #666666">=</span> np<span style="color: #666666">.</span>atleast_1d(Z), np<span style="color: #666666">.</span>atleast_1d(N)
-    <span style="color: #408080; font-style: italic"># Total number of nucleons</span>
-    A <span style="color: #666666">=</span> Z <span style="color: #666666">+</span> N
-
-    <span style="color: #408080; font-style: italic"># The pairing term is -delta for Z and N both odd, +delta for Z and N both</span>
-    <span style="color: #408080; font-style: italic"># even, and 0 otherwise. Create an array of the sign of this term so that</span>
-    <span style="color: #408080; font-style: italic"># we can vectorize the calculation across the arrays Z and N.</span>
-    sgn <span style="color: #666666">=</span> np<span style="color: #666666">.</span>zeros(Z<span style="color: #666666">.</span>shape)
-    sgn[(Z<span style="color: #666666">%2</span>) <span style="color: #666666">&amp;</span> (N<span style="color: #666666">%2</span>)] <span style="color: #666666">=</span> <span style="color: #666666">-1</span>
-    sgn[<span style="color: #666666">~</span>(Z<span style="color: #666666">%2</span>) <span style="color: #666666">&amp;</span> <span style="color: #666666">~</span>(N<span style="color: #666666">%2</span>)] <span style="color: #666666">=</span> <span style="color: #666666">+1</span>
-
-    <span style="color: #408080; font-style: italic"># The SEMF for the average binding energy per nucleon.</span>
-    E <span style="color: #666666">=</span> (aV <span style="color: #666666">-</span> aS <span style="color: #666666">/</span> A<span style="color: #666666">**</span>(<span style="color: #666666">1/3</span>) <span style="color: #666666">-</span> aC <span style="color: #666666">*</span> Z<span style="color: #666666">**2</span> <span style="color: #666666">/</span> A<span style="color: #666666">**</span>(<span style="color: #666666">4/3</span>) <span style="color: #666666">-</span>
-         aA <span style="color: #666666">*</span> (A<span style="color: #666666">-2*</span>Z)<span style="color: #666666">**2/</span>A<span style="color: #666666">**2</span> <span style="color: #666666">+</span> sgn <span style="color: #666666">*</span> delta<span style="color: #666666">/</span>A<span style="color: #666666">**</span>(<span style="color: #666666">3/2</span>))
-
-    <span style="color: #408080; font-style: italic"># Return E as a scalar or array as appropriate to the input Z.</span>
-    <span style="color: #008000; font-weight: bold">if</span> Z<span style="color: #666666">.</span>shape[<span style="color: #666666">0</span>] <span style="color: #666666">==</span> <span style="color: #666666">1</span>:
-        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000">float</span>(E)
-    <span style="color: #008000; font-weight: bold">return</span> E
 
 <span style="color: #408080; font-style: italic"># Read the experimental data into a Pandas DataFrame.</span>
 df <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>read_fwf(infile, usecols<span style="color: #666666">=</span>(<span style="color: #666666">2</span>,<span style="color: #666666">3</span>,<span style="color: #666666">4</span>,<span style="color: #666666">11</span>),
@@ -810,24 +776,32 @@ gdf <span style="color: #666666">=</span> df<span style="color: #666666">.</span
 <span style="color: #408080; font-style: italic"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
 maxavEbind <span style="color: #666666">=</span> gdf<span style="color: #666666">.</span>apply(<span style="color: #008000; font-weight: bold">lambda</span> t: t[t<span style="color: #666666">.</span>avEbind<span style="color: #666666">==</span>t<span style="color: #666666">.</span>avEbind<span style="color: #666666">.</span>max()])
 
-<span style="color: #408080; font-style: italic"># Add a column of estimated binding energies calculated using the SEMF.</span>
-maxavEbind[<span style="color: #BA2121">&#39;Eapprox&#39;</span>] <span style="color: #666666">=</span> SEMF(maxavEbind[<span style="color: #BA2121">&#39;Z&#39;</span>], maxavEbind[<span style="color: #BA2121">&#39;N&#39;</span>])
-
 <span style="color: #408080; font-style: italic"># Generate a plot comparing the experimental with the SEMF values.</span>
 fig, ax <span style="color: #666666">=</span> plt<span style="color: #666666">.</span>subplots()
 ax<span style="color: #666666">.</span>plot(maxavEbind[<span style="color: #BA2121">&#39;A&#39;</span>], maxavEbind[<span style="color: #BA2121">&#39;avEbind&#39;</span>], alpha<span style="color: #666666">=0.7</span>, lw<span style="color: #666666">=2</span>,
             label<span style="color: #666666">=</span><span style="color: #BA2121">&#39;Ame2003&#39;</span>)
-ax<span style="color: #666666">.</span>plot(maxavEbind[<span style="color: #BA2121">&#39;A&#39;</span>], maxavEbind[<span style="color: #BA2121">&#39;Eapprox&#39;</span>], alpha<span style="color: #666666">=0.7</span>, lw<span style="color: #666666">=2</span>, c<span style="color: #666666">=</span><span style="color: #BA2121">&#39;m&#39;</span>,
-            label<span style="color: #666666">=</span><span style="color: #BA2121">&#39;SEMF&#39;</span>)
 ax<span style="color: #666666">.</span>set_xlabel(<span style="color: #BA2121">r&#39;$A = N + Z$&#39;</span>)
 ax<span style="color: #666666">.</span>set_ylabel(<span style="color: #BA2121">r&#39;$E_\mathrm{bind}\,/\mathrm{MeV}$&#39;</span>)
 ax<span style="color: #666666">.</span>legend()
-<span style="color: #408080; font-style: italic"># We don&#39;t expect the SEMF to work very well for light nuclei with small</span>
-<span style="color: #408080; font-style: italic"># average binding energies, so display only data relevant to avEbind &gt; 7 MeV.</span>
-ax<span style="color: #666666">.</span>set_ylim(<span style="color: #666666">7</span>,<span style="color: #666666">9</span>)
 save_fig(<span style="color: #BA2121">&quot;Masses2016&quot;</span>)
 plt<span style="color: #666666">.</span>show()
 </pre></div>
+<p>
+We see how easy it is to reorganize the data using <b>pandas</b>. If we
+were to do these operations in C/C++ or Fortran, we would have had to
+write various functions/subroutines which perform the above
+reorganizations for us.  Having reorganized the data, we can now start
+to make some simple fits using both the functionalities in <b>numpy</b> and
+<b>scikitlearn</b> afterwards. Our first attempt is to make a fit using the
+standard least squares functionality of <b>numpy</b>. Here we will also
+show functionalities like the computation of the mean values, the
+variance and the covariance.
+
+<p>
+<!-- to do  make plots of separation energies -->
+<!-- make fit using standard linreg in numpy -->
+<!-- show functionality like mean, covariance and variance -->
+<!-- don't use ML wordings before we switch to the linreg chapter -->
 
 <h2 id="___sec15">Simple linear regression model using <b>scikit-learn</b> </h2>
 
