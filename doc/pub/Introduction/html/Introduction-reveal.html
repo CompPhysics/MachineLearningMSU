@@ -163,7 +163,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>&nbsp;<br>
-<center><h4>Mar 25, 2019</h4></center> <!-- date -->
+<center><h4>Mar 26, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -752,13 +752,16 @@ into the calculational formats we need for a specific algorithm.
 <p>
 We are going to start with a classic from nuclear physics, namely all
 available data on binding energies. We will then show some of the
-strength of packages like <b>scikitlearn</b> in fitting binding energies to
+strength of packages like <b>scikit-learn</b> in fitting binding energies to
 specific functions using linear regression.
 
 <h3 id="___sec15">Brief reminder on masses and binding energies </h3>
 
 <p>
-A basic quantity which can be measured for the ground states of nuclei is the atomic mass \( M(N, Z) \) of the neutral atom with atomic mass number \( A \) and charge \( Z \). The number of neutrons is \( N \).
+Let us remind ourselves about some basic features about binding
+energies.  A basic quantity which can be measured for the ground
+states of nuclei is the atomic mass \( M(N, Z) \) of the neutral atom with
+atomic mass number \( A \) and charge \( Z \). The number of neutrons is \( N \).
 
 <p>
 Atomic masses are usually tabulated in terms of the mass excess defined by
@@ -775,10 +778,6 @@ u = M(^{12}\mathrm{C})/12 = 931.49386 \hspace{0.1cm} \mathrm{MeV}/c^2.
 $$
 <p>&nbsp;<br>
 
-In this course we will mainly use 
-data from the 2016 compilation.
-
-<p>
 The nucleon masses are
 <p>&nbsp;<br>
 $$
@@ -794,13 +793,18 @@ $$
 <p>&nbsp;<br>
 
 <p>
-In the 2016 mass evaluation there are xxx nuclei measured with an accuracy of xxx
-MeV or better, and xxx nuclei measured with an accuracy of greater than xxx MeV. For
-heavy nuclei one observes several chains of nuclei with a constant \( N-Z \) value whose masses are obtained from the energy released in \( \alpha \)-decay.
+In the 2016 mass evaluation there are xxx nuclei measured with an
+accuracy of xxx MeV or better, and xxx nuclei measured with an
+accuracy of greater than xxx MeV. For heavy nuclei one observes
+several chains of nuclei with a constant \( N-Z \) value whose masses are
+obtained from the energy released in \( \alpha \)-decay.
 
 <p>
-The nuclear binding energy is defined as the energy required to break up a given nucleus
-into its constituent parts of \( N \) neutrons and \( Z \) protons. In terms of the atomic masses \( M(N, Z) \) the binding energy is defined by
+The nuclear binding energy is defined as the energy required to break
+up a given nucleus into its constituent parts of \( N \) neutrons and \( Z \)
+protons. In terms of the atomic masses \( M(N, Z) \) the binding energy is
+defined by
+
 <p>&nbsp;<br>
 $$
 BE(N, Z) = ZM_H c^2 + Nm_n c^2 - M(N, Z)c^2 ,
@@ -821,12 +825,14 @@ where \( \Delta_H c^2 = 7.2890 \) MeV and \( \Delta_n c^2 = 8.0713 \) MeV.
 A popular and physically intuitive model which can be used to parametrize 
 the experimental binding energies as function of \( A \), is the so-called 
 the liquid drop model. The ansatz is based on the following expression
+
 <p>&nbsp;<br>
 $$ 
 BE(N,Z) = a_1A-a_2A^{2/3}-a_3\frac{Z^2}{A^{1/3}}-a_4\frac{(N-Z)^2}{A},
 $$
 <p>&nbsp;<br>
 
+<p>
 where \( A \) stands for the number of nucleons and the $a_i$s are parameters which are determined by a fit 
 to the experimental data.
 
@@ -838,165 +844,18 @@ To arrive at the above expression we have assumed that we can make the following
  <p><li> There is a surface energy term \( a_2A^{2/3} \). The assumption here is that a nucleon at the surface of a nucleus interacts with fewer other nucleons than one in the interior of the nucleus and hence its binding energy is less. This surface energy term takes that into account and is therefore negative and is proportional to the surface area.</li>
  <p><li> There is a Coulomb energy term \( a_3\frac{Z^2}{A^{1/3}} \). The electric repulsion between each pair of protons in a nucleus yields less binding.</li>
 
-<p><li> There is an asymmetry term \( a_4\frac{(N-Z)^2}{A} \). This term is associated with the Pauli exclusion principle and reflectd the fact that the proton-neutron interaction is more attractive on the average than the neutron-neutron and proton-proton interactions.</li>
+<p><li> There is an asymmetry term \( a_4\frac{(N-Z)^2}{A} \). This term is associated with the Pauli exclusion principle and reflects the fact that the proton-neutron interaction is more attractive on the average than the neutron-neutron and proton-proton interactions.</li>
 </ul>
 <p>
 
 We could also add a so-called pairing term, which is a correction term that
 arises from the tendency of proton pairs and neutron pairs to
-occur. An even number of particles is more stable than an odd number. 
-Performing a least-square fit to data, we obtain the following numerical values for the various constants
-
-<ul>
-<p><li> \( a_1=15.49 \) MeV</li>
-<p><li> \( a_2=17.23 \) MeV</li>
-<p><li> \( a_3=0.697 \) MeV</li>
-<p><li> \( a_4=22.6 \) MeV</li>
-</ul>
-<p>
-
-
-<div class="compute"><script type="text/x-sage">
-import numpy as np
-from scipy.optimize import curve_fit
-from  matplotlib import pyplot as plt
-# Load in data file
-data = np.loadtxt("datafiles/bindingenergies.dat")
-# Make arrays containing A on x-axis and binding energies
-A = data[:,2]
-bexpt = data[:,3]
-# The function we want to fit to, only two terms here
-def func(A,a1, a2):
-    return a1*A-a2*(A**(2.0/3.0))
-# function to perform nonlinear least square with guess for a1 and a2
-popt, pcov = curve_fit(func, A, bexpt, p0 = (16.0, 18.0))
-a1  = popt[0]
-a2 = popt[1]
-liquiddrop = a1*A-a2*(A**(2.0/3.0))
-
-plt.plot(A, bexpt ,'bo', A, liquiddrop, 'ro')
-plt.axis([0,270,-1, 10.0])
-plt.xlabel(r'$A$')
-plt.ylabel(r'Binding energies in [MeV]')
-plt.legend(('Experiment','Liquid Drop'), loc='upper right')
-plt.title(r'Binding energies from experiment and liquid drop')
-plt.savefig('bindingenergies.pdf')
-plt.savefig('bindingenergies.png')
-plt.show()
-
-</script></div>
-<p>
-We are now interested in interpreting experimental binding energies  in terms of a single-particle picture.
-In order to do so, we  consider first energy conservation for nuclear transformations that include, for
-example, the fusion of two nuclei \( a \) and \( b \) into the combined system \( c \)
-<p>&nbsp;<br>
-$$
-{^{N_a+Z_a}}a+ {^{N_b+Z_b}}b\rightarrow {^{N_c+Z_c}}c
-$$
-<p>&nbsp;<br>
-
-or the decay of nucleus \( c \) into two other nuclei \( a \) and \( b \)
-<p>&nbsp;<br>
-$$
-^{N_c+Z_c}c \rightarrow  ^{N_a+Z_a}a+ ^{N_b+Z_b}b
-$$
-<p>&nbsp;<br>
-
-<p>
-In general we have the reactions
-<p>&nbsp;<br>
-$$
-\sum_i {^{N_i+Z_i}}i \rightarrow  \sum_f {^{N_f+Z_f}}f
-$$
-<p>&nbsp;<br>
-
-We require also that the number of protons and neutrons (the total number of nucleons) is conserved in the initial stage and final stage, unless we have processes which violate baryon conservation, 
-<p>&nbsp;<br>
-$$
-\sum_iN_i = \sum_f N_f \hspace{0.2cm}\mathrm{and} \hspace{0.2cm}\sum_iZ_i = \sum_f Z_f.
-$$
-<p>&nbsp;<br>
-
-<p>&nbsp;<br>
-$$
-^{N_c+Z_c}c \rightarrow  ^{N_a+Z_a}a+ ^{N_b+Z_b}b .
-$$
-<p>&nbsp;<br>
-
-<p>
-The above processes can be characterized by an energy difference called the \( Q \) value, defined as
-<p>&nbsp;<br>
-$$
-Q=\sum_i M(N_i, Z_i)c^2-\sum_f M(N_f, Z_f)c^2=\sum_i BE(N_f, Z_f)-\sum_i BE(N_i, Z_i)
-$$
-<p>&nbsp;<br>
-
-Spontaneous decay involves a single initial nuclear state and is allowed if \( Q > 0 \). In the decay, energy is released in the form of the kinetic energy of the final products. Reactions involving two initial nuclei are called endothermic (a net loss of energy) if \( Q < 0 \). The reactions are exothermic (a net release of energy) if \( Q > 0 \).
-
-<p>
-Let us study the Q values associated with the removal of one or two nucleons from
-a nucleus. These are conventionally defined in terms of the one-nucleon and two-nucleon
-separation energies. The neutron separation energy is defined as 
-<p>&nbsp;<br>
-$$
-S_n= -Q_n= BE(N,Z)-BE(N-1,Z),
-$$
-<p>&nbsp;<br>
-
-and the proton separation energy reads
-<p>&nbsp;<br>
-$$
-S_p= -Q_p= BE(N,Z)-BE(N,Z-1).
-$$
-<p>&nbsp;<br>
-
-The two-neutron separation energy is defined as
-<p>&nbsp;<br>
-$$
-S_{2n}= -Q_{2n}= BE(N,Z)-BE(N-2,Z),
-$$
-<p>&nbsp;<br>
-
-and  the two-proton separation energy is given by
-<p>&nbsp;<br>
-$$
-S_{2p}= -Q_{2p}= BE(N,Z)-BE(N,Z-2).
-$$
-<p>&nbsp;<br>
-
-<p>
-Using say the neutron separation energies (alternatively the proton separation energies)
-<p>&nbsp;<br>
-$$
-S_n= -Q_n= BE(N,Z)-BE(N-1,Z),
-$$
-<p>&nbsp;<br>
-
-we can define the so-called energy gap for neutrons (or protons) as 
-<p>&nbsp;<br>
-$$
-\Delta S_n= BE(N,Z)-BE(N-1,Z)-\left(BE(N+1,Z)-BE(N,Z)\right),
-$$
-<p>&nbsp;<br>
-
-or 
-<p>&nbsp;<br>
-$$
-\Delta S_n= 2BE(N,Z)-BE(N-1,Z)-BE(N+1,Z).
-$$
-<p>&nbsp;<br>
-
-This quantity can in turn be used to determine which nuclei are magic or not. 
-For protons we would have 
-<p>&nbsp;<br>
-$$
-\Delta S_p= 2BE(N,Z)-BE(N,Z-1)-BE(N,Z+1).
-$$
-<p>&nbsp;<br>
+occur. An even number of particles is more stable than an odd number.
 
 <h3 id="___sec16">Organizing our data </h3>
 
-But let us start with reading and organizing our data. This will also allow us to present <b>matplotlib</b>, 
+<p>
+Let us start with reading and organizing our data. This will also allow us to present <b>matplotlib</b>, 
 a powerful Python package for plotting.  We start with the compilation of masses and binding energies from 2016.
 <!-- To do add new link to files -->
 After having downloaded this file to our own computer, we are now ready to read the file and start structuring our data.
@@ -1088,6 +947,100 @@ to make some simple fits using both the functionalities in <b>numpy</b> and
 standard least squares functionality of <b>numpy</b>. Here we will also
 show functionalities like the computation of the mean values, the
 variance and the covariance.
+
+<p>
+
+
+<div class="compute"><script type="text/x-sage">
+import numpy as np
+from scipy.optimize import curve_fit
+from  matplotlib import pyplot as plt
+# Load in data file
+data = np.loadtxt("datafiles/bindingenergies.dat")
+# Make arrays containing A on x-axis and binding energies
+A = data[:,2]
+bexpt = data[:,3]
+# The function we want to fit to, only two terms here
+def func(A,a1, a2):
+    return a1*A-a2*(A**(2.0/3.0))
+# function to perform nonlinear least square with guess for a1 and a2
+popt, pcov = curve_fit(func, A, bexpt, p0 = (16.0, 18.0))
+a1  = popt[0]
+a2 = popt[1]
+liquiddrop = a1*A-a2*(A**(2.0/3.0))
+
+plt.plot(A, bexpt ,'bo', A, liquiddrop, 'ro')
+plt.axis([0,270,-1, 10.0])
+plt.xlabel(r'$A$')
+plt.ylabel(r'Binding energies in [MeV]')
+plt.legend(('Experiment','Liquid Drop'), loc='upper right')
+plt.title(r'Binding energies from experiment and liquid drop')
+plt.savefig('bindingenergies.pdf')
+plt.savefig('bindingenergies.png')
+plt.show()
+
+</script></div>
+<p>
+Let us study the Q values associated with the removal of one or two nucleons from
+a nucleus. These are conventionally defined in terms of the one-nucleon and two-nucleon
+separation energies. The neutron separation energy is defined as
+
+<p>&nbsp;<br>
+$$
+S_n= -Q_n= BE(N,Z)-BE(N-1,Z),
+$$
+<p>&nbsp;<br>
+
+and the proton separation energy reads
+<p>&nbsp;<br>
+$$
+S_p= -Q_p= BE(N,Z)-BE(N,Z-1).
+$$
+<p>&nbsp;<br>
+
+The two-neutron separation energy is defined as
+<p>&nbsp;<br>
+$$
+S_{2n}= -Q_{2n}= BE(N,Z)-BE(N-2,Z),
+$$
+<p>&nbsp;<br>
+
+and  the two-proton separation energy is given by
+<p>&nbsp;<br>
+$$
+S_{2p}= -Q_{2p}= BE(N,Z)-BE(N,Z-2).
+$$
+<p>&nbsp;<br>
+
+<p>
+Using say the neutron separation energies (alternatively the proton separation energies)
+<p>&nbsp;<br>
+$$
+S_n= -Q_n= BE(N,Z)-BE(N-1,Z),
+$$
+<p>&nbsp;<br>
+
+we can define the so-called energy gap for neutrons (or protons) as 
+<p>&nbsp;<br>
+$$
+\Delta S_n= BE(N,Z)-BE(N-1,Z)-\left(BE(N+1,Z)-BE(N,Z)\right),
+$$
+<p>&nbsp;<br>
+
+or 
+<p>&nbsp;<br>
+$$
+\Delta S_n= 2BE(N,Z)-BE(N-1,Z)-BE(N+1,Z).
+$$
+<p>&nbsp;<br>
+
+This quantity can in turn be used to determine which nuclei are magic or not. 
+For protons we would have 
+<p>&nbsp;<br>
+$$
+\Delta S_p= 2BE(N,Z)-BE(N,Z-1)-BE(N,Z+1).
+$$
+<p>&nbsp;<br>
 
 <p>
 <!-- to do  make plots of separation energies -->
