@@ -495,7 +495,7 @@ values) files, via _excel_, _html_ to _hdf5_ formats.  With _pandas_
 and the _DataFrame_  and _Series_ functionalities we are able to convert text data
 into the calculational formats we need for a specific algorithm.
 
-We are going to start with a classic from nuclear physics, namely all
+We are going to start with a classic case from nuclear physics, namely all
 available data on binding energies. We will then show some of the
 strength of packages like _scikit-learn_ in fitting binding energies to
 specific functions using linear regression.
