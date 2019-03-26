@@ -31,6 +31,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 
+"""
+This is taken from the data file of the mass 2016 evaluation.
+All files are 3436 lines long with 124 character per line.
+       Headers are 39 lines long.
+   col 1     :  Fortran character control: 1 = page feed  0 = line feed
+   format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f13.5,f11.5,f11.3,f9.3,1x,a2,f11.3,f9.3,1x,i3,1x,f12.5,f11.5
+   These formats are reflected in the pandas widths variable below, see the statement
+   widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
+   Pandas has also a variable header, with length 39 in this case.
+"""
+
+
 # Read the experimental data into a Pandas DataFrame.
 df = pd.read_fwf(infile, usecols=(2,3,4,11),
               names=('N', 'Z', 'A', 'avEbind'),
