@@ -44,7 +44,7 @@ All files are 3436 lines long with 124 character per line.
 
 
 # Read the experimental data into a Pandas DataFrame.
-df = pd.read_fwf(infile, usecols=(2,3,4,11),
+Masses = pd.read_fwf(infile, usecols=(2,3,4,11),
               names=('N', 'Z', 'A', 'avEbind'),
               widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
               header=39,
@@ -52,43 +52,43 @@ df = pd.read_fwf(infile, usecols=(2,3,4,11),
 
 # Extrapolated values are indicated by '#' in place of the decimal place, so
 # the avEbind column won't be numeric. Coerce to float and drop these entries.
-df['avEbind'] = pd.to_numeric(df['avEbind'], errors='coerce')
-df = df.dropna()
+Masses['avEbind'] = pd.to_numeric(Masses['avEbind'], errors='coerce')
+Masses = Masses.dropna()
 # Also convert from keV to MeV.
-df['avEbind'] /= 1000
+Masses['avEbind'] /= 1000
 
 # Group the DataFrame by nucleon number, A.
-gdf = df.groupby('A')
+Masses = Masses.groupby('A')
 # Find the rows of the grouped DataFrame with the maximum binding energy.
-maxavEbind = gdf.apply(lambda t: t[t.avEbind==t.avEbind.max()])
+maxavEbind = Masses.apply(lambda t: t[t.avEbind==t.avEbind.max()])
 
 # Add a column of estimated binding energies calculated using the SEMF.
-#maxavEbind['Eapprox'] = SEMF(maxavEbind['Z'], maxavEbind['N'])
+MassNumber = maxavEbind['A']
+Energies = maxavEbind['avEbind']
 
-# Generate a plot comparing the experimental with the SEMF values.
+# The function we want to fit to, only two terms here
+def func(A,a1, a2):
+    return a1*A-a2*(A**(2.0/3.0))
+# function to perform nonlinear least square with guess for a1 and a2
+popt, pcov = curve_fit(func, MassNumber, Energies, p0 = (16.0, 18.0))
+a1  = popt[0]
+a2 = popt[1]
+maxavEbind['Eapprox']  = a1*MassNumber-a2*(MassNumber**(2.0/3.0))
+
+# Generate a plot comparing the experimental with the fitted values values.
 fig, ax = plt.subplots()
-ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
-            label='Ame2016')
-
 ax.set_xlabel(r'$A = N + Z$')
 ax.set_ylabel(r'$E_\mathrm{bind}\,/\mathrm{MeV}$')
+ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
+            label='Ame2016')
+ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
+            label='Fit')
 ax.legend()
-#ax.set_ylim(7,9)
+ax.set_ylim(6,10)
 save_fig("Masses2016")
 plt.show()
 
 
 
-
-#A = data[:,2]
-#bexpt = data[:,3]
-# The function we want to fit to, only two terms here
-def func(A,a1, a2):
-    return a1*A-a2*(A**(2.0/3.0))
-# function to perform nonlinear least square with guess for a1 and a2
-#popt, pcov = curve_fit(func, A, bexpt, p0 = (16.0, 18.0))
-#a1  = popt[0]
-#a2 = popt[1]
-#liquiddrop = a1*A-a2*(A**(2.0/3.0))
 
 

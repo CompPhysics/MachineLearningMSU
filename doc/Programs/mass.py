@@ -91,11 +91,11 @@ maxavEbind['Eapprox'] = SEMF(maxavEbind['Z'], maxavEbind['N'])
 fig, ax = plt.subplots()
 ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
             label='Ame2016')
-#ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
-#            label='SEMF')
+ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
+            label='SEMF')
 ax.set_xlabel(r'$A = N + Z$')
 ax.set_ylabel(r'$E_\mathrm{bind}\,/\mathrm{MeV}$')
 ax.legend()
-#ax.set_ylim(7,9)
+ax.set_ylim(7,9)
 save_fig("Masses2016")
 plt.show()
