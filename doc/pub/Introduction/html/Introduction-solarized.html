@@ -151,7 +151,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Mar 26, 2019</h4></center> <!-- date -->
+<center><h4>Mar 27, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -452,12 +452,18 @@ For an \( N\times N \) matrix  \( \mathbf{A} \) the following properties are all
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
 <div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-n = <span style="color: #B452CD">10</span>
+</pre></div>
+<p>
+Here follows a simple example where we set up an array of ten elements, all determined by random numbers drawn according to the normal distribution,
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span>n = <span style="color: #B452CD">10</span>
 x = np.random.normal(size=n)
 <span style="color: #8B008B; font-weight: bold">print</span>(x)
 </pre></div>
 <p>
-Here we have defined a vector \( x \) with \( n=10 \) elements with its values given by the Normal distribution \( N(0,1) \).
+We defined a vector \( x \) with \( n=10 \) elements with its values given by the Normal distribution \( N(0,1) \).
 Another alternative is to declare a vector as follows
 <p>
 
@@ -525,8 +531,12 @@ x = np.log(np.array([<span style="color: #B452CD">4.0</span>, <span style="color
 </pre></div>
 
 <h2 id="___sec13">Matrices in Python </h2>
-Having defined vectors, we are now ready to try out matrices. We can define a \( 3 \times 3  \) real matrix \( \hat{A} \)
-as (recall that we user lowercase letters for vectors and uppercase letters for matrices)
+
+<p>
+Having defined vectors, we are now ready to try out matrices. We can
+define a \( 3 \times 3  \) real matrix \( \hat{A} \) as (recall that we user
+lowercase letters for vectors and uppercase letters for matrices)
+
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -748,7 +758,8 @@ m_n = 939.56536(8)\hspace{0.1cm} \mathrm{MeV}/c^2 = 1.0086649156(6)u.
 $$
 
 <p>
-In the 2016 mass evaluation there are xxx nuclei measured with an
+In the <a href="http://nuclearmasses.org/resources_folder/Wang_2017_Chinese_Phys_C_41_030003.pdf" target="_blank">2016 mass evaluation of by W.J.Huang, G.Audi, M.Wang, F.G.Kondev, S.Naimi and X.Xu</a>
+there are xxx nuclei measured with an
 accuracy of xxx MeV or better, and xxx nuclei measured with an
 accuracy of greater than xxx MeV. For heavy nuclei one observes
 several chains of nuclei with a constant \( N-Z \) value whose masses are
@@ -775,7 +786,7 @@ where \( \Delta_H c^2 = 7.2890 \) MeV and \( \Delta_n c^2 = 8.0713 \) MeV.
 <p>
 A popular and physically intuitive model which can be used to parametrize 
 the experimental binding energies as function of \( A \), is the so-called 
-the liquid drop model. The ansatz is based on the following expression
+<b>liquid drop model</b>. The ansatz is based on the following expression
 
 $$ 
 BE(N,Z) = a_1A-a_2A^{2/3}-a_3\frac{Z^2}{A^{1/3}}-a_4\frac{(N-Z)^2}{A},
@@ -804,13 +815,7 @@ occur. An even number of particles is more stable than an odd number.
 <p>
 Let us start with reading and organizing our data. This will also allow us to present <b>matplotlib</b>, 
 a powerful Python package for plotting.  We start with the compilation of masses and binding energies from 2016.
-<!-- To do add new link to files -->
 After having downloaded this file to our own computer, we are now ready to read the file and start structuring our data.
-
-<p>
-<!-- to do, make a general read and write files to folders. prepare these folders -->
-<!-- Look at different ways of handling data, make also csv file -->
-<!-- Have additional plot of separation energies etc -->
 
 <p>
 We start with preparing folders for storing our calculations and the data file over masses and binding energies.
@@ -846,35 +851,67 @@ DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
 infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;MassEval2016.dat&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
 </pre></div>
 <p>
-Thereafter we import <b>numpy</b>, <b>pandas</b> and <b>matpplotlib</b> and plot the data
+Thereafter we import <b>numpy</b>, <b>pandas</b> and <b>matpplotlib</b>. 
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
 <div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
 <span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
 <span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+</pre></div>
+<p>
+Our next step is to read the data on experimental binding energies and reorganize them as functions of the mass number \( A \) and the number of protons \( Z \) and neutrons \( N \) using <b>pandas</b>.  Before we do this it is always (unless you have a binary file or other types of compressed data) to actually open the file and simply take a look at it!
+In particular, the program that outputs the final nuclear masses is written in Fortran with a specific format, that is (extracted from the file itself) we have
+<p>
 
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #CD5555">&quot;&quot;&quot;                                                                                                                         </span>
+<span style="color: #CD5555">This is taken from the data file of the mass 2016 evaluation.                                                               </span>
+<span style="color: #CD5555">All files are 3436 lines long with 124 character per line.                                                                  </span>
+<span style="color: #CD5555">       Headers are 39 lines long.                                                                                           </span>
+<span style="color: #CD5555">   col 1     :  Fortran character control: 1 = page feed  0 = line feed                                                     </span>
+<span style="color: #CD5555">   format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f13.5,f11.5,f11.3,f9.3,1x,a2,f11.3,f9.3,1x,i3,1x,f12.5,f11.5                     </span>
+<span style="color: #CD5555">   These formats are reflected in the pandas widths variable below, see the statement                                       </span>
+<span style="color: #CD5555">   widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),                                                            </span>
+<span style="color: #CD5555">   Pandas has also a variable header, with length 39 in this case.                                                          </span>
+<span style="color: #CD5555">&quot;&quot;&quot;</span>
+</pre></div>
+<p>
+The data we are interested in are in columns 2, 3, 4 and 11, giving us the number of neutrons, protons, mass numbers and binding energies, respectively. The data are in fixed-width formatted lines and we will covert them into the <b>pandas</b> DataFrame structure.
+<p>
 
-<span style="color: #228B22"># Read the experimental data into a Pandas DataFrame.</span>
-df = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">11</span>),
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #228B22"># Read the experimental data into a Pandas DataFrame.</span>
+Masses = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">11</span>),
               names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;avEbind&#39;</span>),
               widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
               header=<span style="color: #B452CD">39</span>,
               index_col=<span style="color: #658b00">False</span>)
 
 <span style="color: #228B22"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
-<span style="color: #228B22"># the avEbind column won&#39;t be numeric. Coerce to float and drop these entries.</span>
-df[<span style="color: #CD5555">&#39;avEbind&#39;</span>] = pd.to_numeric(df[<span style="color: #CD5555">&#39;avEbind&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
-df = df.dropna()
-<span style="color: #228B22"># Also convert from keV to MeV.</span>
-df[<span style="color: #CD5555">&#39;avEbind&#39;</span>] /= <span style="color: #B452CD">1000</span>
+<span style="color: #228B22"># the avEbind column is not numeric. Coerce to float and drop these entries.</span>
+Masses[<span style="color: #CD5555">&#39;avEbind&#39;</span>] = pd.to_numeric(df[<span style="color: #CD5555">&#39;avEbind&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
+Masses = Masses.dropna()
+<span style="color: #228B22"># Here we change from units of keV to units of MeV</span>
+Masses[<span style="color: #CD5555">&#39;avEbind&#39;</span>] /= <span style="color: #B452CD">1000</span>
+</pre></div>
+<p>
+With <b>pandas</b> we can regroup the data and organize everything by nucleon number
+<p>
 
-<span style="color: #228B22"># Group the DataFrame by nucleon number, A.</span>
-gdf = df.groupby(<span style="color: #CD5555">&#39;A&#39;</span>)
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #228B22"># Group the masses by nucleon number A.</span>
+Masses = Masses.groupby(<span style="color: #CD5555">&#39;A&#39;</span>)
 <span style="color: #228B22"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
-maxavEbind = gdf.apply(<span style="color: #8B008B; font-weight: bold">lambda</span> t: t[t.avEbind==t.avEbind.max()])
+maxavEbind = Masses.apply(<span style="color: #8B008B; font-weight: bold">lambda</span> t: t[t.avEbind==t.avEbind.max()])
+</pre></div>
+<p>
+Let us now see how we can use <b>pandas</b> to print out the data. We limit ourselves to printing the first 30 values.
 
-<span style="color: #228B22"># Generate a plot comparing the experimental with the SEMF values.</span>
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #228B22"># Generate a plot comparing the experimental with the SEMF values.</span>
 fig, ax = plt.subplots()
 ax.plot(maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>], maxavEbind[<span style="color: #CD5555">&#39;avEbind&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>,
             label=<span style="color: #CD5555">&#39;Ame2003&#39;</span>)
