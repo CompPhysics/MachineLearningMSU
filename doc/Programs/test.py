@@ -74,7 +74,7 @@ popt, pcov = curve_fit(func, MassNumber, Energies, p0 = (16.0, 18.0))
 a1  = popt[0]
 a2 = popt[1]
 maxavEbind['Eapprox']  = a1*MassNumber-a2*(MassNumber**(2.0/3.0))
-
+print(maxavEbind)
 # Generate a plot comparing the experimental with the fitted values values.
 fig, ax = plt.subplots()
 ax.set_xlabel(r'$A = N + Z$')
