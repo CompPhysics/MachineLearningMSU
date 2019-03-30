@@ -151,7 +151,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Mar 27, 2019</h4></center> <!-- date -->
+<center><h4>Mar 30, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -1441,6 +1441,99 @@ plt.plot(line, reg.predict(line), label=<span style="color: #CD5555">&quot;decis
 regline = LinearRegression().fit(x.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>),y.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>))
 plt.plot(line, regline.predict(line), label= <span style="color: #CD5555">&quot;Linear Regression&quot;</span>)
 plt.plot(x, y, label= <span style="color: #CD5555">&quot;Linear Regression&quot;</span>)
+plt.show()
+</pre></div>
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #228B22"># Common imports</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">os</span>
+
+<span style="color: #228B22"># Where to save the figures and data files</span>
+PROJECT_ROOT_DIR = <span style="color: #CD5555">&quot;Results&quot;</span>
+FIGURE_ID = <span style="color: #CD5555">&quot;Results/FigureFiles&quot;</span>
+DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">image_path</span>(fig_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(FIGURE_ID, fig_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">data_path</span>(dat_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(DATA_ID, dat_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">save_fig</span>(fig_id):
+    plt.savefig(image_path(fig_id) + <span style="color: #CD5555">&quot;.png&quot;</span>, format=<span style="color: #CD5555">&#39;png&#39;</span>)
+
+infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;MassEval2016.dat&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
+
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">scipy.optimize</span> <span style="color: #8B008B; font-weight: bold">import</span> curve_fit
+
+<span style="color: #CD5555">&quot;&quot;&quot;</span>
+<span style="color: #CD5555">This is taken from the data file of the mass 2016 evaluation.</span>
+<span style="color: #CD5555">All files are 3436 lines long with 124 character per line.</span>
+<span style="color: #CD5555">       Headers are 39 lines long.</span>
+<span style="color: #CD5555">   col 1     :  Fortran character control: 1 = page feed  0 = line feed</span>
+<span style="color: #CD5555">   format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f13.5,f11.5,f11.3,f9.3,1x,a2,f11.3,f9.3,1x,i3,1x,f12.5,f11.5</span>
+<span style="color: #CD5555">   These formats are reflected in the pandas widths variable below, see the statement</span>
+<span style="color: #CD5555">   widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),</span>
+<span style="color: #CD5555">   Pandas has also a variable header, with length 39 in this case.</span>
+<span style="color: #CD5555">&quot;&quot;&quot;</span>
+
+
+<span style="color: #228B22"># Read the experimental data into a Pandas DataFrame.</span>
+Masses = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">11</span>),
+              names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;avEbind&#39;</span>),
+              widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
+              header=<span style="color: #B452CD">39</span>,
+              index_col=<span style="color: #658b00">False</span>)
+
+<span style="color: #228B22"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
+<span style="color: #228B22"># the avEbind column won&#39;t be numeric. Coerce to float and drop these entries.</span>
+Masses[<span style="color: #CD5555">&#39;avEbind&#39;</span>] = pd.to_numeric(Masses[<span style="color: #CD5555">&#39;avEbind&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
+Masses = Masses.dropna()
+<span style="color: #228B22"># Also convert from keV to MeV.</span>
+Masses[<span style="color: #CD5555">&#39;avEbind&#39;</span>] /= <span style="color: #B452CD">1000</span>
+
+<span style="color: #228B22"># Group the DataFrame by nucleon number, A.</span>
+Masses = Masses.groupby(<span style="color: #CD5555">&#39;A&#39;</span>)
+<span style="color: #228B22"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
+maxavEbind = Masses.apply(<span style="color: #8B008B; font-weight: bold">lambda</span> t: t[t.avEbind==t.avEbind.max()])
+
+<span style="color: #228B22"># Add a column of estimated binding energies calculated using the SEMF.</span>
+MassNumber = maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>]
+Energies = maxavEbind[<span style="color: #CD5555">&#39;avEbind&#39;</span>]
+
+<span style="color: #228B22"># The function we want to fit to, only two terms here</span>
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">func</span>(A,a1, a2):
+    <span style="color: #8B008B; font-weight: bold">return</span> a1*A-a2*(A**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>))
+<span style="color: #228B22"># function to perform nonlinear least square with guess for a1 and a2</span>
+popt, pcov = curve_fit(func, MassNumber, Energies, p0 = (<span style="color: #B452CD">16.0</span>, <span style="color: #B452CD">18.0</span>))
+a1  = popt[<span style="color: #B452CD">0</span>]
+a2 = popt[<span style="color: #B452CD">1</span>]
+maxavEbind[<span style="color: #CD5555">&#39;Eapprox&#39;</span>]  = a1*MassNumber-a2*(MassNumber**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>))
+<span style="color: #8B008B; font-weight: bold">print</span>(maxavEbind)
+<span style="color: #228B22"># Generate a plot comparing the experimental with the fitted values values.</span>
+fig, ax = plt.subplots()
+ax.set_xlabel(<span style="color: #CD5555">r&#39;$A = N + Z$&#39;</span>)
+ax.set_ylabel(<span style="color: #CD5555">r&#39;$E_\mathrm{bind}\,/\mathrm{MeV}$&#39;</span>)
+ax.plot(maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>], maxavEbind[<span style="color: #CD5555">&#39;avEbind&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>,
+            label=<span style="color: #CD5555">&#39;Ame2016&#39;</span>)
+ax.plot(maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>], maxavEbind[<span style="color: #CD5555">&#39;Eapprox&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>, c=<span style="color: #CD5555">&#39;m&#39;</span>,
+            label=<span style="color: #CD5555">&#39;Fit&#39;</span>)
+ax.legend()
+ax.set_ylim(<span style="color: #B452CD">6</span>,<span style="color: #B452CD">10</span>)
+save_fig(<span style="color: #CD5555">&quot;Masses2016&quot;</span>)
 plt.show()
 </pre></div>
 <p>
