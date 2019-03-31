@@ -64,17 +64,23 @@ maxavEbind = Masses.apply(lambda t: t[t.avEbind==t.avEbind.max()])
 
 # Add a column of estimated binding energies calculated using the SEMF.
 MassNumber = maxavEbind['A']
+ProtonNumber = maxavEbind['Z']
+NeutronNumber = maxavEbind['N']
 Energies = maxavEbind['avEbind']
 
-# The function we want to fit to, only two terms here
-def func(A,a1, a2):
-    return a1*A-a2*(A**(2.0/3.0))
-# function to perform nonlinear least square with guess for a1 and a2
-popt, pcov = curve_fit(func, MassNumber, Energies, p0 = (16.0, 18.0))
-a1  = popt[0]
-a2 = popt[1]
-maxavEbind['Eapprox']  = a1*MassNumber-a2*(MassNumber**(2.0/3.0))
-print(maxavEbind)
+DesignMatrix = np.zeros((4+1,len(MassNumber)))
+DesignMatrix[4,:] = MassNumber**(-1.0)
+DesignMatrix[3,:] = MassNumber**(-1.0/3.0)
+DesignMatrix[2,:] = MassNumber**(2.0/3.0)
+DesignMatrix[1,:] = MassNumber
+DesignMatrix[0,:] = 1
+
+fit = np.linalg.lstsq(DesignMatrix.T, Energies, rcond =None)[0]
+fity = np.dot(fit,DesignMatrix)
+
+maxavEbind['Eapprox']  = fity
+#print(maxavEbind)
+print(np.mean( (Energies-fity)**2))
 # Generate a plot comparing the experimental with the fitted values values.
 fig, ax = plt.subplots()
 ax.set_xlabel(r'$A = N + Z$')
@@ -84,9 +90,10 @@ ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
 ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
             label='Fit')
 ax.legend()
-ax.set_ylim(6,10)
+#ax.set_ylim(6,10)
 save_fig("Masses2016")
 plt.show()
+
 
 
 
