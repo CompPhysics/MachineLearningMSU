@@ -29,7 +29,7 @@ infile = open(data_path("MassEval2016.dat"),'r')
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
+
 
 """
 This is taken from the data file of the mass 2016 evaluation.
@@ -68,8 +68,9 @@ ProtonNumber = maxavEbind['Z']
 NeutronNumber = maxavEbind['N']
 Energies = maxavEbind['avEbind']
 
-DesignMatrix = np.zeros((4+1,len(MassNumber)))
-DesignMatrix[4,:] = MassNumber**(-1.0)
+DesignMatrix = np.zeros((4,len(MassNumber)))
+#DesignMatrix[4,:] = MassNumber**(1.0/3.0)
+#DesignMatrix[4,:] = MassNumber**(-1.0)
 DesignMatrix[3,:] = MassNumber**(-1.0/3.0)
 DesignMatrix[2,:] = MassNumber**(2.0/3.0)
 DesignMatrix[1,:] = MassNumber
