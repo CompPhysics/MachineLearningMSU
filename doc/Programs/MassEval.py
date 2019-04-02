@@ -62,15 +62,14 @@ Masses = Masses.groupby('A')
 # Find the rows of the grouped DataFrame with the maximum binding energy.
 maxavEbind = Masses.apply(lambda t: t[t.avEbind==t.avEbind.max()])
 
-# Add a column of estimated binding energies calculated using the SEMF.
+# Add a column of estimated binding energies calculated using Weizsaecker's empirical formula
 MassNumber = maxavEbind['A']
 ProtonNumber = maxavEbind['Z']
 NeutronNumber = maxavEbind['N']
 Energies = maxavEbind['avEbind']
 
-DesignMatrix = np.zeros((4,len(MassNumber)))
-#DesignMatrix[4,:] = MassNumber**(1.0/3.0)
-#DesignMatrix[4,:] = MassNumber**(-1.0)
+DesignMatrix = np.zeros((5,len(MassNumber)))
+DesignMatrix[4,:] = MassNumber**(-1.0)
 DesignMatrix[3,:] = MassNumber**(-1.0/3.0)
 DesignMatrix[2,:] = MassNumber**(2.0/3.0)
 DesignMatrix[1,:] = MassNumber
