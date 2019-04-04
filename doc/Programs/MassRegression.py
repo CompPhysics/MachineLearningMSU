@@ -1,4 +1,11 @@
+# Regression analysis using scikit-learn functions
 # Common imports
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import sklearn.linear_model as skl
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 import os
 
 # Where to save the figures and data files
@@ -26,10 +33,6 @@ def save_fig(fig_id):
 
 infile = open(data_path("MassEval2016.dat"),'r')
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
 
 """
 This is taken from the data file of the mass 2016 evaluation.
@@ -44,7 +47,7 @@ All files are 3436 lines long with 124 character per line.
 
 
 # Read the experimental data into a Pandas DataFrame.
-Masses = pd.read_fwf(infile, usecols=(2,3,4,11),
+Masses = pd.read_fwf(infile, usecols=(2,3,4,12),
               names=('N', 'Z', 'A', 'avEbind'),
               widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
               header=39,
@@ -61,26 +64,50 @@ Masses['avEbind'] /= 1000
 Masses = Masses.groupby('A')
 # Find the rows of the grouped DataFrame with the maximum binding energy.
 maxavEbind = Masses.apply(lambda t: t[t.avEbind==t.avEbind.max()])
-
+#maxavEbind = Masses
 # Add a column of estimated binding energies calculated using Weizsaecker's empirical formula
 MassNumber = maxavEbind['A']
 ProtonNumber = maxavEbind['Z']
 NeutronNumber = maxavEbind['N']
 Energies = maxavEbind['avEbind']
+# Now we set up the design matrix X
+X = np.zeros((5,len(MassNumber)))
+X[4,:] = ((MassNumber-2.*ProtonNumber)**2)*MassNumber**(-1.0)
+X[3,:] = ProtonNumber*(ProtonNumber-1)*MassNumber**(-1.0/3.0)
+X[2,:] = MassNumber**(2.0/3.0)
+X[1,:] = MassNumber
+X[0,:] = 1
 
-DesignMatrix = np.zeros((5,len(MassNumber)))
-DesignMatrix[4,:] = MassNumber**(-1.0)
-DesignMatrix[3,:] = MassNumber**(-1.0/3.0)
-DesignMatrix[2,:] = MassNumber**(2.0/3.0)
-DesignMatrix[1,:] = MassNumber
-DesignMatrix[0,:] = 1
 
-fit = np.linalg.lstsq(DesignMatrix.T, Energies, rcond =None)[0]
-fity = np.dot(fit,DesignMatrix)
+clf = skl.LinearRegression().fit(X.T, Energies)
 
-maxavEbind['Eapprox']  = fity
-print(maxavEbind)
-print(np.mean( (Energies-fity)**2))
+fity = clf.predict(X.T)
+
+# The mean squared error                               
+print("Mean squared error: %.2f" % mean_squared_error(Energies, fity))
+# Explained variance score: 1 is perfect prediction                                 
+print('Variance score: %.2f' % r2_score(Energies, fity))
+# Mean absolute error                                                           
+print('Mean absolute error: %.2f' % mean_absolute_error(Energies, fity))
+print(clf.coef_, clf.intercept_)
+
+
+_lambda = 0.1
+clf_ridge = skl.Ridge(alpha=_lambda).fit(X.T, Energies)
+
+E_ridge = clf_ridge.predict(X.T)
+
+# The mean squared error                               
+print("Mean squared error: %.2f" % mean_squared_error(Energies, E_ridge))
+# Explained variance score: 1 is perfect prediction                                 
+print('Variance score: %.2f' % r2_score(Energies, E_ridge))
+# Mean absolute error                                                           
+print('Mean absolute error: %.2f' % mean_absolute_error(Energies, E_ridge))
+print(clf_ridge.coef_, clf_ridge.intercept_)
+
+
+
+maxavEbind['Eapprox']  = E_ridge
 # Generate a plot comparing the experimental with the fitted values values.
 fig, ax = plt.subplots()
 ax.set_xlabel(r'$A = N + Z$')
@@ -90,12 +117,8 @@ ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
 ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
             label='Fit')
 ax.legend()
-#ax.set_ylim(6,10)
 save_fig("Masses2016")
 plt.show()
-
-
-
 
 
 

@@ -75,12 +75,24 @@ DesignMatrix[2,:] = MassNumber**(2.0/3.0)
 DesignMatrix[1,:] = MassNumber
 DesignMatrix[0,:] = 1
 
-fit = np.linalg.lstsq(DesignMatrix.T, Energies, rcond =None)[0]
-fity = np.dot(fit,DesignMatrix)
+#fit = np.linalg.lstsq(DesignMatrix.T, Energies, rcond =None)[0]
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.80)
+#from sklearn.model_selection import train_test_split
+import sklearn.linear_model as skl
+# Transpose the matrix so we can use it with scikit-learn or our own code
+X = DesignMatrix.T
+#beta = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(Energies)
+
+clf = skl.LinearRegression().fit(X, Energies)
+#fity = X @ beta#clf.predict(DesignMatrix)
+fity = clf.predict(X)
+sk_r_test = clf.score(X, fity)
+print(sk_r_test)
+#fity = np.dot(fit,DesignMatrix)
 
 maxavEbind['Eapprox']  = fity
-print(maxavEbind)
-print(np.mean( (Energies-fity)**2))
+#print(maxavEbind)
+#print(np.mean( (Energies-fity)**2))
 # Generate a plot comparing the experimental with the fitted values values.
 fig, ax = plt.subplots()
 ax.set_xlabel(r'$A = N + Z$')
@@ -90,12 +102,22 @@ ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
 ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
             label='Fit')
 ax.legend()
-#ax.set_ylim(6,10)
 save_fig("Masses2016")
 plt.show()
 
 
 
 
+
+
+#_lambda = 0.1
+#omega_ridge = get_ridge_weights(X_train_own, y_train, np.array([_lambda]))
+#clf_ridge = skl.Ridge(alpha=_lambda).fit(X_train, y_train)
+#clf_lasso = skl.Lasso(alpha=_lambda).fit(X_train, y_train)
+
+#def r_squared(y, y_hat):
+#    return 1 - np.sum((y - y_hat) ** 2) / np.sum((y - np.mean(y_hat)) ** 2)
+
+#r_test = r_squared(y_test, y_hat)
 
 
