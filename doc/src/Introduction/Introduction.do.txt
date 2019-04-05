@@ -468,17 +468,46 @@ display(data_pandas)
 
 Here are other examples where we use the _DataFrame_ functionality to handle arrays
 !bc pycod
-import numpy as np                                                                               
+import numpy as np
 import pandas as pd
 from IPython.display import display
-np.random.seed(100)                                                                          
+np.random.seed(100)
 # setting up a 9 x 4 matrix
-a = np.random.randn(9,4)
-df = pd.DataFrame(a)   
+rows = 9
+cols = 4
+a = np.random.randn(rows,cols)
+df = pd.DataFrame(a)
 display(df)
 print(df.mean())
 print(df.std())
 display(df**2)
+
+
+df.columns = ['First', 'Second', 'Third', 'Fourth']
+df.index = np.arange(9)
+
+display(df)
+print(df['Second'].mean() )
+print(df.info())
+print(df.describe())
+
+from pylab import plt, mpl
+plt.style.use('seaborn')
+mpl.rcParams['font.family'] = 'serif'
+
+df.cumsum().plot(lw=2.0, figsize=(10,6))
+#plt.show()
+
+
+df.plot.bar(figsize=(10,6), rot=15)
+#plt.show()
+
+
+b = np.arange(16).reshape((4,4))
+print(b)
+
+df1 = pd.DataFrame(b)
+
 !ec
 
 
@@ -708,37 +737,223 @@ show functionalities like the computation of the mean values, the
 variance and the covariance. 
 
 
-!bc pyscpro
-import numpy as np
-from scipy.optimize import curve_fit
-from  matplotlib import pyplot as plt
-# Load in data file
-data = np.loadtxt("datafiles/bindingenergies.dat")
-# Make arrays containing A on x-axis and binding energies
-A = data[:,2]
-bexpt = data[:,3]
-# The function we want to fit to, only two terms here
-def func(A,a1, a2):
-    return a1*A-a2*(A**(2.0/3.0))
-# function to perform nonlinear least square with guess for a1 and a2
-popt, pcov = curve_fit(func, A, bexpt, p0 = (16.0, 18.0))
-a1  = popt[0]
-a2 = popt[1]
-liquiddrop = a1*A-a2*(A**(2.0/3.0))
+!bc pycod
 
-plt.plot(A, bexpt ,'bo', A, liquiddrop, 'ro')
-plt.axis([0,270,-1, 10.0])
-plt.xlabel(r'$A$')
-plt.ylabel(r'Binding energies in [MeV]')
-plt.legend(('Experiment','Liquid Drop'), loc='upper right')
-plt.title(r'Binding energies from experiment and liquid drop')
-plt.savefig('bindingenergies.pdf')
-plt.savefig('bindingenergies.png')
+# Regression analysis using scikit-learn functions
+# Common imports
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import sklearn.linear_model as skl
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+import os
+
+# Where to save the figures and data files
+PROJECT_ROOT_DIR = "Results"
+FIGURE_ID = "Results/FigureFiles"
+DATA_ID = "DataFiles/"
+
+if not os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+if not os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+if not os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+def image_path(fig_id):
+    return os.path.join(FIGURE_ID, fig_id)
+
+def data_path(dat_id):
+    return os.path.join(DATA_ID, dat_id)
+
+def save_fig(fig_id):
+    plt.savefig(image_path(fig_id) + ".png", format='png')
+
+infile = open(data_path("MassEval2016.dat"),'r')
+
+
+# Read the experimental data with Pandas
+Masses = pd.read_fwf(infile, usecols=(2,3,4,6,11),
+              names=('N', 'Z', 'A', 'Element', 'Ebinding'),
+              widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
+              header=39,
+              index_col=False)
+
+# Extrapolated values are indicated by '#' in place of the decimal place, so
+# the Ebinding column won't be numeric. Coerce to float and drop these entries.
+Masses['Ebinding'] = pd.to_numeric(Masses['Ebinding'], errors='coerce')
+Masses = Masses.dropna()
+# Convert from keV to MeV.
+Masses['Ebinding'] /= 1000
+
+# Group the DataFrame by nucleon number, A.
+Masses = Masses.groupby('A')
+# Find the rows of the grouped DataFrame with the maximum binding energy.
+Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
+A = Masses['A']
+Z = Masses['Z']
+N = Masses['N']
+Element = Masses['Element']
+Energies = Masses['Ebinding']
+
+print(Masses)
+
+
+# Now we set up the design matrix X
+X = np.zeros((5,len(A)))
+X[4,:] = A**(-1.0)
+X[3,:] = A**(-1.0/3.0)
+X[2,:] = A**(2.0/3.0)
+X[1,:] = A
+X[0,:] = 1
+
+clf = skl.LinearRegression().fit(X.T, Energies)
+fity = clf.predict(X.T)
+
+# The mean squared error                               
+print("Mean squared error: %.2f" % mean_squared_error(Energies, fity))
+# Explained variance score: 1 is perfect prediction                                 
+print('Variance score: %.2f' % r2_score(Energies, fity))
+# Mean absolute error                                                           
+print('Mean absolute error: %.2f' % mean_absolute_error(Energies, fity))
+print(clf.coef_, clf.intercept_)
+
+
+_lambda = 0.1
+clf_ridge = skl.Ridge(alpha=_lambda).fit(X.T, Energies)
+
+E_ridge = clf_ridge.predict(X.T)
+
+# The mean squared error                               
+print("Mean squared error: %.2f" % mean_squared_error(Energies, E_ridge))
+# Explained variance score: 1 is perfect prediction                                 
+print('Variance score: %.2f' % r2_score(Energies, E_ridge))
+# Mean absolute error                                                           
+print('Mean absolute error: %.2f' % mean_absolute_error(Energies, E_ridge))
+print(clf_ridge.coef_, clf_ridge.intercept_)
+
+Masses['Eapprox']  = E_ridge
+# Generate a plot comparing the experimental with the fitted values values.
+fig, ax = plt.subplots()
+ax.set_xlabel(r'$A = N + Z$')
+ax.set_ylabel(r'$E_\mathrm{bind}\,/\mathrm{MeV}$')
+ax.plot(Masses['A'], Masses['Ebinding'], alpha=0.7, lw=2,
+            label='Ame2016')
+ax.plot(Masses['A'], Masses['Eapprox'], alpha=0.7, lw=2, c='m',
+            label='Fit')
+ax.legend()
+save_fig("Masses2016")
 plt.show()
 !ec
 
 
-Let us study the Q values associated with the removal of one or two nucleons from
+
+!bc pycod
+# Regression analysis using scikit-learn and Decisions trees
+# Common imports
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import sklearn.linear_model as skl
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+import os
+
+# Where to save the figures and data files
+PROJECT_ROOT_DIR = "Results"
+FIGURE_ID = "Results/FigureFiles"
+DATA_ID = "DataFiles/"
+
+if not os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+if not os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+if not os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+def image_path(fig_id):
+    return os.path.join(FIGURE_ID, fig_id)
+
+def data_path(dat_id):
+    return os.path.join(DATA_ID, dat_id)
+
+def save_fig(fig_id):
+    plt.savefig(image_path(fig_id) + ".png", format='png')
+
+infile = open(data_path("MassEval2016.dat"),'r')
+
+
+# Read the experimental data with Pandas
+Masses = pd.read_fwf(infile, usecols=(2,3,4,6,11),
+              names=('N', 'Z', 'A', 'Element', 'Ebinding'),
+              widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
+              header=39,
+              index_col=False)
+
+# Extrapolated values are indicated by '#' in place of the decimal place, so
+# the Ebinding column won't be numeric. Coerce to float and drop these entries.
+Masses['Ebinding'] = pd.to_numeric(Masses['Ebinding'], errors='coerce')
+Masses = Masses.dropna()
+# Convert from keV to MeV.
+Masses['Ebinding'] /= 1000
+
+# Group the DataFrame by nucleon number, A.
+Masses = Masses.groupby('A')
+# Find the rows of the grouped DataFrame with the maximum binding energy.
+Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
+A = Masses['A']
+Z = Masses['Z']
+N = Masses['N']
+Element = Masses['Element']
+Energies = Masses['Ebinding']
+# Now we set up the design matrix X
+X = np.zeros((5,len(A)))
+X[4,:] = A**(-1.0)
+X[3,:] = A**(-1.0/3.0)
+X[2,:] = A**(2.0/3.0)
+X[1,:] = A
+X[0,:] = 1
+
+
+#Decision Tree Regression
+from sklearn.tree import DecisionTreeRegressor
+regr_1=DecisionTreeRegressor(max_depth=5)
+regr_2=DecisionTreeRegressor(max_depth=7)
+regr_3=DecisionTreeRegressor(max_depth=9)
+regr_1.fit(X.T, Energies)
+regr_2.fit(X.T, Energies)
+regr_3.fit(X.T, Energies)
+
+
+y_1 = regr_1.predict(X.T)
+y_2 = regr_2.predict(X.T)
+y_3=regr_3.predict(X.T)
+Masses['Eapprox'] = y_1
+# Plot the results
+plt.figure()
+plt.plot(A, Energies, color="blue", label="Data", linewidth=2)
+plt.plot(A, y_1, color="red", label="max_depth=5", linewidth=2)
+plt.plot(A, y_2, color="green", label="max_depth=7", linewidth=2)
+plt.plot(A, y_3, color="m", label="max_depth=9", linewidth=2)
+
+plt.xlabel("$A$")
+plt.ylabel("$E$[MeV]")
+plt.title("Decision Tree Regression")
+plt.legend()
+save_fig("Masses2016Trees")
+plt.show()
+print(Masses)
+print(np.mean( (Energies-y_1)**2))
+!ec
+
+=== More on flexibility with pandas and xarray ===
+
+Let us study the $Q$ values associated with the removal of one or two nucleons from
 a nucleus. These are conventionally defined in terms of the one-nucleon and two-nucleon
 separation energies. The neutron separation energy is defined as 
 
@@ -793,12 +1008,86 @@ For protons we would have
 !et
 
 
+!bc pycod
+# Using pandas to compute separation energies 
+# Common imports
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+from pylab import plt, mpl
+plt.style.use('seaborn')
+mpl.rcParams['font.family'] = 'serif'
+
+def MakePlot(x,y, styles, labels, axlabels):
+    plt.figure(figsize=(10,6))
+    for i in range(len(x)):
+        plt.plot(x[i], y[i], styles[i], label = labels[i])
+        plt.xlabel(axlabels[0])
+        plt.ylabel(axlabels[1])
+    plt.legend(loc=0)
 
 
-# to do  make plots of separation energies
-# make fit using standard linreg in numpy
-# show functionality like mean, covariance and variance
-# don't use ML wordings before we switch to the linreg chapter
+
+# Where to save the figures and data files
+PROJECT_ROOT_DIR = "Results"
+FIGURE_ID = "Results/FigureFiles"
+DATA_ID = "DataFiles/"
+
+if not os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+if not os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+if not os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+def image_path(fig_id):
+    return os.path.join(FIGURE_ID, fig_id)
+
+def data_path(dat_id):
+    return os.path.join(DATA_ID, dat_id)
+
+def save_fig(fig_id):
+    plt.savefig(image_path(fig_id) + ".png", format='png')
+
+infile = open(data_path("MassEval2016.dat"),'r')
+
+
+# Read the experimental data with Pandas
+Masses = pd.read_fwf(infile, usecols=(2,3,4,6,11),
+              names=('N', 'Z', 'A', 'Element', 'Ebinding'),
+              widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
+              header=39,
+              index_col=False)
+
+# Extrapolated values are indicated by '#' in place of the decimal place, so
+# the Ebinding column won't be numeric. Coerce to float and drop these entries.
+Masses['Ebinding'] = pd.to_numeric(Masses['Ebinding'], errors='coerce')
+Masses = Masses.dropna()
+# Convert from keV to MeV.
+Masses['Ebinding'] /= 1000
+A = Masses['A']
+Z = Masses['Z']
+N = Masses['N']
+Element = Masses['Element']
+Energies = Masses['Ebinding']*A
+
+df = pd.DataFrame({'A':A,'Z':Z, 'N':N,'Element':Element,'Energies':Energies})
+Nucleus = df.loc[lambda df: df.Z==8, :]
+# drop cases with no number
+Nucleus = Nucleus.dropna()
+print(Nucleus)
+Nucleus['NeutronSeparationEnergies'] = Nucleus['Energies'].diff(+1)
+MakePlot([Nucleus.A], [Nucleus.NeutronSeparationEnergies], ['b'], ['Neutron Separation Energy'], ['$A$','$S_n$'])
+save_fig('Nucleus')
+plt.show()
+!ec
+
+
+
+
 
 ===== Simple linear regression model using _scikit-learn_ =====
 
@@ -1180,146 +1469,3 @@ plt.show()
 
 
 
-===== Concluding with another teaser, $k$-nearest neighbors with scikit-learn =====
-
-!bc pycod
-import numpy as np
-import matplotlib.pyplot as plt
-from IPython.display import display
-import sklearn
-from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.model_selection import train_test_split
-import mglearn
-X, y = mglearn.datasets.make_forge()
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
-from sklearn.neighbors import KNeighborsClassifier
-clf = KNeighborsClassifier(n_neighbors=3)
-clf.fit(X_train, y_train)
-KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',metric_params=None, n_jobs=1, n_neighbors=3, p=2,weights='uniform')
-
-clf.predict(X_test)
-
-clf.score(X_test, y_test)
-fig, axes = plt.subplots(1, 3, figsize=(10, 3))
-for n_neighbors, ax in zip([1, 3, 9], axes):
-        clf = KNeighborsClassifier(n_neighbors=n_neighbors).fit(X, y)
-        mglearn.plots.plot_2d_separator(clf, X, fill=True, eps=0.5, ax=ax, alpha=.4)
-        ax.scatter(X[:, 0], X[:, 1], c=y, s=60, cmap=mglearn.cm2)
-        ax.set_title("%d neighbor(s)" % n_neighbors)
-
-
-data = np.loadtxt('src/Hudson_Bay.csv', delimiter=',', skiprows=1)
-x = data[:,0]
-y = data[:,1]
-#x_train,  y_train = train_test_split(x, y, random_state=0)
-line = np.linspace(1900,1930,1000,endpoint=False).reshape(-1,1)
-reg = DecisionTreeRegressor(min_samples_split=3).fit(x.reshape(-1,1),y.reshape(-1,1))
-plt.plot(line, reg.predict(line), label="decision tree")
-regline = LinearRegression().fit(x.reshape(-1,1),y.reshape(-1,1))
-plt.plot(line, regline.predict(line), label= "Linear Regression")
-plt.plot(x, y, label= "Linear Regression")
-plt.show()
-
-!ec
-
-
-!bc pycod
-# Common imports
-import os
-
-# Where to save the figures and data files
-PROJECT_ROOT_DIR = "Results"
-FIGURE_ID = "Results/FigureFiles"
-DATA_ID = "DataFiles/"
-
-if not os.path.exists(PROJECT_ROOT_DIR):
-    os.mkdir(PROJECT_ROOT_DIR)
-
-if not os.path.exists(FIGURE_ID):
-    os.makedirs(FIGURE_ID)
-
-if not os.path.exists(DATA_ID):
-    os.makedirs(DATA_ID)
-
-def image_path(fig_id):
-    return os.path.join(FIGURE_ID, fig_id)
-
-def data_path(dat_id):
-    return os.path.join(DATA_ID, dat_id)
-
-def save_fig(fig_id):
-    plt.savefig(image_path(fig_id) + ".png", format='png')
-
-infile = open(data_path("MassEval2016.dat"),'r')
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
-
-"""
-This is taken from the data file of the mass 2016 evaluation.
-All files are 3436 lines long with 124 character per line.
-       Headers are 39 lines long.
-   col 1     :  Fortran character control: 1 = page feed  0 = line feed
-   format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f13.5,f11.5,f11.3,f9.3,1x,a2,f11.3,f9.3,1x,i3,1x,f12.5,f11.5
-   These formats are reflected in the pandas widths variable below, see the statement
-   widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
-   Pandas has also a variable header, with length 39 in this case.
-"""
-
-
-# Read the experimental data into a Pandas DataFrame.
-Masses = pd.read_fwf(infile, usecols=(2,3,4,11),
-              names=('N', 'Z', 'A', 'avEbind'),
-              widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
-              header=39,
-              index_col=False)
-
-# Extrapolated values are indicated by '#' in place of the decimal place, so
-# the avEbind column won't be numeric. Coerce to float and drop these entries.
-Masses['avEbind'] = pd.to_numeric(Masses['avEbind'], errors='coerce')
-Masses = Masses.dropna()
-# Also convert from keV to MeV.
-Masses['avEbind'] /= 1000
-
-# Group the DataFrame by nucleon number, A.
-Masses = Masses.groupby('A')
-# Find the rows of the grouped DataFrame with the maximum binding energy.
-maxavEbind = Masses.apply(lambda t: t[t.avEbind==t.avEbind.max()])
-
-# Add a column of estimated binding energies calculated using the SEMF.
-MassNumber = maxavEbind['A']
-Energies = maxavEbind['avEbind']
-
-# The function we want to fit to, only two terms here
-def func(A,a1, a2):
-    return a1*A-a2*(A**(2.0/3.0))
-# function to perform nonlinear least square with guess for a1 and a2
-popt, pcov = curve_fit(func, MassNumber, Energies, p0 = (16.0, 18.0))
-a1  = popt[0]
-a2 = popt[1]
-maxavEbind['Eapprox']  = a1*MassNumber-a2*(MassNumber**(2.0/3.0))
-print(maxavEbind)
-# Generate a plot comparing the experimental with the fitted values values.
-fig, ax = plt.subplots()
-ax.set_xlabel(r'$A = N + Z$')
-ax.set_ylabel(r'$E_\mathrm{bind}\,/\mathrm{MeV}$')
-ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
-            label='Ame2016')
-ax.plot(maxavEbind['A'], maxavEbind['Eapprox'], alpha=0.7, lw=2, c='m',
-            label='Fit')
-ax.legend()
-ax.set_ylim(6,10)
-save_fig("Masses2016")
-plt.show()
-
-
-
-
-
-
-!ec
-
-# add text on rewrapping of code

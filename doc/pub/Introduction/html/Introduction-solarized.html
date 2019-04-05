@@ -57,21 +57,6 @@ div { text-align: justify; text-justify: inter-word; }
 </style>
 
 
-<script src="https://sagecell.sagemath.org/static/jquery.min.js"></script>
-<script src="https://sagecell.sagemath.org/embedded_sagecell.js"></script>
-<link rel="stylesheet" type="text/css" href="https://sagecell.sagemath.org/static/sagecell_embed.css">
-<script>
-$(function () {
-    // Make the div with id 'mycell' a Sage cell
-    sagecell.makeSagecell({inputLocation:  '#mycell',
-                           template:       sagecell.templates.minimal,
-                           evalButtonText: 'Activate'});
-    // Make *any* div with class 'compute' a Sage cell
-    sagecell.makeSagecell({inputLocation: 'div.compute',
-                           evalButtonText: 'Evaluate'});
-});
-</script>
-
 </head>
 
 <!-- tocinfo
@@ -100,16 +85,15 @@ $(function () {
                None,
                '___sec15'),
               ('Organizing our data', 3, None, '___sec16'),
+              ('More on flexibility with pandas and xarray',
+               3,
+               None,
+               '___sec17'),
               ('Simple linear regression model using _scikit-learn_',
                2,
                None,
-               '___sec17'),
-              ('Random walk model', 3, None, '___sec18'),
-              ('Concluding with another teaser, $k$-nearest neighbors with '
-               'scikit-learn',
-               2,
-               None,
-               '___sec19')]}
+               '___sec18'),
+              ('Random walk model', 3, None, '___sec19')]}
 end of tocinfo -->
 
 <body>
@@ -151,7 +135,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Mar 30, 2019</h4></center> <!-- date -->
+<center><h4>Apr 5, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -688,17 +672,45 @@ Here are other examples where we use the <b>DataFrame</b> functionality to handl
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>                                                                               
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
 <span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
 <span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
-np.random.seed(<span style="color: #B452CD">100</span>)                                                                          
+np.random.seed(<span style="color: #B452CD">100</span>)
 <span style="color: #228B22"># setting up a 9 x 4 matrix</span>
-a = np.random.randn(<span style="color: #B452CD">9</span>,<span style="color: #B452CD">4</span>)
-df = pd.DataFrame(a)   
+rows = <span style="color: #B452CD">9</span>
+cols = <span style="color: #B452CD">4</span>
+a = np.random.randn(rows,cols)
+df = pd.DataFrame(a)
 display(df)
 <span style="color: #8B008B; font-weight: bold">print</span>(df.mean())
 <span style="color: #8B008B; font-weight: bold">print</span>(df.std())
 display(df**<span style="color: #B452CD">2</span>)
+
+
+df.columns = [<span style="color: #CD5555">&#39;First&#39;</span>, <span style="color: #CD5555">&#39;Second&#39;</span>, <span style="color: #CD5555">&#39;Third&#39;</span>, <span style="color: #CD5555">&#39;Fourth&#39;</span>]
+df.index = np.arange(<span style="color: #B452CD">9</span>)
+
+display(df)
+<span style="color: #8B008B; font-weight: bold">print</span>(df[<span style="color: #CD5555">&#39;Second&#39;</span>].mean() )
+<span style="color: #8B008B; font-weight: bold">print</span>(df.info())
+<span style="color: #8B008B; font-weight: bold">print</span>(df.describe())
+
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">pylab</span> <span style="color: #8B008B; font-weight: bold">import</span> plt, mpl
+plt.style.use(<span style="color: #CD5555">&#39;seaborn&#39;</span>)
+mpl.rcParams[<span style="color: #CD5555">&#39;font.family&#39;</span>] = <span style="color: #CD5555">&#39;serif&#39;</span>
+
+df.cumsum().plot(lw=<span style="color: #B452CD">2.0</span>, figsize=(<span style="color: #B452CD">10</span>,<span style="color: #B452CD">6</span>))
+<span style="color: #228B22">#plt.show()</span>
+
+
+df.plot.bar(figsize=(<span style="color: #B452CD">10</span>,<span style="color: #B452CD">6</span>), rot=<span style="color: #B452CD">15</span>)
+<span style="color: #228B22">#plt.show()</span>
+
+
+b = np.arange(<span style="color: #B452CD">16</span>).reshape((<span style="color: #B452CD">4</span>,<span style="color: #B452CD">4</span>))
+<span style="color: #8B008B; font-weight: bold">print</span>(b)
+
+df1 = pd.DataFrame(b)
 </pre></div>
 
 <h2 id="___sec14">Reading Data </h2>
@@ -934,38 +946,222 @@ variance and the covariance.
 
 <p>
 
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #228B22"># Regression analysis using scikit-learn functions</span>
+<span style="color: #228B22"># Common imports</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">skl</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.model_selection</span> <span style="color: #8B008B; font-weight: bold">import</span> train_test_split
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.metrics</span> <span style="color: #8B008B; font-weight: bold">import</span> mean_squared_error, r2_score, mean_absolute_error
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">os</span>
 
-<div class="compute"><script type="text/x-sage">
-import numpy as np
-from scipy.optimize import curve_fit
-from  matplotlib import pyplot as plt
-# Load in data file
-data = np.loadtxt("datafiles/bindingenergies.dat")
-# Make arrays containing A on x-axis and binding energies
-A = data[:,2]
-bexpt = data[:,3]
-# The function we want to fit to, only two terms here
-def func(A,a1, a2):
-    return a1*A-a2*(A**(2.0/3.0))
-# function to perform nonlinear least square with guess for a1 and a2
-popt, pcov = curve_fit(func, A, bexpt, p0 = (16.0, 18.0))
-a1  = popt[0]
-a2 = popt[1]
-liquiddrop = a1*A-a2*(A**(2.0/3.0))
+<span style="color: #228B22"># Where to save the figures and data files</span>
+PROJECT_ROOT_DIR = <span style="color: #CD5555">&quot;Results&quot;</span>
+FIGURE_ID = <span style="color: #CD5555">&quot;Results/FigureFiles&quot;</span>
+DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
 
-plt.plot(A, bexpt ,'bo', A, liquiddrop, 'ro')
-plt.axis([0,270,-1, 10.0])
-plt.xlabel(r'$A$')
-plt.ylabel(r'Binding energies in [MeV]')
-plt.legend(('Experiment','Liquid Drop'), loc='upper right')
-plt.title(r'Binding energies from experiment and liquid drop')
-plt.savefig('bindingenergies.pdf')
-plt.savefig('bindingenergies.png')
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">image_path</span>(fig_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(FIGURE_ID, fig_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">data_path</span>(dat_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(DATA_ID, dat_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">save_fig</span>(fig_id):
+    plt.savefig(image_path(fig_id) + <span style="color: #CD5555">&quot;.png&quot;</span>, format=<span style="color: #CD5555">&#39;png&#39;</span>)
+
+infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;MassEval2016.dat&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
+
+
+<span style="color: #228B22"># Read the experimental data with Pandas</span>
+Masses = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">6</span>,<span style="color: #B452CD">11</span>),
+              names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;Element&#39;</span>, <span style="color: #CD5555">&#39;Ebinding&#39;</span>),
+              widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
+              header=<span style="color: #B452CD">39</span>,
+              index_col=<span style="color: #658b00">False</span>)
+
+<span style="color: #228B22"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
+<span style="color: #228B22"># the Ebinding column won&#39;t be numeric. Coerce to float and drop these entries.</span>
+Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>] = pd.to_numeric(Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
+Masses = Masses.dropna()
+<span style="color: #228B22"># Convert from keV to MeV.</span>
+Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>] /= <span style="color: #B452CD">1000</span>
+
+<span style="color: #228B22"># Group the DataFrame by nucleon number, A.</span>
+Masses = Masses.groupby(<span style="color: #CD5555">&#39;A&#39;</span>)
+<span style="color: #228B22"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
+Masses = Masses.apply(<span style="color: #8B008B; font-weight: bold">lambda</span> t: t[t.Ebinding==t.Ebinding.max()])
+A = Masses[<span style="color: #CD5555">&#39;A&#39;</span>]
+Z = Masses[<span style="color: #CD5555">&#39;Z&#39;</span>]
+N = Masses[<span style="color: #CD5555">&#39;N&#39;</span>]
+Element = Masses[<span style="color: #CD5555">&#39;Element&#39;</span>]
+Energies = Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>]
+
+<span style="color: #8B008B; font-weight: bold">print</span>(Masses)
+
+
+<span style="color: #228B22"># Now we set up the design matrix X</span>
+X = np.zeros((<span style="color: #B452CD">5</span>,<span style="color: #658b00">len</span>(A)))
+X[<span style="color: #B452CD">4</span>,:] = A**(-<span style="color: #B452CD">1.0</span>)
+X[<span style="color: #B452CD">3</span>,:] = A**(-<span style="color: #B452CD">1.0</span>/<span style="color: #B452CD">3.0</span>)
+X[<span style="color: #B452CD">2</span>,:] = A**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>)
+X[<span style="color: #B452CD">1</span>,:] = A
+X[<span style="color: #B452CD">0</span>,:] = <span style="color: #B452CD">1</span>
+
+clf = skl.LinearRegression().fit(X.T, Energies)
+fity = clf.predict(X.T)
+
+<span style="color: #228B22"># The mean squared error                               </span>
+<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&quot;Mean squared error: %.2f&quot;</span> % mean_squared_error(Energies, fity))
+<span style="color: #228B22"># Explained variance score: 1 is perfect prediction                                 </span>
+<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Variance score: %.2f&#39;</span> % r2_score(Energies, fity))
+<span style="color: #228B22"># Mean absolute error                                                           </span>
+<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Mean absolute error: %.2f&#39;</span> % mean_absolute_error(Energies, fity))
+<span style="color: #8B008B; font-weight: bold">print</span>(clf.coef_, clf.intercept_)
+
+
+_lambda = <span style="color: #B452CD">0.1</span>
+clf_ridge = skl.Ridge(alpha=_lambda).fit(X.T, Energies)
+
+E_ridge = clf_ridge.predict(X.T)
+
+<span style="color: #228B22"># The mean squared error                               </span>
+<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&quot;Mean squared error: %.2f&quot;</span> % mean_squared_error(Energies, E_ridge))
+<span style="color: #228B22"># Explained variance score: 1 is perfect prediction                                 </span>
+<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Variance score: %.2f&#39;</span> % r2_score(Energies, E_ridge))
+<span style="color: #228B22"># Mean absolute error                                                           </span>
+<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Mean absolute error: %.2f&#39;</span> % mean_absolute_error(Energies, E_ridge))
+<span style="color: #8B008B; font-weight: bold">print</span>(clf_ridge.coef_, clf_ridge.intercept_)
+
+Masses[<span style="color: #CD5555">&#39;Eapprox&#39;</span>]  = E_ridge
+<span style="color: #228B22"># Generate a plot comparing the experimental with the fitted values values.</span>
+fig, ax = plt.subplots()
+ax.set_xlabel(<span style="color: #CD5555">r&#39;$A = N + Z$&#39;</span>)
+ax.set_ylabel(<span style="color: #CD5555">r&#39;$E_\mathrm{bind}\,/\mathrm{MeV}$&#39;</span>)
+ax.plot(Masses[<span style="color: #CD5555">&#39;A&#39;</span>], Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>,
+            label=<span style="color: #CD5555">&#39;Ame2016&#39;</span>)
+ax.plot(Masses[<span style="color: #CD5555">&#39;A&#39;</span>], Masses[<span style="color: #CD5555">&#39;Eapprox&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>, c=<span style="color: #CD5555">&#39;m&#39;</span>,
+            label=<span style="color: #CD5555">&#39;Fit&#39;</span>)
+ax.legend()
+save_fig(<span style="color: #CD5555">&quot;Masses2016&quot;</span>)
 plt.show()
-
-</script></div>
+</pre></div>
 <p>
-Let us study the Q values associated with the removal of one or two nucleons from
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #228B22"># Regression analysis using scikit-learn and Decisions trees</span>
+<span style="color: #228B22"># Common imports</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">skl</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.model_selection</span> <span style="color: #8B008B; font-weight: bold">import</span> train_test_split
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.metrics</span> <span style="color: #8B008B; font-weight: bold">import</span> mean_squared_error, r2_score, mean_absolute_error
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">os</span>
+
+<span style="color: #228B22"># Where to save the figures and data files</span>
+PROJECT_ROOT_DIR = <span style="color: #CD5555">&quot;Results&quot;</span>
+FIGURE_ID = <span style="color: #CD5555">&quot;Results/FigureFiles&quot;</span>
+DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">image_path</span>(fig_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(FIGURE_ID, fig_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">data_path</span>(dat_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(DATA_ID, dat_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">save_fig</span>(fig_id):
+    plt.savefig(image_path(fig_id) + <span style="color: #CD5555">&quot;.png&quot;</span>, format=<span style="color: #CD5555">&#39;png&#39;</span>)
+
+infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;MassEval2016.dat&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
+
+
+<span style="color: #228B22"># Read the experimental data with Pandas</span>
+Masses = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">6</span>,<span style="color: #B452CD">11</span>),
+              names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;Element&#39;</span>, <span style="color: #CD5555">&#39;Ebinding&#39;</span>),
+              widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
+              header=<span style="color: #B452CD">39</span>,
+              index_col=<span style="color: #658b00">False</span>)
+
+<span style="color: #228B22"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
+<span style="color: #228B22"># the Ebinding column won&#39;t be numeric. Coerce to float and drop these entries.</span>
+Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>] = pd.to_numeric(Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
+Masses = Masses.dropna()
+<span style="color: #228B22"># Convert from keV to MeV.</span>
+Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>] /= <span style="color: #B452CD">1000</span>
+
+<span style="color: #228B22"># Group the DataFrame by nucleon number, A.</span>
+Masses = Masses.groupby(<span style="color: #CD5555">&#39;A&#39;</span>)
+<span style="color: #228B22"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
+Masses = Masses.apply(<span style="color: #8B008B; font-weight: bold">lambda</span> t: t[t.Ebinding==t.Ebinding.max()])
+A = Masses[<span style="color: #CD5555">&#39;A&#39;</span>]
+Z = Masses[<span style="color: #CD5555">&#39;Z&#39;</span>]
+N = Masses[<span style="color: #CD5555">&#39;N&#39;</span>]
+Element = Masses[<span style="color: #CD5555">&#39;Element&#39;</span>]
+Energies = Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>]
+<span style="color: #228B22"># Now we set up the design matrix X</span>
+X = np.zeros((<span style="color: #B452CD">5</span>,<span style="color: #658b00">len</span>(A)))
+X[<span style="color: #B452CD">4</span>,:] = A**(-<span style="color: #B452CD">1.0</span>)
+X[<span style="color: #B452CD">3</span>,:] = A**(-<span style="color: #B452CD">1.0</span>/<span style="color: #B452CD">3.0</span>)
+X[<span style="color: #B452CD">2</span>,:] = A**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>)
+X[<span style="color: #B452CD">1</span>,:] = A
+X[<span style="color: #B452CD">0</span>,:] = <span style="color: #B452CD">1</span>
+
+
+<span style="color: #228B22">#Decision Tree Regression</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.tree</span> <span style="color: #8B008B; font-weight: bold">import</span> DecisionTreeRegressor
+regr_1=DecisionTreeRegressor(max_depth=<span style="color: #B452CD">5</span>)
+regr_2=DecisionTreeRegressor(max_depth=<span style="color: #B452CD">7</span>)
+regr_3=DecisionTreeRegressor(max_depth=<span style="color: #B452CD">9</span>)
+regr_1.fit(X.T, Energies)
+regr_2.fit(X.T, Energies)
+regr_3.fit(X.T, Energies)
+
+
+y_1 = regr_1.predict(X.T)
+y_2 = regr_2.predict(X.T)
+y_3=regr_3.predict(X.T)
+Masses[<span style="color: #CD5555">&#39;Eapprox&#39;</span>] = y_1
+<span style="color: #228B22"># Plot the results</span>
+plt.figure()
+plt.plot(A, Energies, color=<span style="color: #CD5555">&quot;blue&quot;</span>, label=<span style="color: #CD5555">&quot;Data&quot;</span>, linewidth=<span style="color: #B452CD">2</span>)
+plt.plot(A, y_1, color=<span style="color: #CD5555">&quot;red&quot;</span>, label=<span style="color: #CD5555">&quot;max_depth=5&quot;</span>, linewidth=<span style="color: #B452CD">2</span>)
+plt.plot(A, y_2, color=<span style="color: #CD5555">&quot;green&quot;</span>, label=<span style="color: #CD5555">&quot;max_depth=7&quot;</span>, linewidth=<span style="color: #B452CD">2</span>)
+plt.plot(A, y_3, color=<span style="color: #CD5555">&quot;m&quot;</span>, label=<span style="color: #CD5555">&quot;max_depth=9&quot;</span>, linewidth=<span style="color: #B452CD">2</span>)
+
+plt.xlabel(<span style="color: #CD5555">&quot;$A$&quot;</span>)
+plt.ylabel(<span style="color: #CD5555">&quot;$E$[MeV]&quot;</span>)
+plt.title(<span style="color: #CD5555">&quot;Decision Tree Regression&quot;</span>)
+plt.legend()
+save_fig(<span style="color: #CD5555">&quot;Masses2016Trees&quot;</span>)
+plt.show()
+<span style="color: #8B008B; font-weight: bold">print</span>(Masses)
+<span style="color: #8B008B; font-weight: bold">print</span>(np.mean( (Energies-y_1)**<span style="color: #B452CD">2</span>))
+</pre></div>
+
+<h3 id="___sec17">More on flexibility with pandas and xarray </h3>
+
+<p>
+Let us study the \( Q \) values associated with the removal of one or two nucleons from
 a nucleus. These are conventionally defined in terms of the one-nucleon and two-nucleon
 separation energies. The neutron separation energy is defined as 
 
@@ -1011,12 +1207,85 @@ $$
 $$
 
 <p>
-<!-- to do  make plots of separation energies -->
-<!-- make fit using standard linreg in numpy -->
-<!-- show functionality like mean, covariance and variance -->
-<!-- don't use ML wordings before we switch to the linreg chapter -->
 
-<h2 id="___sec17">Simple linear regression model using <b>scikit-learn</b> </h2>
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #228B22"># Using pandas to compute separation energies </span>
+<span style="color: #228B22"># Common imports</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">os</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">pylab</span> <span style="color: #8B008B; font-weight: bold">import</span> plt, mpl
+plt.style.use(<span style="color: #CD5555">&#39;seaborn&#39;</span>)
+mpl.rcParams[<span style="color: #CD5555">&#39;font.family&#39;</span>] = <span style="color: #CD5555">&#39;serif&#39;</span>
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">MakePlot</span>(x,y, styles, labels, axlabels):
+    plt.figure(figsize=(<span style="color: #B452CD">10</span>,<span style="color: #B452CD">6</span>))
+    <span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(<span style="color: #658b00">len</span>(x)):
+        plt.plot(x[i], y[i], styles[i], label = labels[i])
+        plt.xlabel(axlabels[<span style="color: #B452CD">0</span>])
+        plt.ylabel(axlabels[<span style="color: #B452CD">1</span>])
+    plt.legend(loc=<span style="color: #B452CD">0</span>)
+
+
+
+<span style="color: #228B22"># Where to save the figures and data files</span>
+PROJECT_ROOT_DIR = <span style="color: #CD5555">&quot;Results&quot;</span>
+FIGURE_ID = <span style="color: #CD5555">&quot;Results/FigureFiles&quot;</span>
+DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">image_path</span>(fig_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(FIGURE_ID, fig_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">data_path</span>(dat_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(DATA_ID, dat_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">save_fig</span>(fig_id):
+    plt.savefig(image_path(fig_id) + <span style="color: #CD5555">&quot;.png&quot;</span>, format=<span style="color: #CD5555">&#39;png&#39;</span>)
+
+infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;MassEval2016.dat&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
+
+
+<span style="color: #228B22"># Read the experimental data with Pandas</span>
+Masses = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">6</span>,<span style="color: #B452CD">11</span>),
+              names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;Element&#39;</span>, <span style="color: #CD5555">&#39;Ebinding&#39;</span>),
+              widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
+              header=<span style="color: #B452CD">39</span>,
+              index_col=<span style="color: #658b00">False</span>)
+
+<span style="color: #228B22"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
+<span style="color: #228B22"># the Ebinding column won&#39;t be numeric. Coerce to float and drop these entries.</span>
+Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>] = pd.to_numeric(Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
+Masses = Masses.dropna()
+<span style="color: #228B22"># Convert from keV to MeV.</span>
+Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>] /= <span style="color: #B452CD">1000</span>
+A = Masses[<span style="color: #CD5555">&#39;A&#39;</span>]
+Z = Masses[<span style="color: #CD5555">&#39;Z&#39;</span>]
+N = Masses[<span style="color: #CD5555">&#39;N&#39;</span>]
+Element = Masses[<span style="color: #CD5555">&#39;Element&#39;</span>]
+Energies = Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>]*A
+
+df = pd.DataFrame({<span style="color: #CD5555">&#39;A&#39;</span>:A,<span style="color: #CD5555">&#39;Z&#39;</span>:Z, <span style="color: #CD5555">&#39;N&#39;</span>:N,<span style="color: #CD5555">&#39;Element&#39;</span>:Element,<span style="color: #CD5555">&#39;Energies&#39;</span>:Energies})
+Nucleus = df.loc[<span style="color: #8B008B; font-weight: bold">lambda</span> df: df.Z==<span style="color: #B452CD">8</span>, :]
+<span style="color: #228B22"># drop cases with no number</span>
+Nucleus = Nucleus.dropna()
+<span style="color: #8B008B; font-weight: bold">print</span>(Nucleus)
+Nucleus[<span style="color: #CD5555">&#39;NeutronSeparationEnergies&#39;</span>] = Nucleus[<span style="color: #CD5555">&#39;Energies&#39;</span>].diff(+<span style="color: #B452CD">1</span>)
+MakePlot([Nucleus.A], [Nucleus.NeutronSeparationEnergies], [<span style="color: #CD5555">&#39;b&#39;</span>], [<span style="color: #CD5555">&#39;Neutron Separation Energy&#39;</span>], [<span style="color: #CD5555">&#39;$A$&#39;</span>,<span style="color: #CD5555">&#39;$S_n$&#39;</span>])
+save_fig(<span style="color: #CD5555">&#39;Nucleus&#39;</span>)
+plt.show()
+</pre></div>
+
+<h2 id="___sec18">Simple linear regression model using <b>scikit-learn</b> </h2>
 
 <p>
 We start with perhaps our simplest possible example, using <b>scikit-learn</b> to perform linear regression analysis on a data set produced by us. 
@@ -1303,7 +1572,7 @@ plt.show()
 <p>
 Similarly, using <b>R</b>, we can perform similar studies.
 
-<h3 id="___sec18">Random walk model </h3>
+<h3 id="___sec19">Random walk model </h3>
 
 We end with a  teaser on how to fit a random walk with up to tenth-order polynomial as well as using decision trees as algorithm.
 
@@ -1397,143 +1666,6 @@ plt.xlabel(<span style="color: #CD5555">&quot;Data&quot;</span>)
 plt.ylabel(<span style="color: #CD5555">&quot;Darget&quot;</span>)
 plt.title(<span style="color: #CD5555">&quot;Decision Tree Regression&quot;</span>)
 plt.legend()
-plt.show()
-</pre></div>
-
-<h2 id="___sec19">Concluding with another teaser, \( k \)-nearest neighbors with scikit-learn </h2>
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">sklearn</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.tree</span> <span style="color: #8B008B; font-weight: bold">import</span> DecisionTreeRegressor
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.model_selection</span> <span style="color: #8B008B; font-weight: bold">import</span> train_test_split
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">mglearn</span>
-X, y = mglearn.datasets.make_forge()
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=<span style="color: #B452CD">0</span>)
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.neighbors</span> <span style="color: #8B008B; font-weight: bold">import</span> KNeighborsClassifier
-clf = KNeighborsClassifier(n_neighbors=<span style="color: #B452CD">3</span>)
-clf.fit(X_train, y_train)
-KNeighborsClassifier(algorithm=<span style="color: #CD5555">&#39;auto&#39;</span>, leaf_size=<span style="color: #B452CD">30</span>, metric=<span style="color: #CD5555">&#39;minkowski&#39;</span>,metric_params=<span style="color: #658b00">None</span>, n_jobs=<span style="color: #B452CD">1</span>, n_neighbors=<span style="color: #B452CD">3</span>, p=<span style="color: #B452CD">2</span>,weights=<span style="color: #CD5555">&#39;uniform&#39;</span>)
-
-clf.predict(X_test)
-
-clf.score(X_test, y_test)
-fig, axes = plt.subplots(<span style="color: #B452CD">1</span>, <span style="color: #B452CD">3</span>, figsize=(<span style="color: #B452CD">10</span>, <span style="color: #B452CD">3</span>))
-<span style="color: #8B008B; font-weight: bold">for</span> n_neighbors, ax <span style="color: #8B008B">in</span> <span style="color: #658b00">zip</span>([<span style="color: #B452CD">1</span>, <span style="color: #B452CD">3</span>, <span style="color: #B452CD">9</span>], axes):
-        clf = KNeighborsClassifier(n_neighbors=n_neighbors).fit(X, y)
-        mglearn.plots.plot_2d_separator(clf, X, fill=<span style="color: #658b00">True</span>, eps=<span style="color: #B452CD">0.5</span>, ax=ax, alpha=.<span style="color: #B452CD">4</span>)
-        ax.scatter(X[:, <span style="color: #B452CD">0</span>], X[:, <span style="color: #B452CD">1</span>], c=y, s=<span style="color: #B452CD">60</span>, cmap=mglearn.cm2)
-        ax.set_title(<span style="color: #CD5555">&quot;%d neighbor(s)&quot;</span> % n_neighbors)
-
-
-data = np.loadtxt(<span style="color: #CD5555">&#39;src/Hudson_Bay.csv&#39;</span>, delimiter=<span style="color: #CD5555">&#39;,&#39;</span>, skiprows=<span style="color: #B452CD">1</span>)
-x = data[:,<span style="color: #B452CD">0</span>]
-y = data[:,<span style="color: #B452CD">1</span>]
-<span style="color: #228B22">#x_train,  y_train = train_test_split(x, y, random_state=0)</span>
-line = np.linspace(<span style="color: #B452CD">1900</span>,<span style="color: #B452CD">1930</span>,<span style="color: #B452CD">1000</span>,endpoint=<span style="color: #658b00">False</span>).reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>)
-reg = DecisionTreeRegressor(min_samples_split=<span style="color: #B452CD">3</span>).fit(x.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>),y.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>))
-plt.plot(line, reg.predict(line), label=<span style="color: #CD5555">&quot;decision tree&quot;</span>)
-regline = LinearRegression().fit(x.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>),y.reshape(-<span style="color: #B452CD">1</span>,<span style="color: #B452CD">1</span>))
-plt.plot(line, regline.predict(line), label= <span style="color: #CD5555">&quot;Linear Regression&quot;</span>)
-plt.plot(x, y, label= <span style="color: #CD5555">&quot;Linear Regression&quot;</span>)
-plt.show()
-</pre></div>
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #228B22"># Common imports</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">os</span>
-
-<span style="color: #228B22"># Where to save the figures and data files</span>
-PROJECT_ROOT_DIR = <span style="color: #CD5555">&quot;Results&quot;</span>
-FIGURE_ID = <span style="color: #CD5555">&quot;Results/FigureFiles&quot;</span>
-DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
-
-<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(PROJECT_ROOT_DIR):
-    os.mkdir(PROJECT_ROOT_DIR)
-
-<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(FIGURE_ID):
-    os.makedirs(FIGURE_ID)
-
-<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(DATA_ID):
-    os.makedirs(DATA_ID)
-
-<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">image_path</span>(fig_id):
-    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(FIGURE_ID, fig_id)
-
-<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">data_path</span>(dat_id):
-    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(DATA_ID, dat_id)
-
-<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">save_fig</span>(fig_id):
-    plt.savefig(image_path(fig_id) + <span style="color: #CD5555">&quot;.png&quot;</span>, format=<span style="color: #CD5555">&#39;png&#39;</span>)
-
-infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;MassEval2016.dat&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
-
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">scipy.optimize</span> <span style="color: #8B008B; font-weight: bold">import</span> curve_fit
-
-<span style="color: #CD5555">&quot;&quot;&quot;</span>
-<span style="color: #CD5555">This is taken from the data file of the mass 2016 evaluation.</span>
-<span style="color: #CD5555">All files are 3436 lines long with 124 character per line.</span>
-<span style="color: #CD5555">       Headers are 39 lines long.</span>
-<span style="color: #CD5555">   col 1     :  Fortran character control: 1 = page feed  0 = line feed</span>
-<span style="color: #CD5555">   format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f13.5,f11.5,f11.3,f9.3,1x,a2,f11.3,f9.3,1x,i3,1x,f12.5,f11.5</span>
-<span style="color: #CD5555">   These formats are reflected in the pandas widths variable below, see the statement</span>
-<span style="color: #CD5555">   widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),</span>
-<span style="color: #CD5555">   Pandas has also a variable header, with length 39 in this case.</span>
-<span style="color: #CD5555">&quot;&quot;&quot;</span>
-
-
-<span style="color: #228B22"># Read the experimental data into a Pandas DataFrame.</span>
-Masses = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">11</span>),
-              names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;avEbind&#39;</span>),
-              widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
-              header=<span style="color: #B452CD">39</span>,
-              index_col=<span style="color: #658b00">False</span>)
-
-<span style="color: #228B22"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
-<span style="color: #228B22"># the avEbind column won&#39;t be numeric. Coerce to float and drop these entries.</span>
-Masses[<span style="color: #CD5555">&#39;avEbind&#39;</span>] = pd.to_numeric(Masses[<span style="color: #CD5555">&#39;avEbind&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
-Masses = Masses.dropna()
-<span style="color: #228B22"># Also convert from keV to MeV.</span>
-Masses[<span style="color: #CD5555">&#39;avEbind&#39;</span>] /= <span style="color: #B452CD">1000</span>
-
-<span style="color: #228B22"># Group the DataFrame by nucleon number, A.</span>
-Masses = Masses.groupby(<span style="color: #CD5555">&#39;A&#39;</span>)
-<span style="color: #228B22"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
-maxavEbind = Masses.apply(<span style="color: #8B008B; font-weight: bold">lambda</span> t: t[t.avEbind==t.avEbind.max()])
-
-<span style="color: #228B22"># Add a column of estimated binding energies calculated using the SEMF.</span>
-MassNumber = maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>]
-Energies = maxavEbind[<span style="color: #CD5555">&#39;avEbind&#39;</span>]
-
-<span style="color: #228B22"># The function we want to fit to, only two terms here</span>
-<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">func</span>(A,a1, a2):
-    <span style="color: #8B008B; font-weight: bold">return</span> a1*A-a2*(A**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>))
-<span style="color: #228B22"># function to perform nonlinear least square with guess for a1 and a2</span>
-popt, pcov = curve_fit(func, MassNumber, Energies, p0 = (<span style="color: #B452CD">16.0</span>, <span style="color: #B452CD">18.0</span>))
-a1  = popt[<span style="color: #B452CD">0</span>]
-a2 = popt[<span style="color: #B452CD">1</span>]
-maxavEbind[<span style="color: #CD5555">&#39;Eapprox&#39;</span>]  = a1*MassNumber-a2*(MassNumber**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>))
-<span style="color: #8B008B; font-weight: bold">print</span>(maxavEbind)
-<span style="color: #228B22"># Generate a plot comparing the experimental with the fitted values values.</span>
-fig, ax = plt.subplots()
-ax.set_xlabel(<span style="color: #CD5555">r&#39;$A = N + Z$&#39;</span>)
-ax.set_ylabel(<span style="color: #CD5555">r&#39;$E_\mathrm{bind}\,/\mathrm{MeV}$&#39;</span>)
-ax.plot(maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>], maxavEbind[<span style="color: #CD5555">&#39;avEbind&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>,
-            label=<span style="color: #CD5555">&#39;Ame2016&#39;</span>)
-ax.plot(maxavEbind[<span style="color: #CD5555">&#39;A&#39;</span>], maxavEbind[<span style="color: #CD5555">&#39;Eapprox&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>, c=<span style="color: #CD5555">&#39;m&#39;</span>,
-            label=<span style="color: #CD5555">&#39;Fit&#39;</span>)
-ax.legend()
-ax.set_ylim(<span style="color: #B452CD">6</span>,<span style="color: #B452CD">10</span>)
-save_fig(<span style="color: #CD5555">&quot;Masses2016&quot;</span>)
 plt.show()
 </pre></div>
 <p>
