@@ -64,11 +64,11 @@ Element = Masses['Element']
 Energies = Masses['Ebinding']*A
 
 df = pd.DataFrame({'A':A,'Z':Z, 'N':N,'Element':Element,'Energies':Energies})
-Oxygen = df.loc[lambda df: df.Z==8, :]
-Oxygen['NSeparationEnergies'] = Oxygen['Energies'].diff(+1)
-# preparing for plot
-x = Oxygen.A
-y = Oxygen.NSeparationEnergies 
-MakePlot([x], [y], ['b'], ['Binding energy'], ['A','Energy'])
-save_fig('Oxygen')
+Nucleus = df.loc[lambda df: df.Z==8, :]
+# drop cases with no number
+Nucleus = Nucleus.dropna()
+print(Nucleus)
+Nucleus['NeutronSeparationEnergies'] = Nucleus['Energies'].diff(+1)
+MakePlot([Nucleus.A], [Nucleus.NeutronSeparationEnergies], ['b'], ['Neutron Separation Energy'], ['$A$','$S_n$'])
+save_fig('Nucleus')
 plt.show()
