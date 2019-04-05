@@ -3,10 +3,20 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import sklearn.linear_model as skl
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 import os
+from pylab import plt, mpl
+plt.style.use('seaborn')
+mpl.rcParams['font.family'] = 'serif'
+
+def MakePlot(x,y, styles, labels, axlabels):
+    plt.figure(figsize=(10,6))
+    for i in range(len(x)):
+        plt.plot(x[i], y[i], styles[i], label = labels[i])
+        plt.xlabel(axlabels[0])
+        plt.ylabel(axlabels[1])
+    plt.legend(loc=0)
+
+
 
 # Where to save the figures and data files
 PROJECT_ROOT_DIR = "Results"
@@ -41,28 +51,24 @@ Masses = pd.read_fwf(infile, usecols=(2,3,4,6,11),
               header=39,
               index_col=False)
 
-
 # Extrapolated values are indicated by '#' in place of the decimal place, so
 # the Ebinding column won't be numeric. Coerce to float and drop these entries.
 Masses['Ebinding'] = pd.to_numeric(Masses['Ebinding'], errors='coerce')
 Masses = Masses.dropna()
 # Convert from keV to MeV.
 Masses['Ebinding'] /= 1000
-
-
-# Group the DataFrame by nucleon number, A.
-Masses = Masses.groupby('A')
-# Find the rows of the grouped DataFrame with the maximum binding energy.
-Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
 A = Masses['A']
 Z = Masses['Z']
 N = Masses['N']
 Element = Masses['Element']
-Energies = Masses['Ebinding']
-
-
+Energies = Masses['Ebinding']*A
 
 df = pd.DataFrame({'A':A,'Z':Z, 'N':N,'Element':Element,'Energies':Energies})
-
-print(df)
-
+Oxygen = df.loc[lambda df: df.Z==8, :]
+Oxygen['NSeparationEnergies'] = Oxygen['Energies'].diff(+1)
+# preparing for plot
+x = Oxygen.A
+y = Oxygen.NSeparationEnergies 
+MakePlot([x], [y], ['b'], ['Binding energy'], ['A','Energy'])
+save_fig('Oxygen')
+plt.show()
