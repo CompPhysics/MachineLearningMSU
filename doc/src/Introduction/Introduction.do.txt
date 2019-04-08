@@ -1584,3 +1584,7 @@ plt.show()
 === A final example ===
 
 Can we fit nuclear interactions using neural networks? 
+
+Should we include material about radii?
+
+Make fit without polynomial forcing
