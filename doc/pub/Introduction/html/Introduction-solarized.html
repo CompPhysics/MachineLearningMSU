@@ -93,7 +93,8 @@ div { text-align: justify; text-justify: inter-word; }
                2,
                None,
                '___sec18'),
-              ('Random walk model', 3, None, '___sec19')]}
+              ('Random walk model', 3, None, '___sec19'),
+              ('A final example', 3, None, '___sec20')]}
 end of tocinfo -->
 
 <body>
@@ -135,7 +136,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Apr 6, 2019</h4></center> <!-- date -->
+<center><h4>Apr 7, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -1288,8 +1289,17 @@ plt.show()
 <h2 id="___sec18">Simple linear regression model using <b>scikit-learn</b> </h2>
 
 <p>
-We start with perhaps our simplest possible example, using <b>scikit-learn</b> to perform linear regression analysis on a data set produced by us. 
-What follows is a simple Python code where we have defined  function \( y \) in terms of the variable \( x \). Both are defined as vectors of dimension \( 1\times 100 \). The entries to the vector \( \hat{x} \)  are given by random numbers generated with a uniform distribution with entries \( x_i \in [0,1] \) (more about probability distribution functions later). These values are then used to define a function \( y(x) \) (tabulated again as a vector) with a linear dependence on \( x \) plus a random noise added via the normal distribution.
+We start with perhaps our simplest possible example, using <b>scikit-learn</b> to perform linear regression analysis on a data set produced by us.
+
+<p>
+What follows is a simple Python code where we have defined a function
+\( y \) in terms of the variable \( x \). Both are defined as vectors with  \( 100 \) entries. 
+The numbers in the vector \( \hat{x} \) are given
+by random numbers generated with a uniform distribution with entries
+\( x_i \in [0,1] \) (more about probability distribution functions
+later). These values are then used to define a function \( y(x) \)
+(tabulated again as a vector) with a linear dependence on \( x \) plus a
+random noise added via the normal distribution.
 
 <p>
 The Numpy functions are imported used the <b>import numpy as np</b>
@@ -1366,7 +1376,7 @@ $$
 
 <p>
 where \( x \) is defined as before.  Does the fit look better? Indeed, by
-reducing the role of the normal distribution we see immediately that
+reducing the role of the noise given by normal distribution we see immediately that
 our linear prediction seemingly reproduces better the training
 set. However, this testing 'by the eye' is obviouly not satisfactory in the
 long run. Here we have only defined the training data and our model, and 
@@ -1768,7 +1778,11 @@ ax.set_ylabel(<span style="color: #CD5555">&quot;$\eta$&quot;</span>)
 ax.set_xlabel(<span style="color: #CD5555">&quot;$\lambda$&quot;</span>)
 plt.show()
 </pre></div>
+
+<h3 id="___sec20">A final example </h3>
+
 <p>
+Can we fit nuclear interactions using neural networks? 
 
 <!-- ------------------- end of main content --------------- -->
 

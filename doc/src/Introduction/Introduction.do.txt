@@ -1092,7 +1092,15 @@ plt.show()
 ===== Simple linear regression model using _scikit-learn_ =====
 
 We start with perhaps our simplest possible example, using _scikit-learn_ to perform linear regression analysis on a data set produced by us. 
-What follows is a simple Python code where we have defined  function $y$ in terms of the variable $x$. Both are defined as vectors of dimension $1\times 100$. The entries to the vector $\hat{x}$  are given by random numbers generated with a uniform distribution with entries $x_i \in [0,1]$ (more about probability distribution functions later). These values are then used to define a function $y(x)$ (tabulated again as a vector) with a linear dependence on $x$ plus a random noise added via the normal distribution.
+
+What follows is a simple Python code where we have defined a function
+$y$ in terms of the variable $x$. Both are defined as vectors with  $100$ entries. 
+The numbers in the vector $\hat{x}$ are given
+by random numbers generated with a uniform distribution with entries
+$x_i \in [0,1]$ (more about probability distribution functions
+later). These values are then used to define a function $y(x)$
+(tabulated again as a vector) with a linear dependence on $x$ plus a
+random noise added via the normal distribution.
 
 
 The Numpy functions are imported used the _import numpy as np_
@@ -1167,7 +1175,7 @@ y = 10x+0.01 \times N(0,1),
 !et
 
 where $x$ is defined as before.  Does the fit look better? Indeed, by
-reducing the role of the normal distribution we see immediately that
+reducing the role of the noise given by normal distribution we see immediately that
 our linear prediction seemingly reproduces better the training
 set. However, this testing 'by the eye' is obviouly not satisfactory in the
 long run. Here we have only defined the training data and our model, and 
@@ -1570,3 +1578,9 @@ plt.show()
 
 
 !ec
+
+
+
+=== A final example ===
+
+Can we fit nuclear interactions using neural networks? 
