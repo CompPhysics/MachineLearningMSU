@@ -51,7 +51,7 @@ Masses['Ebinding'] /= 1000
 # Group the DataFrame by nucleon number, A.
 Masses = Masses.groupby('A')
 # Find the rows of the grouped DataFrame with the maximum binding energy.
-Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding])
+Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
 A = Masses['A']
 Z = Masses['Z']
 N = Masses['N']

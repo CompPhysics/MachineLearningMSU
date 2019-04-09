@@ -51,26 +51,26 @@ Masses['Ebinding'] /= 1000
 # Group the DataFrame by nucleon number, A.
 Masses = Masses.groupby('A')
 # Find the rows of the grouped DataFrame with the maximum binding energy.
-Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
+Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding])
 A = Masses['A']
 Z = Masses['Z']
 N = Masses['N']
 Element = Masses['Element']
 Energies = Masses['Ebinding']
 # Now we set up the design matrix X
-X = np.zeros((5,len(A)))
-X[4,:] = A**(-1.0)
-X[3,:] = A**(-1.0/3.0)
-X[2,:] = A**(2.0/3.0)
-X[1,:] = A
-X[0,:] = 1
+X = np.zeros((1,len(A)))
+#X[4,:] = A**(-1.0)
+#X[3,:] = A**(-1.0/3.0)
+#X[2,:] = A**(2.0/3.0)
+X[0,:] = A
+#X[0,:] = 1
 
 
 #Decision Tree Regression
 from sklearn.tree import DecisionTreeRegressor
 regr_1=DecisionTreeRegressor(max_depth=5)
 regr_2=DecisionTreeRegressor(max_depth=7)
-regr_3=DecisionTreeRegressor(max_depth=9)
+regr_3=DecisionTreeRegressor(max_depth=15)
 regr_1.fit(X.T, Energies)
 regr_2.fit(X.T, Energies)
 regr_3.fit(X.T, Energies)
@@ -79,7 +79,7 @@ regr_3.fit(X.T, Energies)
 y_1 = regr_1.predict(X.T)
 y_2 = regr_2.predict(X.T)
 y_3=regr_3.predict(X.T)
-Masses['Eapprox'] = y_1
+Masses['Eapprox'] = y_3
 # Plot the results
 plt.figure()
 plt.plot(A, Energies, color="blue", label="Data", linewidth=2)
@@ -94,7 +94,7 @@ plt.legend()
 save_fig("Masses2016Trees")
 plt.show()
 print(Masses)
-print(np.mean( (Energies-y_1)**2))
+print(np.mean( (Energies-y_3)**2))
 
 
 
