@@ -1585,6 +1585,7 @@ plt.show()
 
 Can we fit nuclear interactions using neural networks? 
 
-Should we include material about radii?
+Should we include material about radii? Figure out how to do this
 
-Make fit without polynomial forcing
+
+
