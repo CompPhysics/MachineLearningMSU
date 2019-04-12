@@ -64,15 +64,15 @@ _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 - 1030am-11am: Break, coffee, tea etc
 - 11am-12pm: Logistic Regression (MHJ)
 - 12pm-1pm: Lunch
-- 1pm-2pm: Optimization of functions, gradient descent and stochastic gradient descent (MHJ?)
-- 2pm-3pm: Decision Trees and Random Forests  (MH or MK or MHJ?)
+- 1pm-2pm: Optimization of functions, gradient descent and stochastic gradient descent (MHJ)
+- 2pm-3pm: Decision Trees and Random Forests  (MHJ)
 - 3pm-330pm: Break, coffee, tea etc
 - 330pm-6pm: Hands-on sessions with selected Physics examples
 
 _Tuesday May 21, 2019_:
 
-- 830am-930am: Neural networks  (MHJ?)
-- 930am-1030am: Neural networks and deep learning  (MK?)
+- 830am-930am: Neural networks  (MHJ)
+- 930am-1030am: Neural networks and deep learning  (MK)
 - 1030am-11am: Break, coffee, tea etc
 - 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments (MK)
 - 12pm-1pm: Lunch
