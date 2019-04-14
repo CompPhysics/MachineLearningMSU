@@ -7,6 +7,20 @@ DATE: today
 
 
 !split
+===== Why Linear Rgeression (aka Ordinary Least Squares) =====
+
+Fitting a continuous function with linear parameterization in terms of the parameters  $\bm{\beta}$.
+* Method of choice for fitting a continuous function!
+* Gives an excellent (and well-known) introduction to central Machine Learning features with _understandable pedagogical_ links to other methods like _Neural Networks_, _Support Vector Machines_ etc
+* Analytical expression for the parameters $\bm{\beta}$
+* Analytical expressions for statistical propertiers like mean values, variances, confidence intervals and more
+* Analytical relation with probabilistic interpretations 
+* Easy to introduce basic concepts like bias-variance tradeoff, cross-validation, resampling and regularization techniques and many other ML topics
+* Easy to code! And links well with classification problems and logistic regression and neural networks
+* Allows for _easy_ hands-on understanding of gradient descent methods
+* and many more features
+
+!split
 ===== Regression analysis, overarching aims  =====
 !bblock
 
