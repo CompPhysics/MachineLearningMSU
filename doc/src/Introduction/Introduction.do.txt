@@ -1588,4 +1588,4 @@ Can we fit nuclear interactions using neural networks?
 Should we include material about radii? Figure out how to do this
 
 
-
+Add more material about pandas and how to read data
