@@ -71,7 +71,7 @@ _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
 _Tuesday May 21, 2019_:
 
-- 830am-930am: Neural networks  (MHJ)
+- 830am-930am: Neural networks  (MK)
 - 930am-1030am: Neural networks and deep learning  (MK)
 - 1030am-11am: Break, coffee, tea etc
 - 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments (MK)
@@ -83,13 +83,13 @@ _Tuesday May 21, 2019_:
 
 _Wednesday May 22, 2019_:
 
-- 830am-930am:  Introduction to exploratory data analysis and unsupervised learning: PCA  (MH)
-- 930am-1030am: Clustering and introduction to nonlinear dimension reduction: k-means and t-SNE  (MH)
+- 830am-930am: Reinforcement learning  (MK) 
+- 930am-1030am:  Introduction to exploratory data analysis and unsupervised learning: PCA  (MH)
 - 1030am-11am: Break, coffee, tea etc
-- 11am-12pm: Nonlinear dimension reduction: Spectral graph theory and manifold learning (MH)
+- 11am-12pm: Clustering and introduction to nonlinear dimension reduction: k-means and t-SNE  (MH)
 - 12pm-1pm: Lunch
-- 1pm-2pm:  Reinforcement learning  (MK?)
-- 2pm-3pm:  Boltzmann machines and many-body problems  (MHJ?)
+- 1pm-2pm:  Nonlinear dimension reduction: Spectral graph theory and manifold learning (MH)
+- 2pm-3pm:  Boltzmann machines and many-body problems  (MHJ)
 - 3pm-330pm: Break, coffee, tea etc
 - 3pm-6pm: Hands-on sessions with examples from quantum mechanical many-body problems
 
