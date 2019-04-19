@@ -95,7 +95,8 @@ _Wednesday May 22, 2019_:
 
 _Thursday May 23, 2019_:
 
-- 9am-12pm: Hands-on sessions with examples from nuclear physics, experiment and theory
+- 9am-10am: Current state of Machine Learning research (MK)
+- 10am-12pm: Hands-on sessions with examples from nuclear physics, experiment and theory
 - Coffee, tea etc at 1030am
 - 12pm-1pm: Lunch
 - 1pm-5pm: Hands-on sessions with examples from nuclear physics, experiment and theory. 
