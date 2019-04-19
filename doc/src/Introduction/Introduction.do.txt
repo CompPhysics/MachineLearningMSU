@@ -29,12 +29,10 @@ _scikit-learn_.
 These examples will serve us the purpose of getting
 started. Furthermore, they allow us to catch more than two birds with
 a stone. They will allow us to bring in some programming specific
-topics and tools as well as showing the power of various Python (and
-R) packages for machine learning and statistical data analysis. In the
-lectures on linear algebra we cover in more detail various programming
-features of languages like Python and C++ (and other), we will also
-look into more specific linear functions which are relevant for the
-various algorithms we will discuss. Here, we will mainly focus on two
+topics and tools as well as showing the power of various Python 
+packages for machine learning and statistical data analysis.  
+
+Here, we will mainly focus on two
 specific Python packages for Machine Learning, scikit-learn and
 tensorflow (see below for links etc).  Moreover, the examples we
 introduce will serve as inputs to many of our discussions later, as
@@ -49,16 +47,14 @@ get started with programming.
 
 We will make extensive use of Python as programming language and its
 myriad of available libraries.  You will find
-IPython/Jupyter notebooks invaluable in your work.  You can run _R_
+Jupyter notebooks invaluable in your work.  You can run _R_
 codes in the Jupyter/IPython notebooks, with the immediate benefit of
 visualizing your data. You can also use compiled languages like C++,
 Rust, Fortran etc if you prefer. The focus in these lectures will be
-on Python, but we will provide many code examples for those of you who
-prefer R or compiled languages. You can integrate C++ codes and R in for example
-a Jupyter notebook. 
+on Python.
 
 
-If you have Python installed (we recommend Python3) and you feel
+If you have Python installed (we strongly recommend Python3) and you feel
 pretty familiar with installing different packages, we recommend that
 you install the following Python packages via _pip_ as 
 
@@ -104,9 +100,18 @@ analysis environment, available for free and under a commercial
 license.
 
 ===== Useful Python packages =====
-Here we list several useful Python packages.
+Here we list several useful Python packages you may wish to install (if you use anaconda many of these are already there)
 
-And more text to come in order to get started with Python
+* Numpy
+* Pandas
+* Xarray
+* Scipy
+* Matplotlib
+* autodiff
+* sympy
+* Scikit-learn
+* tensorflow and keras
+* pytorch
 
 
 ===== Installing R, C++, cython or Julia =====
@@ -120,7 +125,7 @@ Python afecionado, feel free to explore R as well.  Jupyter/Ipython
 notebook allows you to run _R_ codes interactively in your
 browser. The software library _R_ is tuned to statistically analysis
 and allows for an easy usage of the tools we will discuss in these
-texts.
+lectures.
 
 To install _R_ with Jupyter notebook 
 "follow the link here":"https://mpacer.org/maths/r-kernel-for-ipython-notebook"
@@ -453,6 +458,8 @@ plt.show()
 !ec
 
 
+===== Meet the Pandas =====
+
 Another useful Python package is
 "pandas":"https://pandas.pydata.org/", which is an open source library
 providing high-performance, easy-to-use data structures and data
@@ -511,7 +518,7 @@ df1 = pd.DataFrame(b)
 !ec
 
 
-===== Reading Data =====
+===== Reading Data and fitting Nuclear Masses =====
 
 In order to study various Machine Learning algorithms, we need to
 access data. Acccessing data is an essential step in all machine
@@ -524,572 +531,24 @@ loading data from databases and interacting with online sources
 like web application programming interfaces (APIs).
 
 In handling various input formats, we will mainly stay with _pandas_,
-a Python package which allows us in a seamless and painless way to
+a Python package which allows us, in a seamless and painless way, to
 deal with a multitude of formats, from standard _csv_ (comma separated
 values) files, via _excel_, _html_ to _hdf5_ formats.  With _pandas_
 and the _DataFrame_  and _Series_ functionalities we are able to convert text data
-into the calculational formats we need for a specific algorithm.
+into the calculational formats we need for a specific algorithm. And our code is going to be 
+pretty close the basic mathematical expressions.
 
 We are going to start with a classic case from nuclear physics, namely all
 available data on binding energies. We will then show some of the
 strength of packages like _scikit-learn_ in fitting binding energies to
-specific functions using linear regression.
+specific functions using linear regression first. Then, as a teaser, we will show you how 
+you can easily implement other algorithms like decision trees and random forests and neural networks.
 
+But before we really start with nuclear data, let's just look at some simpler polynomial fitting cases, such as,
+(don't be offended) fitting straight lines!
 
-=== Brief reminder on masses and binding energies ===
 
-Let us remind ourselves about some basic features about binding
-energies.  A basic quantity which can be measured for the ground
-states of nuclei is the atomic mass $M(N, Z)$ of the neutral atom with
-atomic mass number $A$ and charge $Z$. The number of neutrons is $N$.
-
-Atomic masses are usually tabulated in terms of the mass excess defined by
-!bt
-\[
-\Delta M(N, Z) =  M(N, Z) - uA,
-\]
-!et
-where $u$ is the Atomic Mass Unit 
-!bt
-\[
-u = M(^{12}\mathrm{C})/12 = 931.49386 \hspace{0.1cm} \mathrm{MeV}/c^2.
-\]
-!et
-The nucleon masses are
-!bt 
-\[
-m_p = 938.27203(8)\hspace{0.1cm} \mathrm{MeV}/c^2 = 1.00727646688(13)u,
-\] 
-!et
-and
-!bt 
-\[
-m_n = 939.56536(8)\hspace{0.1cm} \mathrm{MeV}/c^2 = 1.0086649156(6)u.
-\]
-!et
-
-In the "2016 mass evaluation of by W.J.Huang, G.Audi, M.Wang, F.G.Kondev, S.Naimi and X.Xu":"http://nuclearmasses.org/resources_folder/Wang_2017_Chinese_Phys_C_41_030003.pdf"
-there are xxx nuclei measured with an
-accuracy of xxx MeV or better, and xxx nuclei measured with an
-accuracy of greater than xxx MeV. For heavy nuclei one observes
-several chains of nuclei with a constant $N-Z$ value whose masses are
-obtained from the energy released in $\alpha$-decay.
-
-
-The nuclear binding energy is defined as the energy required to break
-up a given nucleus into its constituent parts of $N$ neutrons and $Z$
-protons. In terms of the atomic masses $M(N, Z)$ the binding energy is
-defined by
-
-
-!bt
-\[
-BE(N, Z) = ZM_H c^2 + Nm_n c^2 - M(N, Z)c^2 ,
-\]
-!et
-where $M_H$ is the mass of the hydrogen atom and $m_n$ is the mass of the neutron.
-In terms of the mass excess the binding energy is given by
-!bt
-\[
-BE(N, Z) = Z\Delta_H c^2 + N\Delta_n c^2 -\Delta(N, Z)c^2 ,
-\]
-!et
-where $\Delta_H c^2 = 7.2890$ MeV and $\Delta_n c^2 = 8.0713$ MeV.
-
-
-A popular and physically intuitive model which can be used to parametrize 
-the experimental binding energies as function of $A$, is the so-called 
-_liquid drop model_. The ansatz is based on the following expression
-
-!bt
-\[ 
-BE(N,Z) = a_1A-a_2A^{2/3}-a_3\frac{Z^2}{A^{1/3}}-a_4\frac{(N-Z)^2}{A},
-\]
-!et
-
-where $A$ stands for the number of nucleons and the $a_i$s are parameters which are determined by a fit 
-to the experimental data.  
-
-
-
-
-To arrive at the above expression we have assumed that we can make the following assumptions:
-
- * There is a volume term $a_1A$ proportional with the number of nucleons (the energy is also an extensive quantity). When an assembly of nucleons of the same size is packed together into the smallest volume, each interior nucleon has a certain number of other nucleons in contact with it. This contribution is proportional to the volume.
-
- * There is a surface energy term $a_2A^{2/3}$. The assumption here is that a nucleon at the surface of a nucleus interacts with fewer other nucleons than one in the interior of the nucleus and hence its binding energy is less. This surface energy term takes that into account and is therefore negative and is proportional to the surface area.
-
-
- * There is a Coulomb energy term $a_3\frac{Z^2}{A^{1/3}}$. The electric repulsion between each pair of protons in a nucleus yields less binding. 
-
- * There is an asymmetry term $a_4\frac{(N-Z)^2}{A}$. This term is associated with the Pauli exclusion principle and reflects the fact that the proton-neutron interaction is more attractive on the average than the neutron-neutron and proton-proton interactions.
-
-We could also add a so-called pairing term, which is a correction term that
-arises from the tendency of proton pairs and neutron pairs to
-occur. An even number of particles is more stable than an odd number. 
-
-
-=== Organizing our data ===
-
-Let us start with reading and organizing our data. This will also allow us to present _matplotlib_, 
-a powerful Python package for plotting.  We start with the compilation of masses and binding energies from 2016.
-After having downloaded this file to our own computer, we are now ready to read the file and start structuring our data.
-
-
-We start with preparing folders for storing our calculations and the data file over masses and binding energies.
-!bc pycod
-# Common imports
-import os
-
-# Where to save the figures and data files
-PROJECT_ROOT_DIR = "Results"
-FIGURE_ID = "Results/FigureFiles"
-DATA_ID = "DataFiles/"
-
-if not os.path.exists(PROJECT_ROOT_DIR):
-    os.mkdir(PROJECT_ROOT_DIR)
-
-if not os.path.exists(FIGURE_ID):
-    os.makedirs(FIGURE_ID)
-
-if not os.path.exists(DATA_ID):
-    os.makedirs(DATA_ID)
-
-def image_path(fig_id):
-    return os.path.join(FIGURE_ID, fig_id)
-
-def data_path(dat_id):
-    return os.path.join(DATA_ID, dat_id)
-
-def save_fig(fig_id):
-    plt.savefig(image_path(fig_id) + ".png", format='png')
-
-infile = open(data_path("MassEval2016.dat"),'r')
-!ec
-
-Thereafter we import _numpy_, _pandas_ and _matpplotlib_. 
-!bc pycod
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-!ec
-Our next step is to read the data on experimental binding energies and reorganize them as functions of the mass number $A$ and the number of protons $Z$ and neutrons $N$ using _pandas_.  Before we do this it is always (unless you have a binary file or other types of compressed data) to actually open the file and simply take a look at it!
-In particular, the program that outputs the final nuclear masses is written in Fortran with a specific format, that is (extracted from the file itself) we have
-!bc pycod 
-"""                                                                                                                         
-This is taken from the data file of the mass 2016 evaluation.                                                               
-All files are 3436 lines long with 124 character per line.                                                                  
-       Headers are 39 lines long.                                                                                           
-   col 1     :  Fortran character control: 1 = page feed  0 = line feed                                                     
-   format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f13.5,f11.5,f11.3,f9.3,1x,a2,f11.3,f9.3,1x,i3,1x,f12.5,f11.5                     
-   These formats are reflected in the pandas widths variable below, see the statement                                       
-   widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),                                                            
-   Pandas has also a variable header, with length 39 in this case.                                                          
-"""
-!ec
-The data we are interested in are in columns 2, 3, 4 and 11, giving us the number of neutrons, protons, mass numbers and binding energies, respectively. The data are in fixed-width formatted lines and we will covert them into the _pandas_ DataFrame structure.
-!bc pycod 
-# Read the experimental data into a Pandas DataFrame.
-Masses = pd.read_fwf(infile, usecols=(2,3,4,11),
-              names=('N', 'Z', 'A', 'avEbind'),
-              widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
-              header=39,
-              index_col=False)
-
-# Extrapolated values are indicated by '#' in place of the decimal place, so
-# the avEbind column is not numeric. Coerce to float and drop these entries.
-Masses['avEbind'] = pd.to_numeric(df['avEbind'], errors='coerce')
-Masses = Masses.dropna()
-# Here we change from units of keV to units of MeV
-Masses['avEbind'] /= 1000
-!ec
-
-With _pandas_ we can regroup the data and organize everything by nucleon number
-!bc pycod
-# Group the masses by nucleon number A.
-Masses = Masses.groupby('A')
-# Find the rows of the grouped DataFrame with the maximum binding energy.
-maxavEbind = Masses.apply(lambda t: t[t.avEbind==t.avEbind.max()])
-!ec
-Let us now see how we can use _pandas_ to print out the data. We limit ourselves to printing the first 30 values.
-
-!bc pycod
-# Generate a plot comparing the experimental with the SEMF values.
-fig, ax = plt.subplots()
-ax.plot(maxavEbind['A'], maxavEbind['avEbind'], alpha=0.7, lw=2,
-            label='Ame2003')
-ax.set_xlabel(r'$A = N + Z$')
-ax.set_ylabel(r'$E_\mathrm{bind}\,/\mathrm{MeV}$')
-ax.legend()
-save_fig("Masses2016")
-plt.show()
-
-!ec
-
-We see how easy it is to reorganize the data using _pandas_. If we
-were to do these operations in C/C++ or Fortran, we would have had to
-write various functions/subroutines which perform the above
-reorganizations for us.  Having reorganized the data, we can now start
-to make some simple fits using both the functionalities in _numpy_ and
-_scikitlearn_ afterwards. Our first attempt is to make a fit using the
-standard least squares functionality of _numpy_. Here we will also
-show functionalities like the computation of the mean values, the
-variance and the covariance. 
-
-
-!bc pycod
-
-# Regression analysis using scikit-learn functions
-# Common imports
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import sklearn.linear_model as skl
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-import os
-
-# Where to save the figures and data files
-PROJECT_ROOT_DIR = "Results"
-FIGURE_ID = "Results/FigureFiles"
-DATA_ID = "DataFiles/"
-
-if not os.path.exists(PROJECT_ROOT_DIR):
-    os.mkdir(PROJECT_ROOT_DIR)
-
-if not os.path.exists(FIGURE_ID):
-    os.makedirs(FIGURE_ID)
-
-if not os.path.exists(DATA_ID):
-    os.makedirs(DATA_ID)
-
-def image_path(fig_id):
-    return os.path.join(FIGURE_ID, fig_id)
-
-def data_path(dat_id):
-    return os.path.join(DATA_ID, dat_id)
-
-def save_fig(fig_id):
-    plt.savefig(image_path(fig_id) + ".png", format='png')
-
-infile = open(data_path("MassEval2016.dat"),'r')
-
-
-# Read the experimental data with Pandas
-Masses = pd.read_fwf(infile, usecols=(2,3,4,6,11),
-              names=('N', 'Z', 'A', 'Element', 'Ebinding'),
-              widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
-              header=39,
-              index_col=False)
-
-# Extrapolated values are indicated by '#' in place of the decimal place, so
-# the Ebinding column won't be numeric. Coerce to float and drop these entries.
-Masses['Ebinding'] = pd.to_numeric(Masses['Ebinding'], errors='coerce')
-Masses = Masses.dropna()
-# Convert from keV to MeV.
-Masses['Ebinding'] /= 1000
-
-# Group the DataFrame by nucleon number, A.
-Masses = Masses.groupby('A')
-# Find the rows of the grouped DataFrame with the maximum binding energy.
-Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
-A = Masses['A']
-Z = Masses['Z']
-N = Masses['N']
-Element = Masses['Element']
-Energies = Masses['Ebinding']
-
-print(Masses)
-
-
-# Now we set up the design matrix X
-X = np.zeros((5,len(A)))
-X[4,:] = A**(-1.0)
-X[3,:] = A**(-1.0/3.0)
-X[2,:] = A**(2.0/3.0)
-X[1,:] = A
-X[0,:] = 1
-
-clf = skl.LinearRegression().fit(X.T, Energies)
-fity = clf.predict(X.T)
-
-# The mean squared error                               
-print("Mean squared error: %.2f" % mean_squared_error(Energies, fity))
-# Explained variance score: 1 is perfect prediction                                 
-print('Variance score: %.2f' % r2_score(Energies, fity))
-# Mean absolute error                                                           
-print('Mean absolute error: %.2f' % mean_absolute_error(Energies, fity))
-print(clf.coef_, clf.intercept_)
-
-
-_lambda = 0.1
-clf_ridge = skl.Ridge(alpha=_lambda).fit(X.T, Energies)
-
-E_ridge = clf_ridge.predict(X.T)
-
-# The mean squared error                               
-print("Mean squared error: %.2f" % mean_squared_error(Energies, E_ridge))
-# Explained variance score: 1 is perfect prediction                                 
-print('Variance score: %.2f' % r2_score(Energies, E_ridge))
-# Mean absolute error                                                           
-print('Mean absolute error: %.2f' % mean_absolute_error(Energies, E_ridge))
-print(clf_ridge.coef_, clf_ridge.intercept_)
-
-Masses['Eapprox']  = E_ridge
-# Generate a plot comparing the experimental with the fitted values values.
-fig, ax = plt.subplots()
-ax.set_xlabel(r'$A = N + Z$')
-ax.set_ylabel(r'$E_\mathrm{bind}\,/\mathrm{MeV}$')
-ax.plot(Masses['A'], Masses['Ebinding'], alpha=0.7, lw=2,
-            label='Ame2016')
-ax.plot(Masses['A'], Masses['Eapprox'], alpha=0.7, lw=2, c='m',
-            label='Fit')
-ax.legend()
-save_fig("Masses2016")
-plt.show()
-!ec
-
-
-
-!bc pycod
-# Regression analysis using scikit-learn and Decisions trees
-# Common imports
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import sklearn.linear_model as skl
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-import os
-
-# Where to save the figures and data files
-PROJECT_ROOT_DIR = "Results"
-FIGURE_ID = "Results/FigureFiles"
-DATA_ID = "DataFiles/"
-
-if not os.path.exists(PROJECT_ROOT_DIR):
-    os.mkdir(PROJECT_ROOT_DIR)
-
-if not os.path.exists(FIGURE_ID):
-    os.makedirs(FIGURE_ID)
-
-if not os.path.exists(DATA_ID):
-    os.makedirs(DATA_ID)
-
-def image_path(fig_id):
-    return os.path.join(FIGURE_ID, fig_id)
-
-def data_path(dat_id):
-    return os.path.join(DATA_ID, dat_id)
-
-def save_fig(fig_id):
-    plt.savefig(image_path(fig_id) + ".png", format='png')
-
-infile = open(data_path("MassEval2016.dat"),'r')
-
-
-# Read the experimental data with Pandas
-Masses = pd.read_fwf(infile, usecols=(2,3,4,6,11),
-              names=('N', 'Z', 'A', 'Element', 'Ebinding'),
-              widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
-              header=39,
-              index_col=False)
-
-# Extrapolated values are indicated by '#' in place of the decimal place, so
-# the Ebinding column won't be numeric. Coerce to float and drop these entries.
-Masses['Ebinding'] = pd.to_numeric(Masses['Ebinding'], errors='coerce')
-Masses = Masses.dropna()
-# Convert from keV to MeV.
-Masses['Ebinding'] /= 1000
-
-# Group the DataFrame by nucleon number, A.
-Masses = Masses.groupby('A')
-# Find the rows of the grouped DataFrame with the maximum binding energy.
-Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
-A = Masses['A']
-Z = Masses['Z']
-N = Masses['N']
-Element = Masses['Element']
-Energies = Masses['Ebinding']
-# Now we set up the design matrix X
-X = np.zeros((5,len(A)))
-X[4,:] = A**(-1.0)
-X[3,:] = A**(-1.0/3.0)
-X[2,:] = A**(2.0/3.0)
-X[1,:] = A
-X[0,:] = 1
-
-
-#Decision Tree Regression
-from sklearn.tree import DecisionTreeRegressor
-regr_1=DecisionTreeRegressor(max_depth=5)
-regr_2=DecisionTreeRegressor(max_depth=7)
-regr_3=DecisionTreeRegressor(max_depth=9)
-regr_1.fit(X.T, Energies)
-regr_2.fit(X.T, Energies)
-regr_3.fit(X.T, Energies)
-
-
-y_1 = regr_1.predict(X.T)
-y_2 = regr_2.predict(X.T)
-y_3=regr_3.predict(X.T)
-Masses['Eapprox'] = y_1
-# Plot the results
-plt.figure()
-plt.plot(A, Energies, color="blue", label="Data", linewidth=2)
-plt.plot(A, y_1, color="red", label="max_depth=5", linewidth=2)
-plt.plot(A, y_2, color="green", label="max_depth=7", linewidth=2)
-plt.plot(A, y_3, color="m", label="max_depth=9", linewidth=2)
-
-plt.xlabel("$A$")
-plt.ylabel("$E$[MeV]")
-plt.title("Decision Tree Regression")
-plt.legend()
-save_fig("Masses2016Trees")
-plt.show()
-print(Masses)
-print(np.mean( (Energies-y_1)**2))
-!ec
-
-=== More on flexibility with pandas and xarray ===
-
-Let us study the $Q$ values associated with the removal of one or two nucleons from
-a nucleus. These are conventionally defined in terms of the one-nucleon and two-nucleon
-separation energies. The neutron separation energy is defined as 
-
-!bt
-\[
-S_n= -Q_n= BE(N,Z)-BE(N-1,Z),
-\]
-!et
-and the proton separation energy reads
-!bt
-\[
-S_p= -Q_p= BE(N,Z)-BE(N,Z-1).
-\]
-!et
-The two-neutron separation energy is defined as
-!bt
-\[
-S_{2n}= -Q_{2n}= BE(N,Z)-BE(N-2,Z),
-\]
-!et
-and  the two-proton separation energy is given by
-!bt
-\[
-S_{2p}= -Q_{2p}= BE(N,Z)-BE(N,Z-2).
-\]
-!et
-
-Using say the neutron separation energies (alternatively the proton separation energies)
-!bt
-\[
-S_n= -Q_n= BE(N,Z)-BE(N-1,Z),
-\]
-!et
-we can define the so-called energy gap for neutrons (or protons) as 
-!bt
-\[
-\Delta S_n= BE(N,Z)-BE(N-1,Z)-\left(BE(N+1,Z)-BE(N,Z)\right),
-\]
-!et
-or 
-!bt
-\[
-\Delta S_n= 2BE(N,Z)-BE(N-1,Z)-BE(N+1,Z).
-\]
-!et
-This quantity can in turn be used to determine which nuclei are magic or not. 
-For protons we would have 
-!bt
-\[
-\Delta S_p= 2BE(N,Z)-BE(N,Z-1)-BE(N,Z+1).
-\]
-!et
-
-
-!bc pycod
-# Using pandas to compute separation energies 
-# Common imports
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import os
-from pylab import plt, mpl
-plt.style.use('seaborn')
-mpl.rcParams['font.family'] = 'serif'
-
-def MakePlot(x,y, styles, labels, axlabels):
-    plt.figure(figsize=(10,6))
-    for i in range(len(x)):
-        plt.plot(x[i], y[i], styles[i], label = labels[i])
-        plt.xlabel(axlabels[0])
-        plt.ylabel(axlabels[1])
-    plt.legend(loc=0)
-
-
-
-# Where to save the figures and data files
-PROJECT_ROOT_DIR = "Results"
-FIGURE_ID = "Results/FigureFiles"
-DATA_ID = "DataFiles/"
-
-if not os.path.exists(PROJECT_ROOT_DIR):
-    os.mkdir(PROJECT_ROOT_DIR)
-
-if not os.path.exists(FIGURE_ID):
-    os.makedirs(FIGURE_ID)
-
-if not os.path.exists(DATA_ID):
-    os.makedirs(DATA_ID)
-
-def image_path(fig_id):
-    return os.path.join(FIGURE_ID, fig_id)
-
-def data_path(dat_id):
-    return os.path.join(DATA_ID, dat_id)
-
-def save_fig(fig_id):
-    plt.savefig(image_path(fig_id) + ".png", format='png')
-
-infile = open(data_path("MassEval2016.dat"),'r')
-
-
-# Read the experimental data with Pandas
-Masses = pd.read_fwf(infile, usecols=(2,3,4,6,11),
-              names=('N', 'Z', 'A', 'Element', 'Ebinding'),
-              widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),
-              header=39,
-              index_col=False)
-
-# Extrapolated values are indicated by '#' in place of the decimal place, so
-# the Ebinding column won't be numeric. Coerce to float and drop these entries.
-Masses['Ebinding'] = pd.to_numeric(Masses['Ebinding'], errors='coerce')
-Masses = Masses.dropna()
-# Convert from keV to MeV.
-Masses['Ebinding'] /= 1000
-A = Masses['A']
-Z = Masses['Z']
-N = Masses['N']
-Element = Masses['Element']
-Energies = Masses['Ebinding']*A
-
-df = pd.DataFrame({'A':A,'Z':Z, 'N':N,'Element':Element,'Energies':Energies})
-Nucleus = df.loc[lambda df: df.Z==8, :]
-# drop cases with no number
-Nucleus = Nucleus.dropna()
-print(Nucleus)
-Nucleus['NeutronSeparationEnergies'] = Nucleus['Energies'].diff(+1)
-MakePlot([Nucleus.A], [Nucleus.NeutronSeparationEnergies], ['b'], ['Neutron Separation Energy'], ['$A$','$S_n$'])
-save_fig('Nucleus')
-plt.show()
-!ec
-
-
-
-
-
-===== Simple linear regression model using _scikit-learn_ =====
+=== Simple linear regression model using _scikit-learn_ ===
 
 We start with perhaps our simplest possible example, using _scikit-learn_ to perform linear regression analysis on a data set produced by us. 
 
@@ -1221,7 +680,7 @@ the relative error as
 \epsilon_{\mathrm{relative}}= \frac{\vert \hat{y} -\hat{\tilde{y}}\vert}{\vert \hat{y}\vert}.
 \]
 !et
-We can modify easily the above Python code and plot the relative instead
+We can modify easily the above Python code and plot the relative error instead
 !bc pycod
 import numpy as np
 import matplotlib.pyplot as plt
@@ -1314,8 +773,8 @@ where we have defined the mean value  of $\hat{y}$ as
 \bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
 \]
 !et
-Another quantity will meet again in our discussions of regression analysis is 
- mean absolute error (MAE), a risk metric corresponding to the expected value of the absolute error loss or what we call the $l1$-norm loss. In our discussion above we presented the relative error.
+Another quantity taht we will meet again in our discussions of regression analysis is 
+ the mean absolute error (MAE), a risk metric corresponding to the expected value of the absolute error loss or what we call the $l1$-norm loss. In our discussion above we presented the relative error.
 The MAE is defined as follows
 !bt
 \[
@@ -1378,100 +837,313 @@ Similarly, using _R_, we can perform similar studies.
 
 
 
-=== Random walk model ===
-We end with a  teaser on how to fit a random walk with up to tenth-order polynomial as well as using decision trees as algorithm. 
+=== Brief reminder on masses and binding energies ===
 
+Let us return to nuclear physics and remind ourselves briefly about some basic features about binding
+energies.  A basic quantity which can be measured for the ground
+states of nuclei is the atomic mass $M(N, Z)$ of the neutral atom with
+atomic mass number $A$ and charge $Z$. The number of neutrons is $N$.
+
+Atomic masses are usually tabulated in terms of the mass excess defined by
+!bt
+\[
+\Delta M(N, Z) =  M(N, Z) - uA,
+\]
+!et
+where $u$ is the Atomic Mass Unit 
+!bt
+\[
+u = M(^{12}\mathrm{C})/12 = 931.49386 \hspace{0.1cm} \mathrm{MeV}/c^2.
+\]
+!et
+The nucleon masses are
+!bt 
+\[
+m_p = 938.27203(8)\hspace{0.1cm} \mathrm{MeV}/c^2 = 1.00727646688(13)u,
+\] 
+!et
+and
+!bt 
+\[
+m_n = 939.56536(8)\hspace{0.1cm} \mathrm{MeV}/c^2 = 1.0086649156(6)u.
+\]
+!et
+
+In the "2016 mass evaluation of by W.J.Huang, G.Audi, M.Wang, F.G.Kondev, S.Naimi and X.Xu":"http://nuclearmasses.org/resources_folder/Wang_2017_Chinese_Phys_C_41_030003.pdf"
+there are xxx nuclei measured with an
+accuracy of xxx MeV or better, and xxx nuclei measured with an
+accuracy of greater than xxx MeV. For heavy nuclei one observes
+several chains of nuclei with a constant $N-Z$ value whose masses are
+obtained from the energy released in $\alpha$-decay.
+
+
+The nuclear binding energy is defined as the energy required to break
+up a given nucleus into its constituent parts of $N$ neutrons and $Z$
+protons. In terms of the atomic masses $M(N, Z)$ the binding energy is
+defined by
+
+
+!bt
+\[
+BE(N, Z) = ZM_H c^2 + Nm_n c^2 - M(N, Z)c^2 ,
+\]
+!et
+where $M_H$ is the mass of the hydrogen atom and $m_n$ is the mass of the neutron.
+In terms of the mass excess the binding energy is given by
+!bt
+\[
+BE(N, Z) = Z\Delta_H c^2 + N\Delta_n c^2 -\Delta(N, Z)c^2 ,
+\]
+!et
+where $\Delta_H c^2 = 7.2890$ MeV and $\Delta_n c^2 = 8.0713$ MeV.
+
+
+A popular and physically intuitive model which can be used to parametrize 
+the experimental binding energies as function of $A$, is the so-called 
+_liquid drop model_. The ansatz is based on the following expression
+
+!bt
+\[ 
+BE(N,Z) = a_1A-a_2A^{2/3}-a_3\frac{Z^2}{A^{1/3}}-a_4\frac{(N-Z)^2}{A},
+\]
+!et
+
+where $A$ stands for the number of nucleons and the $a_i$s are parameters which are determined by a fit 
+to the experimental data.  
+
+
+
+
+To arrive at the above expression we have assumed that we can make the following assumptions:
+
+ * There is a volume term $a_1A$ proportional with the number of nucleons (the energy is also an extensive quantity). When an assembly of nucleons of the same size is packed together into the smallest volume, each interior nucleon has a certain number of other nucleons in contact with it. This contribution is proportional to the volume.
+
+ * There is a surface energy term $a_2A^{2/3}$. The assumption here is that a nucleon at the surface of a nucleus interacts with fewer other nucleons than one in the interior of the nucleus and hence its binding energy is less. This surface energy term takes that into account and is therefore negative and is proportional to the surface area.
+
+
+ * There is a Coulomb energy term $a_3\frac{Z^2}{A^{1/3}}$. The electric repulsion between each pair of protons in a nucleus yields less binding. 
+
+ * There is an asymmetry term $a_4\frac{(N-Z)^2}{A}$. This term is associated with the Pauli exclusion principle and reflects the fact that the proton-neutron interaction is more attractive on the average than the neutron-neutron and proton-proton interactions.
+
+We could also add a so-called pairing term, which is a correction term that
+arises from the tendency of proton pairs and neutron pairs to
+occur. An even number of particles is more stable than an odd number. 
+
+
+=== Organizing our data ===
+
+Let us start with reading and organizing our data. 
+We start with the compilation of masses and binding energies from 2016.
+After having downloaded this file to our own computer, we are now ready to read the file and start structuring our data.
+
+
+We start with preparing folders for storing our calculations and the data file over masses and binding energies.
+!bc pycod
+# Common imports
+import os
+
+# Where to save the figures and data files
+PROJECT_ROOT_DIR = "Results"
+FIGURE_ID = "Results/FigureFiles"
+DATA_ID = "DataFiles/"
+
+if not os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+if not os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+if not os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+def image_path(fig_id):
+    return os.path.join(FIGURE_ID, fig_id)
+
+def data_path(dat_id):
+    return os.path.join(DATA_ID, dat_id)
+
+def save_fig(fig_id):
+    plt.savefig(image_path(fig_id) + ".png", format='png')
+
+infile = open(data_path("MassEval2016.dat"),'r')
+!ec
+
+Thereafter we import _numpy_, _pandas_ and _matplotlib_. 
 !bc pycod
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression
+!ec
 
-steps=250
+Our next step is to read the data on experimental binding energies and
+reorganize them as functions of the mass number $A$ and the number of
+protons $Z$ and neutrons $N$ using _pandas_.  Before we do this it is
+always useful (unless you have a binary file or other types of compressed
+data) to actually open the file and simply take a look at it!
 
-distance=0
-x=0
-distance_list=[]
-steps_list=[]
-while x<steps:
-    distance+=np.random.randint(-1,2)
-    distance_list.append(distance)
-    x+=1
-    steps_list.append(x)
-plt.plot(steps_list,distance_list, color='green', label="Random Walk Data")
 
-steps_list=np.asarray(steps_list)
-distance_list=np.asarray(distance_list)
+In particular, the program that outputs the final nuclear masses is written in Fortran with a specific format. It means that we need to figure out the format and which columns contain the data we are interested in. Pandas comes with a function that reads formatted output. After having admired the file, we are now ready to start massaging it with _pandas_. The file begins with some basic format information.
+!bc pycod 
+"""                                                                                                                         
+This is taken from the data file of the mass 2016 evaluation.                                                               
+All files are 3436 lines long with 124 character per line.                                                                  
+       Headers are 39 lines long.                                                                                           
+   col 1     :  Fortran character control: 1 = page feed  0 = line feed                                                     
+   format    :  a1,i3,i5,i5,i5,1x,a3,a4,1x,f13.5,f11.5,f11.3,f9.3,1x,a2,f11.3,f9.3,1x,i3,1x,f12.5,f11.5                     
+   These formats are reflected in the pandas widths variable below, see the statement                                       
+   widths=(1,3,5,5,5,1,3,4,1,13,11,11,9,1,2,11,9,1,3,1,12,11,1),                                                            
+   Pandas has also a variable header, with length 39 in this case.                                                          
+"""
+!ec
 
-X=steps_list[:,np.newaxis]
+The data we are interested in are in columns 2, 3, 4 and 11, giving us
+the number of neutrons, protons, mass numbers and binding energies,
+respectively. The data are in fixed-width formatted lines and we will
+covert them into the _pandas_ DataFrame structure.
 
-#Polynomial fits
+!bc pycod 
 
-#Degree 2
-poly_features=PolynomialFeatures(degree=2, include_bias=False)
-X_poly=poly_features.fit_transform(X)
+!ec
 
-lin_reg=LinearRegression()
-poly_fit=lin_reg.fit(X_poly,distance_list)
-b=lin_reg.coef_
-c=lin_reg.intercept_
-print ("2nd degree coefficients:")
-print ("zero power: ",c)
-print ("first power: ", b[0])
-print ("second power: ",b[1])
+With _pandas_ we can regroup the data and organize everything by nucleon number
+!bc pycod
+# Group the masses by nucleon number A.
+Masses = Masses.groupby('A')
+# Find the rows of the grouped DataFrame with the maximum binding energy.
+maxavEbind = Masses.apply(lambda t: t[t.avEbind==t.avEbind.max()])
+!ec
+Let us now see how we can use _pandas_ to print out the data. We limit ourselves to printing the first 30 values.
 
-z = np.arange(0, steps, .01)
-z_mod=b[1]*z**2+b[0]*z+c
+!bc pycod
 
-fit_mod=b[1]*X**2+b[0]*X+c
-plt.plot(z, z_mod, color='r', label="2nd Degree Fit")
-plt.title("Polynomial Regression")
+!ec
 
-plt.xlabel("Steps")
-plt.ylabel("Distance")
+We see how easy it is to reorganize the data using _pandas_. If we
+were to do these operations in C/C++ or Fortran, we would have had to
+write various functions/subroutines which perform the above
+reorganizations for us.  Having reorganized the data, we can now start
+to make some simple fits using both the functionalities in _numpy_ and
+_scikitlearn_ afterwards. Our first attempt is to make a fit using the
+standard least squares functionality of _numpy_. Here we will also
+show functionalities like the computation of the mean values, the
+variance and the covariance. 
 
-#Degree 10
-poly_features10=PolynomialFeatures(degree=10, include_bias=False)
-X_poly10=poly_features10.fit_transform(X)
 
-poly_fit10=lin_reg.fit(X_poly10,distance_list)
+!bc pycod
 
-y_plot=poly_fit10.predict(X_poly10)
-plt.plot(X, y_plot, color='black', label="10th Degree Fit")
 
-plt.legend()
-plt.show()
+!ec
 
+
+
+!bc pycod
 
 #Decision Tree Regression
 from sklearn.tree import DecisionTreeRegressor
-regr_1=DecisionTreeRegressor(max_depth=2)
-regr_2=DecisionTreeRegressor(max_depth=5)
-regr_3=DecisionTreeRegressor(max_depth=7)
-regr_1.fit(X, distance_list)
-regr_2.fit(X, distance_list)
-regr_3.fit(X, distance_list)
+regr_1=DecisionTreeRegressor(max_depth=5)
+regr_2=DecisionTreeRegressor(max_depth=7)
+regr_3=DecisionTreeRegressor(max_depth=9)
+regr_1.fit(X.T, Energies)
+regr_2.fit(X.T, Energies)
+regr_3.fit(X.T, Energies)
 
-X_test = np.arange(0.0, steps, 0.01)[:, np.newaxis]
-y_1 = regr_1.predict(X_test)
-y_2 = regr_2.predict(X_test)
-y_3=regr_3.predict(X_test)
 
+y_1 = regr_1.predict(X.T)
+y_2 = regr_2.predict(X.T)
+y_3=regr_3.predict(X.T)
+Masses['Eapprox'] = y_1
 # Plot the results
 plt.figure()
-plt.scatter(X, distance_list, s=2.5, c="black", label="data")
-plt.plot(X_test, y_1, color="red",
-         label="max_depth=2", linewidth=2)
-plt.plot(X_test, y_2, color="green", label="max_depth=5", linewidth=2)
-plt.plot(X_test, y_3, color="m", label="max_depth=7", linewidth=2)
+plt.plot(A, Energies, color="blue", label="Data", linewidth=2)
+plt.plot(A, y_1, color="red", label="max_depth=5", linewidth=2)
+plt.plot(A, y_2, color="green", label="max_depth=7", linewidth=2)
+plt.plot(A, y_3, color="m", label="max_depth=9", linewidth=2)
 
-plt.xlabel("Data")
-plt.ylabel("Darget")
+plt.xlabel("$A$")
+plt.ylabel("$E$[MeV]")
 plt.title("Decision Tree Regression")
 plt.legend()
+save_fig("Masses2016Trees")
 plt.show()
-
+print(Masses)
+print(np.mean( (Energies-y_1)**2))
 !ec
+
+=== More on flexibility with pandas and xarray ===
+
+Let us study the $Q$ values associated with the removal of one or two nucleons from
+a nucleus. These are conventionally defined in terms of the one-nucleon and two-nucleon
+separation energies. The neutron separation energy is defined as 
+
+!bt
+\[
+S_n= -Q_n= BE(N,Z)-BE(N-1,Z),
+\]
+!et
+and the proton separation energy reads
+!bt
+\[
+S_p= -Q_p= BE(N,Z)-BE(N,Z-1).
+\]
+!et
+The two-neutron separation energy is defined as
+!bt
+\[
+S_{2n}= -Q_{2n}= BE(N,Z)-BE(N-2,Z),
+\]
+!et
+and  the two-proton separation energy is given by
+!bt
+\[
+S_{2p}= -Q_{2p}= BE(N,Z)-BE(N,Z-2).
+\]
+!et
+
+Using say the neutron separation energies (alternatively the proton separation energies)
+!bt
+\[
+S_n= -Q_n= BE(N,Z)-BE(N-1,Z),
+\]
+!et
+we can define the so-called energy gap for neutrons (or protons) as 
+!bt
+\[
+\Delta S_n= BE(N,Z)-BE(N-1,Z)-\left(BE(N+1,Z)-BE(N,Z)\right),
+\]
+!et
+or 
+!bt
+\[
+\Delta S_n= 2BE(N,Z)-BE(N-1,Z)-BE(N+1,Z).
+\]
+!et
+This quantity can in turn be used to determine which nuclei are magic or not. 
+For protons we would have 
+!bt
+\[
+\Delta S_p= 2BE(N,Z)-BE(N,Z-1)-BE(N,Z+1).
+\]
+!et
+
+
+!bc pycod
+Element = Masses['Element']
+Energies = Masses['Ebinding']*A
+
+df = pd.DataFrame({'A':A,'Z':Z, 'N':N,'Element':Element,'Energies':Energies})
+Nucleus = df.loc[lambda df: df.Z==8, :]
+# drop cases with no number
+Nucleus = Nucleus.dropna()
+print(Nucleus)
+Nucleus['NeutronSeparationEnergies'] = Nucleus['Energies'].diff(+1)
+MakePlot([Nucleus.A], [Nucleus.NeutronSeparationEnergies], ['b'], ['Neutron Separation Energy'], ['$A$','$S_n$'])
+save_fig('Nucleus')
+plt.show()
+!ec
+
+
+
+
 
 
 
