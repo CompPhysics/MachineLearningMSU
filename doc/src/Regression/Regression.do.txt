@@ -4,7 +4,7 @@ DATE: today
 
 # todo: add example with nuclear mass, use this as an example to read data with pandas
 # add example of fit of EoS for infinite matter
-
+# add more about svd calculations and the svd itself
 
 !split
 ===== Why Linear Rgeression (aka Ordinary Least Squares) =====
