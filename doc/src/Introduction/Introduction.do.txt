@@ -460,6 +460,9 @@ plt.show()
 
 ===== Meet the Pandas =====
 
+
+FIGURE: [fig/pandas.jpg, width=600 frac=0.8]
+
 Another useful Python package is
 "pandas":"https://pandas.pydata.org/", which is an open source library
 providing high-performance, easy-to-use data structures and data
