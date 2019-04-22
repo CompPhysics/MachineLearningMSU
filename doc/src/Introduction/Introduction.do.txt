@@ -466,35 +466,63 @@ FIGURE: [fig/pandas.jpg, width=600 frac=0.8]
 Another useful Python package is
 "pandas":"https://pandas.pydata.org/", which is an open source library
 providing high-performance, easy-to-use data structures and data
-analysis tools for Python. The following simple example shows how we can, in an easy way make tables of our data. Here we define a data set which includes names, city of residence and age, and displays the data in an easy to read way. We will see repeated use of _pandas_, in particular in connection with classification of data. 
+analysis tools for Python. _pandas_ stands for panel data, a term borrowed from econometrics and is a en efficient library for data analysis with an emphasis on tabular data.
+_pandas_ has two major classes, the _DataFrame_ class with two-dimensional data objects and tabular data organized in columns and the class _Series_ with a focus on one-dimensional data objects. Both classes allow you to index data easily as we will see in the examples below. 
+_pandas_ allows you also to perform mathematical operations on the data, spanning from simple reshapings of vectors and matrices to statistical operations. 
+
+The following simple example shows how we can, in an easy way make tables of our data. Here we define a data set which includes names, city of residence and age, and displays the data in an easy to read way. We will see repeated use of _pandas_, in particular in connection with classification of data. 
 
 !bc pycod 
 import pandas as pd
 from IPython.display import display
-data = {'Name': ["John", "Anna", "Peter", "Linda"], 'Location': ["Nairobi", "Napoli", "London", "Buenos Aires"], 'Age':[51, 21, 34, 45]}
+data = {'First Name': ["Frodo", "Bilbo", "Aragorn II", "Samwise"], 'Last Name': ["Baggins", "Baggins","Elessar","Gamgee"],'Place of birth': ["Shire", "Shire", "Eriador", "Shire"], 'Date of Birth T.A.':[2968, 2890, 2931, 2980]}
 data_pandas = pd.DataFrame(data)
 display(data_pandas)
 !ec
 
-Here are other examples where we use the _DataFrame_ functionality to handle arrays
+In the above we have imported _pandas_ with the shorthand _pd_, the latter has become the standard way we import _pandas_. We make then a list of various variables
+and reorganize the aboves lists into a _DataFrame_ and then print out  a neat table with specific column labels as *Name*, *place of birth* and *date of birth*.
+Displaying these results, we see that the indices are given by the default numbers from zero to three.
+_pandas_ is extremely flexible and we can easily change the above indices by defining a new type of indexing as
+!bc pycod
+data_pandas = pd.DataFrame(data,index=['Frodo','Bilbo','Aragorn','Sam'])
+display(data_pandas)
+!ec
+Thereafter we display the content of the row which begins with the index _Aragorn_
+!bc pycod
+display(data_pandas.loc['Aragorn'])
+!ec
+
+We can easily append data to this, for example
+!bc pycod
+data_pandas=data_pandas.append(pd.DataFrame({'First Name': ["Peregrin"], 'Last Name': ["Took"],'Place of birth': ["Shire"], 'Data of Birth T.A\
+.':[2990]},index=['Pippin']))
+display(data_pandas)
+!ec
+
+
+Here are other examples where we use the _DataFrame_ functionality to handle arrays, now with more interesting features for us, namely numbers. We set up a matrix 
+of dimensionality $10\times 5$ here and compute the mean value and standard deviation of each column. Similarly, we can perform mathematial operations like squaring the matrix elements and many other operations. 
 !bc pycod
 import numpy as np
 import pandas as pd
 from IPython.display import display
 np.random.seed(100)
-# setting up a 9 x 4 matrix
-rows = 9
-cols = 4
+# setting up a 10 x 5 matrix
+rows = 10
+cols = 5
 a = np.random.randn(rows,cols)
 df = pd.DataFrame(a)
 display(df)
 print(df.mean())
 print(df.std())
 display(df**2)
+!ec
 
-
-df.columns = ['First', 'Second', 'Third', 'Fourth']
-df.index = np.arange(9)
+Thereafter we can select specific columns only and plot final results
+!bc pycod
+df.columns = ['First', 'Second', 'Third', 'Fourth', Fifth]
+df.index = np.arange(10)
 
 display(df)
 print(df['Second'].mean() )
@@ -506,20 +534,20 @@ plt.style.use('seaborn')
 mpl.rcParams['font.family'] = 'serif'
 
 df.cumsum().plot(lw=2.0, figsize=(10,6))
-#plt.show()
+plt.show()
 
 
 df.plot.bar(figsize=(10,6), rot=15)
-#plt.show()
-
-
+plt.show()
+!ec
+We can rearange and produce a $4\times$ matrix
+!bc pycod
 b = np.arange(16).reshape((4,4))
 print(b)
-
 df1 = pd.DataFrame(b)
-
+print(df1)
 !ec
-
+and many other operations. 
 
 ===== Reading Data and fitting Nuclear Masses =====
 
@@ -833,9 +861,6 @@ def error(a):
 
 print (error(y))
 !ec
-
-Similarly, using _R_, we can perform similar studies. 
-
 
 
 
