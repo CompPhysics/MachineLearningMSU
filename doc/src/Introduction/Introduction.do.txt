@@ -111,8 +111,8 @@ Here we list several useful Python libraries we strongly recommend (if you use a
 * "SymPy":"https://www.sympy.org/en/index.html" is a Python library for symbolic mathematics. 
 * "scikit-learn":"https://scikit-learn.org/stable/" has simple and efficient tools for machine learning, data mining and data analysis
 * "TensorFlow":"https://www.tensorflow.org/" is a Python library for fast numerical computing created and released by Google
-* "Keras":" https://keras.io/" is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano
-* And many more such at pytorchm Theano etc 
+* "Keras":"https://keras.io/" is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano
+* And many more such as "pytorch":"https://pytorch.org/",  "Theano":"https://pypi.org/project/Theano/" etc 
 
 ===== Installing R, C++, cython or Julia =====
 
@@ -1324,13 +1324,19 @@ plt.show()
 ===== A first summary =====
 
 The aim of these introductory words was to present to you various
-Python packages and their functionalities, in particular packages like
-_numpy_, _pandas_, _xarray_ and _matplotlib_ make our life much easier
-in handling various data sets and vsualizing data. 
+Python libraries and their functionalities, in particular libraries like
+_numpy_, _pandas_, _xarray_ and _matplotlib_ and other that make our life much easier
+in handling various data sets and visualizing data. 
 
 Furthermore,
 _scikit-learn_ allows us with few lines of code to implement popular
-Machine Learning algorithms.
+Machine Learning algorithms. Now it is time to dive more into the details of various methods.
 
+In this summer school we will cover in particular 
+o Linear and Logistic regression
+o Optimization methods like the family of _gradient descent_ methods
+o Decision Trees and Random Forests
+o Neural Networks and deep learning, including convolutional Neural Networks, Recursive and more advanced methods for both regression and classification. 
 
-===== Exercises =====
+The webiste of the summer school contains also material on other methods, with several notebooks you may find useful. 
+
