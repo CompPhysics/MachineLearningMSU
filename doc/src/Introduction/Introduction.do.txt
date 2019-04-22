@@ -937,7 +937,7 @@ We start with the compilation of masses and binding energies from 2016.
 After having downloaded this file to our own computer, we are now ready to read the file and start structuring our data.
 
 
-We start with preparing folders for storing our calculations and the data file over masses and binding energies.
+We start with preparing folders for storing our calculations and the data file over masses and binding energies. We import also various modules that we will find useful in order to present various Machine Learning methods. Here we focus mainly on the functionality of _scikit-learn_.
 !bc pycod
 # Common imports
 import numpy as np
@@ -974,8 +974,24 @@ def save_fig(fig_id):
 infile = open(data_path("MassEval2016.dat"),'r')
 !ec
 
+
+Before we proceed, we define also a function for making our plots. You can obviously avoid this and simply set up various _matplotlib_ commands every time you need them. You may however find it convenient to collect all such commands in one function and simply call this function. 
+!bc pycod 
+from pylab import plt, mpl
+plt.style.use('seaborn')
+mpl.rcParams['font.family'] = 'serif'
+
+def MakePlot(x,y, styles, labels, axlabels):
+    plt.figure(figsize=(10,6))
+    for i in range(len(x)):
+        plt.plot(x[i], y[i], styles[i], label = labels[i])
+        plt.xlabel(axlabels[0])
+        plt.ylabel(axlabels[1])
+    plt.legend(loc=0)
+!ec
+
 Our next step is to read the data on experimental binding energies and
-reorganize them as functions of the mass number $A$ and the number of
+reorganize them as functions of the mass number $A$, the number of
 protons $Z$ and neutrons $N$ using _pandas_.  Before we do this it is
 always useful (unless you have a binary file or other types of compressed
 data) to actually open the file and simply take a look at it!
@@ -1020,6 +1036,7 @@ Masses = Masses.groupby('A')
 # Find the rows of the grouped DataFrame with the maximum binding energy.
 Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
 !ec
+
 We have now read in the data, grouped them according to the variables we are interested in. 
 We see how easy it is to reorganize the data using _pandas_. If we
 were to do these operations in C/C++ or Fortran, we would have had to
@@ -1084,7 +1101,8 @@ plt.show()
 
 
 === Seeing the wood for the trees ===
-As a teaser, let us now see how we can do this with decision trees using _scikit-learn_.
+
+As a teaser, let us now see how we can do this with decision trees using _scikit-learn_. Thereafter we switch to _random forests_!
 
 
 !bc pycod
@@ -1165,7 +1183,7 @@ plt.show()
 
 Let us study the $Q$ values associated with the removal of one or two nucleons from
 a nucleus. These are conventionally defined in terms of the one-nucleon and two-nucleon
-separation energies. With the functionality in _pandas_, one to two lines of code will allows us to plot the separation energies.
+separation energies. With the functionality in _pandas_, two to three lines of code will allow us to plot the separation energies.
 The neutron separation energy is defined as 
 
 !bt
@@ -1304,3 +1322,15 @@ plt.show()
 
 
 ===== A first summary =====
+
+The aim of these introductory words was to present to you various
+Python packages and their functionalities, in particular packages like
+_numpy_, _pandas_, _xarray_ and _matplotlib_ make our life much easier
+in handling various data sets and vsualizing data. 
+
+Furthermore,
+_scikit-learn_ allows us with few lines of code to implement popular
+Machine Learning algorithms.
+
+
+===== Exercises =====
