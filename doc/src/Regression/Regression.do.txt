@@ -11,7 +11,7 @@ DATE: today
 
 Fitting a continuous function with linear parameterization in terms of the parameters  $\bm{\beta}$.
 * Method of choice for fitting a continuous function!
-* Gives an excellent (and well-known) introduction to central Machine Learning features with _understandable pedagogical_ links to other methods like _Neural Networks_, _Support Vector Machines_ etc
+* Gives an excellent introduction to central Machine Learning features with _understandable pedagogical_ links to other methods like _Neural Networks_, _Support Vector Machines_ etc
 * Analytical expression for the parameters $\bm{\beta}$
 * Analytical expressions for statistical propertiers like mean values, variances, confidence intervals and more
 * Analytical relation with probabilistic interpretations 
@@ -24,12 +24,12 @@ Fitting a continuous function with linear parameterization in terms of the param
 ===== Regression analysis, overarching aims  =====
 !bblock
 
-Regression modeling deals with the description of  the sampling distribution of a given random variable $y$ varies as function of another variable or a set of such variables $\hat{x} =[x_0, x_1,\dots, x_p]^T$. 
+Regression modeling deals with the description of  the sampling distribution of a given random variable $y$ and how it varies as function of another variable or a set of such variables $\hat{x} =[x_0, x_1,\dots, x_p]^T$. 
 The first variable is called the _dependent_, the _outcome_ or the _response_ variable while the set of variables $\hat{x}$ is called the independent variable, or the predictor variable or the explanatory variable. 
  
 A regression model aims at finding a likelihood function $p(y\vert \hat{x})$, that is the conditional distribution for $y$ with a given $\hat{x}$. The estimation of  $p(y\vert \hat{x})$ is made using a data set with 
 * $n$ cases $i = 0, 1, 2, \dots, n-1$ 
-* Response (dependent or outcome) variable $y_i$ with $i = 0, 1, 2, \dots, n-1$ 
+* Response (target, dependent or outcome) variable $y_i$ with $i = 0, 1, 2, \dots, n-1$ 
 * $p$ Explanatory (independent or predictor) variables $\hat{x}_i=[x_{i0}, x_{i1}, \dots, x_{ip}]$ with $i = 0, 1, 2, \dots, n-1$   
  The goal of the regression analysis is to extract/exploit relationship between $y_i$ and $\hat{x}_i$ in or to infer causal dependencies, approximations to the likelihood functions, functional relationships and to make predictions .
 !eblock
@@ -41,21 +41,21 @@ A regression model aims at finding a likelihood function $p(y\vert \hat{x})$, th
 
 Consider an experiment in which $p$ characteristics of $n$ samples are
 measured. The data from this experiment are denoted $\mathbf{X}$, with
-$\mathbf{X}$ as above. The matrix $\mathbf{X}$ is called the *design
+$\mathbf{X}$ as above. 
+
+The matrix $\mathbf{X}$ is called the *design
 matrix*. Additional information of the samples is available in the
-form of $\mathbf{Y}$ (also as above). The variable $\mathbf{Y}$ is
+form of $\mathbf{Y}$ (also as above). The variable $\mathbf{y}$ is
 generally referred to as the *response variable*. The aim of
 regression analysis is to explain $\mathbf{Y}$ in terms of
-$\mathbf{X}$ through a functional relationship like $Y_i =
+$\mathbf{X}$ through a functional relationship like $y_i =
 f(\mathbf{X}_{i,\ast})$. When no prior knowledge on the form of
 $f(\cdot)$ is available, it is common to assume a linear relationship
-between $\mathbf{X}$ and $\mathbf{Y}$. This assumption gives rise to
-the *linear regression model* where $\beta = (\beta_1, \ldots,
-\beta_p)^{\top}$ is the *regression parameter*. The parameter
-$\beta_j$, $j=1, \ldots, p$, represents the effect size of covariate
-$j$ on the response. That is, for each unit change in covariate $j$
-(while keeping the other covariates fixed) the observed change in the
-response is equal to $\beta_j$.  
+between $\mathbf{X}$ and $\mathbf{y}$. This assumption gives rise to
+the *linear regression model* where $\beta = (\beta_0, \ldots,
+\beta_{p-1})^{\top}$ are the *regression parameters*. 
+
+Linear regression gives us a set of analytical equations for the parameters $\beta_j$.
 
 !eblock
 
@@ -112,7 +112,7 @@ and
 \hat{\epsilon} = [\epsilon_0,\epsilon_1, \epsilon_2,\dots, \epsilon_{n-1}]^T,
 \]
 !et
-and the matrix
+and the design matrix
 !bt
 \[
 \hat{X}=
@@ -137,7 +137,7 @@ we can rewrite our equations as
 !split
 ===== Generalizing the fitting procedure as a linear algebra problem  =====
 !bblock
-We are obviously not limited to the above polynomial. We could replace the various powers of $x$ with elements of Fourier series, that is, instead of $x_i^j$ we could have $\cos{(j x_i)}$ or $\sin{(j x_i)}$, or time series or other orthogonal functions.
+We are obviously not limited to the above polynomial. We could replace the various powers of $x$ with elements of Fourier series or instead of $x_i^j$ we could have $\cos{(j x_i)}$ or $\sin{(j x_i)}$, or time series or other orthogonal functions.
 For every set of values $y_i,x_i$ we can then generalize the equations to 
 !bt
 \begin{align*}
@@ -175,7 +175,7 @@ and without loss of generality we rewrite again  our equations as
 \hat{y} = \hat{X}\hat{\beta}+\hat{\epsilon}.
 \]
 !et
-The left-hand side of this equation forms know. Our error vector $\hat{\epsilon}$ and the parameter vector $\hat{\beta}$ are our unknow quantities. How can we obtain the optimal set of $\beta_i$ values? 
+The left-hand side of this equation is kwown. Our error vector $\hat{\epsilon}$ and the parameter vector $\hat{\beta}$ are our unknow quantities. How can we obtain the optimal set of $\beta_i$ values? 
 !eblock
 
 

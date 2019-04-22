@@ -315,7 +315,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Apr 20, 2019</h4></center> <!-- date -->
+<center><h4>Apr 21, 2019</h4></center> <!-- date -->
 <br>
 <p>
 <!-- todo: add example with nuclear mass, use this as an example to read data with pandas -->
@@ -332,7 +332,7 @@ Fitting a continuous function with linear parameterization in terms of the param
 
 <ul>
 <li> Method of choice for fitting a continuous function!</li>
-<li> Gives an excellent (and well-known) introduction to central Machine Learning features with <b>understandable pedagogical</b> links to other methods like <b>Neural Networks</b>, <b>Support Vector Machines</b> etc</li>
+<li> Gives an excellent introduction to central Machine Learning features with <b>understandable pedagogical</b> links to other methods like <b>Neural Networks</b>, <b>Support Vector Machines</b> etc</li>
 <li> Analytical expression for the parameters \( \boldsymbol{\beta} \)</li>
 <li> Analytical expressions for statistical propertiers like mean values, variances, confidence intervals and more</li>
 <li> Analytical relation with probabilistic interpretations</li> 
@@ -350,7 +350,7 @@ Fitting a continuous function with linear parameterization in terms of the param
 <p>
 
 <p>
-Regression modeling deals with the description of  the sampling distribution of a given random variable \( y \) varies as function of another variable or a set of such variables \( \hat{x} =[x_0, x_1,\dots, x_p]^T \). 
+Regression modeling deals with the description of  the sampling distribution of a given random variable \( y \) and how it varies as function of another variable or a set of such variables \( \hat{x} =[x_0, x_1,\dots, x_p]^T \). 
 The first variable is called the <b>dependent</b>, the <b>outcome</b> or the <b>response</b> variable while the set of variables \( \hat{x} \) is called the independent variable, or the predictor variable or the explanatory variable.
 
 <p>
@@ -358,7 +358,7 @@ A regression model aims at finding a likelihood function \( p(y\vert \hat{x}) \)
 
 <ul>
 <li> \( n \) cases \( i = 0, 1, 2, \dots, n-1 \)</li> 
-<li> Response (dependent or outcome) variable \( y_i \) with \( i = 0, 1, 2, \dots, n-1 \)</li> 
+<li> Response (target, dependent or outcome) variable \( y_i \) with \( i = 0, 1, 2, \dots, n-1 \)</li> 
 <li> \( p \) Explanatory (independent or predictor) variables \( \hat{x}_i=[x_{i0}, x_{i1}, \dots, x_{ip}] \) with \( i = 0, 1, 2, \dots, n-1 \)</li>   
 </ul>
 
@@ -377,21 +377,23 @@ A regression model aims at finding a likelihood function \( p(y\vert \hat{x}) \)
 <p>
 Consider an experiment in which \( p \) characteristics of \( n \) samples are
 measured. The data from this experiment are denoted \( \mathbf{X} \), with
-\( \mathbf{X} \) as above. The matrix \( \mathbf{X} \) is called the <em>design
+\( \mathbf{X} \) as above.
+
+<p>
+The matrix \( \mathbf{X} \) is called the <em>design
 matrix</em>. Additional information of the samples is available in the
-form of \( \mathbf{Y} \) (also as above). The variable \( \mathbf{Y} \) is
+form of \( \mathbf{Y} \) (also as above). The variable \( \mathbf{y} \) is
 generally referred to as the <em>response variable</em>. The aim of
 regression analysis is to explain \( \mathbf{Y} \) in terms of
-\( \mathbf{X} \) through a functional relationship like \( Y_i =
+\( \mathbf{X} \) through a functional relationship like \( y_i =
 f(\mathbf{X}_{i,\ast}) \). When no prior knowledge on the form of
 \( f(\cdot) \) is available, it is common to assume a linear relationship
-between \( \mathbf{X} \) and \( \mathbf{Y} \). This assumption gives rise to
-the <em>linear regression model</em> where \( \beta = (\beta_1, \ldots,
-\beta_p)^{\top} \) is the <em>regression parameter</em>. The parameter
-\( \beta_j \), \( j=1, \ldots, p \), represents the effect size of covariate
-\( j \) on the response. That is, for each unit change in covariate \( j \)
-(while keeping the other covariates fixed) the observed change in the
-response is equal to \( \beta_j \).
+between \( \mathbf{X} \) and \( \mathbf{y} \). This assumption gives rise to
+the <em>linear regression model</em> where \( \beta = (\beta_0, \ldots,
+\beta_{p-1})^{\top} \) are the <em>regression parameters</em>.
+
+<p>
+Linear regression gives us a set of analytical equations for the parameters \( \beta_j \).
 
 
 </div>
@@ -460,7 +462,7 @@ $$
 \hat{\epsilon} = [\epsilon_0,\epsilon_1, \epsilon_2,\dots, \epsilon_{n-1}]^T,
 $$
 
-and the matrix
+and the design matrix
 $$
 \hat{X}=
 \begin{bmatrix} 
@@ -486,7 +488,7 @@ $$
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
-We are obviously not limited to the above polynomial. We could replace the various powers of \( x \) with elements of Fourier series, that is, instead of \( x_i^j \) we could have \( \cos{(j x_i)} \) or \( \sin{(j x_i)} \), or time series or other orthogonal functions.
+We are obviously not limited to the above polynomial. We could replace the various powers of \( x \) with elements of Fourier series or instead of \( x_i^j \) we could have \( \cos{(j x_i)} \) or \( \sin{(j x_i)} \), or time series or other orthogonal functions.
 For every set of values \( y_i,x_i \) we can then generalize the equations to 
 $$
 \begin{align*}
@@ -526,7 +528,7 @@ $$
 \hat{y} = \hat{X}\hat{\beta}+\hat{\epsilon}.
 $$
 
-The left-hand side of this equation forms know. Our error vector \( \hat{\epsilon} \) and the parameter vector \( \hat{\beta} \) are our unknow quantities. How can we obtain the optimal set of \( \beta_i \) values?
+The left-hand side of this equation is kwown. Our error vector \( \hat{\epsilon} \) and the parameter vector \( \hat{\beta} \) are our unknow quantities. How can we obtain the optimal set of \( \beta_i \) values?
 </div>
 
 
