@@ -549,6 +549,15 @@ print(df1)
 !ec
 and many other operations. 
 
+The _Series_ class is another important class included in
+_pandas_. You can view it as a specialization of _DataFrame_ but where
+we have just a single column of data. It shares many of the same features as _DataFrame. As with _DataFrame_,
+most operations are vectorized, achieving thereby a high performance when dealing with computations of arrays, in particular labeled arrays.
+As we will see below it leads also to a very concice code close to the mathematical operations we may be interested in.
+For multidimensional arrays, we recommend strongly "xarray":"http://xarray.pydata.org/en/stable/". _xarray_ has much of the same flexibility as _pandas_, but allows for the extension to higher dimensions than two. We will see examples later of the usage of both _pandas_ and _xarray_. 
+
+
+
 ===== Reading Data and fitting Nuclear Masses =====
 
 In order to study various Machine Learning algorithms, we need to
@@ -561,7 +570,7 @@ in various formats, The formats span from reading files from disk,
 loading data from databases and interacting with online sources
 like web application programming interfaces (APIs).
 
-In handling various input formats, we will mainly stay with _pandas_,
+In handling various input formats, as discussed above, we will mainly stay with _pandas_,
 a Python package which allows us, in a seamless and painless way, to
 deal with a multitude of formats, from standard _csv_ (comma separated
 values) files, via _excel_, _html_ to _hdf5_ formats.  With _pandas_

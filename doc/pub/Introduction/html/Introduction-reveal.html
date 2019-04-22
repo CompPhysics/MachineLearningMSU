@@ -808,6 +808,14 @@ df1 = pd.DataFrame(b)
 <p>
 and many other operations.
 
+<p>
+The <b>Series</b> class is another important class included in
+<b>pandas</b>. You can view it as a specialization of <b>DataFrame</b> but where
+we have just a single column of data. It shares many of the same features as _DataFrame. As with <b>DataFrame</b>,
+most operations are vectorized, achieving thereby a high performance when dealing with computations of arrays, in particular labeled arrays.
+As we will see below it leads also to a very concice code close to the mathematical operations we may be interested in.
+For multidimensional arrays, we recommend strongly <a href="http://xarray.pydata.org/en/stable/" target="_blank">xarray</a>. <b>xarray</b> has much of the same flexibility as <b>pandas</b>, but allows for the extension to higher dimensions than two. We will see examples later of the usage of both <b>pandas</b> and <b>xarray</b>.
+
 <h2 id="___sec15">Reading Data and fitting Nuclear Masses </h2>
 
 <p>
@@ -822,7 +830,7 @@ loading data from databases and interacting with online sources
 like web application programming interfaces (APIs).
 
 <p>
-In handling various input formats, we will mainly stay with <b>pandas</b>,
+In handling various input formats, as discussed above, we will mainly stay with <b>pandas</b>,
 a Python package which allows us, in a seamless and painless way, to
 deal with a multitude of formats, from standard <b>csv</b> (comma separated
 values) files, via <b>excel</b>, <b>html</b> to <b>hdf5</b> formats.  With <b>pandas</b>
