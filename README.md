@@ -73,7 +73,7 @@ _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
 _Tuesday May 21, 2019_:
 
-- 830am-930am: Neural networks  (MK)
+- 830am-930am: Neural networks  (MK and RR)
 - 930am-1030am: Neural networks and deep learning  (MK and RR)
 - 1030am-11am: Break, coffee, tea etc
 - 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments (MK and RR)
