@@ -53,10 +53,11 @@ _General Machine Learning Books_:
 
 Lectures are 50 min and there is a small break of 10 min between each lecture. Longer breaks at 1030am-11am and 3pm-330pm.
 Acronyms for teachers
-MH = Matthew Hirn
-MHJ = Morten Hjorth-Jensen
-MK = Michelle Kuchera
-RR = Raghuram Ramanujan
+- MH = Matthew Hirn
+- MHJ = Morten Hjorth-Jensen
+- MK = Michelle Kuchera
+- RR = Raghuram Ramanujan
+
 _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
 - 8am-830am: Welcome and registration
