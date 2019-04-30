@@ -41,7 +41,7 @@ Automatically generated HTML file from DocOnce source
 
 <!-- tocinfo
 {'highest level': 2,
- 'sections': [('Why Linear Rgeression (aka Ordinary Least Squares)',
+ 'sections': [('Why Linear Regression (aka Ordinary Least Squares)',
                2,
                None,
                '___sec0'),
@@ -231,10 +231,7 @@ Automatically generated HTML file from DocOnce source
               ('The bias', 2, None, '___sec100'),
               ('The variance', 2, None, '___sec101'),
               ('Summing up', 2, None, '___sec102'),
-              ('The one-dimensional Ising model, project 2',
-               2,
-               None,
-               '___sec103'),
+              ('The one-dimensional Ising model', 2, None, '___sec103'),
               ('Reformulating the problem to suit regression',
                2,
                None,
@@ -291,7 +288,7 @@ MathJax.Hub.Config({
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contents <b class="caret"></b></a>
         <ul class="dropdown-menu">
-     <!-- navigation toc: --> <li><a href="#___sec0" style="font-size: 80%;">Why Linear Rgeression (aka Ordinary Least Squares)</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec0" style="font-size: 80%;">Why Linear Regression (aka Ordinary Least Squares)</a></li>
      <!-- navigation toc: --> <li><a href="#___sec1" style="font-size: 80%;">Regression analysis, overarching aims</a></li>
      <!-- navigation toc: --> <li><a href="#___sec2" style="font-size: 80%;">Regression analysis, overarching aims II</a></li>
      <!-- navigation toc: --> <li><a href="#___sec3" style="font-size: 80%;">General linear models</a></li>
@@ -394,7 +391,7 @@ MathJax.Hub.Config({
      <!-- navigation toc: --> <li><a href="#___sec100" style="font-size: 80%;">The bias</a></li>
      <!-- navigation toc: --> <li><a href="#___sec101" style="font-size: 80%;">The variance</a></li>
      <!-- navigation toc: --> <li><a href="#___sec102" style="font-size: 80%;">Summing up</a></li>
-     <!-- navigation toc: --> <li><a href="#___sec103" style="font-size: 80%;">The one-dimensional Ising model, project 2</a></li>
+     <!-- navigation toc: --> <li><a href="#___sec103" style="font-size: 80%;">The one-dimensional Ising model</a></li>
      <!-- navigation toc: --> <li><a href="#___sec104" style="font-size: 80%;">Reformulating the problem to suit regression</a></li>
      <!-- navigation toc: --> <li><a href="#___sec105" style="font-size: 80%;">Linear regression</a></li>
      <!-- navigation toc: --> <li><a href="#___sec106" style="font-size: 80%;">Ordinary least squares</a></li>
@@ -438,11 +435,13 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Apr 21, 2019</h4></center> <!-- date -->
+<center><h4>Apr 30, 2019</h4></center> <!-- date -->
 <br>
 <p>
 <!-- todo: add example with nuclear mass, use this as an example to read data with pandas -->
+<!-- rewrite bias-variance stuff and add code -->
 <!-- add example of fit of EoS for infinite matter -->
+<!-- think of shell-model effective interactions and how to fit these -->
 <!-- add more about svd calculations and the svd itself -->
 
 <p>
@@ -451,7 +450,7 @@ MathJax.Hub.Config({
 
 <!-- !split -->
 
-<h2 id="___sec0" class="anchor">Why Linear Rgeression (aka Ordinary Least Squares) </h2>
+<h2 id="___sec0" class="anchor">Why Linear Regression (aka Ordinary Least Squares) </h2>
 
 <p>
 Fitting a continuous function with linear parameterization in terms of the parameters  \( \boldsymbol{\beta} \).
@@ -3703,7 +3702,7 @@ flexible statistical methods have higher variance.
 <p>
 <!-- !split -->
 
-<h2 id="___sec103" class="anchor">The one-dimensional Ising model, project 2 </h2>
+<h2 id="___sec103" class="anchor">The one-dimensional Ising model </h2>
 
 <p>
 The one-dimensional Ising model with nearest neighbor interaction, no external field and a constant coupling constant \( J \) is given by
@@ -4271,6 +4270,8 @@ plt<span style="color: #666666">.</span>show()
 From the above figure we can see that LASSO with \( \lambda = 10^{-2} \)
 achieve a very good accuracy on the test set. This by far surpases the
 other models for all values of \( \lambda \).
+
+<p>
 
 <!-- ------------------- end of main content --------------- -->
 

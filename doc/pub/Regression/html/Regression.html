@@ -66,7 +66,7 @@ div { text-align: justify; text-justify: inter-word; }
 
 <!-- tocinfo
 {'highest level': 2,
- 'sections': [('Why Linear Rgeression (aka Ordinary Least Squares)',
+ 'sections': [('Why Linear Regression (aka Ordinary Least Squares)',
                2,
                None,
                '___sec0'),
@@ -256,10 +256,7 @@ div { text-align: justify; text-justify: inter-word; }
               ('The bias', 2, None, '___sec100'),
               ('The variance', 2, None, '___sec101'),
               ('Summing up', 2, None, '___sec102'),
-              ('The one-dimensional Ising model, project 2',
-               2,
-               None,
-               '___sec103'),
+              ('The one-dimensional Ising model', 2, None, '___sec103'),
               ('Reformulating the problem to suit regression',
                2,
                None,
@@ -320,17 +317,19 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Apr 21, 2019</h4></center> <!-- date -->
+<center><h4>Apr 30, 2019</h4></center> <!-- date -->
 <br>
 <p>
 <!-- todo: add example with nuclear mass, use this as an example to read data with pandas -->
+<!-- rewrite bias-variance stuff and add code -->
 <!-- add example of fit of EoS for infinite matter -->
+<!-- think of shell-model effective interactions and how to fit these -->
 <!-- add more about svd calculations and the svd itself -->
 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec0">Why Linear Rgeression (aka Ordinary Least Squares) </h2>
+<h2 id="___sec0">Why Linear Regression (aka Ordinary Least Squares) </h2>
 
 <p>
 Fitting a continuous function with linear parameterization in terms of the parameters  \( \boldsymbol{\beta} \).
@@ -3534,7 +3533,7 @@ flexible statistical methods have higher variance.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec103">The one-dimensional Ising model, project 2 </h2>
+<h2 id="___sec103">The one-dimensional Ising model </h2>
 
 <p>
 The one-dimensional Ising model with nearest neighbor interaction, no external field and a constant coupling constant \( J \) is given by
@@ -4102,6 +4101,8 @@ plt<span style="color: #666666">.</span>show()
 From the above figure we can see that LASSO with \( \lambda = 10^{-2} \)
 achieve a very good accuracy on the test set. This by far surpases the
 other models for all values of \( \lambda \).
+
+<p>
 
 <!-- ------------------- end of main content --------------- -->
 
