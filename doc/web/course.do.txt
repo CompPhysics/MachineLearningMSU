@@ -2,7 +2,7 @@ TITLE: FRIB-TA Summer School on Machine Learning in Nuclear Experiment and Theor
 AUTHOR: "Matthew Hirn":"https://cmse.msu.edu/directory/faculty/matthew-j-hirn/about-me/" at Department of Mathematics and Department of Computational Science, Mathematics and Engineering, Michigan State University, East Lansing, Michigan, USA
 AUTHOR: "Morten Hjorth-Jensen":"http://mhjgit.github.io/info/doc/web/" at Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University, East Lansing, Michigan, USA
 AUTHOR: "Michelle Kuchera":"https://www.davidson.edu/academics/physics/faculty-and-staff/michelle-kuchera" at Physics Department, Davidson College, Davidson, North Carolina, USA
-AUTHOR: "Raghuram Ramanujan":"https://www.davidson.edu/academics/mathematics-and-computer-science/faculty-and-staff/raghuram-ramanujan" at Physics Department, Davidson College, Davidson, North Carolina, USA"
+AUTHOR: "Raghuram Ramanujan":"https://www.davidson.edu/academics/mathematics-and-computer-science/faculty-and-staff/raghuram-ramanujan" at Department of Mathematics and Computer Science, Davidson College, Davidson, North Carolina, USA"
 
 <%
 pub_url = 'https://compphysics.github.io/MachineLearningMSU/doc/pub'
