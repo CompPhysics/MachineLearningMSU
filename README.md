@@ -56,6 +56,7 @@ Acronyms for teachers
 - MH = Matthew Hirn
 - MHJ = Morten Hjorth-Jensen
 - MK = Michelle Kuchera
+- RR = Raghuram Ramanujan
 
 _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
@@ -72,13 +73,13 @@ _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
 _Tuesday May 21, 2019_:
 
-- 830am-930am: Neural networks  (MK)
-- 930am-1030am: Neural networks and deep learning  (MK)
+- 830am-930am: Neural networks  (MK and RR)
+- 930am-1030am: Neural networks and deep learning  (MK and RR)
 - 1030am-11am: Break, coffee, tea etc
-- 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments (MK)
+- 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments (MK and RR)
 - 12pm-1pm: Lunch
-- 1pm-2pm: CNNs (MK)
-- 2pm-3pm: Autoenconders and recurrent neural networks and examples from nuclear physics experiments  (MK)
+- 1pm-2pm: CNNs (MK and RR)
+- 2pm-3pm: Autoenconders and recurrent neural networks and examples from nuclear physics experiments  (MK and RR)
 - 3pm-330pm: Break, coffee, tea etc
 - 330pm-6pm: Hands-on sessions with examples from nuclear physics experiments
 
@@ -92,7 +93,7 @@ _Wednesday May 22, 2019_:
 - 1pm-2pm:  Nonlinear dimension reduction: Spectral graph theory and manifold learning (MH)
 - 2pm-3pm:  Boltzmann machines and many-body problems  (MHJ)
 - 3pm-330pm: Break, coffee, tea etc
-- 3pm-6pm: Hands-on sessions with examples from quantum mechanical many-body problems
+- 3pm-6pm: Hands-on sessions with various examples
 
 _Thursday May 23, 2019_:
 
