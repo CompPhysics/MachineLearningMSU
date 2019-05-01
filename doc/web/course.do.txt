@@ -2,7 +2,7 @@ TITLE: FRIB-TA Summer School on Machine Learning in Nuclear Experiment and Theor
 AUTHOR: "Matthew Hirn":"https://cmse.msu.edu/directory/faculty/matthew-j-hirn/about-me/" at Department of Mathematics and Department of Computational Science, Mathematics and Engineering, Michigan State University, East Lansing, Michigan, USA
 AUTHOR: "Morten Hjorth-Jensen":"http://mhjgit.github.io/info/doc/web/" at Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University, East Lansing, Michigan, USA
 AUTHOR: "Michelle Kuchera":"https://www.davidson.edu/academics/physics/faculty-and-staff/michelle-kuchera" at Physics Department, Davidson College, Davidson, North Carolina, USA
-AUTHOR: "Raghuram Ramanujan":"https://www.davidson.edu/academics/mathematics-and-computer-science/faculty-and-staff/raghuram-ramanujan" at Department of Mathematics and Computer Science, Davidson College, Davidson, North Carolina, USA"
+AUTHOR: "Raghuram Ramanujan":"https://www.davidson.edu/academics/mathematics-and-computer-science/faculty-and-staff/raghuram-ramanujan" at Department of Mathematics and Computer Science, Davidson College, Davidson, North Carolina, USA
 
 <%
 pub_url = 'https://compphysics.github.io/MachineLearningMSU/doc/pub'
@@ -68,7 +68,7 @@ o The last day, Thursday, is dedicated to solving explicit problems with hands-o
 
 === Recommended textbook ===
 !bblock
-* Aurelien Geron, Hands‑On Machine Learning with Scikit‑Learn and TensorFlow, O'Reilly
+* "Aurelien Geron, Hands‑On Machine Learning with Scikit‑Learn and TensorFlow, O'Reilly":"https://github.com/CompPhysics/MachineLearning/blob/master/doc/Textbooks/TensorflowML.pdf"
 !eblock
 
 !bblock General learning book on statistical analysis:
@@ -120,7 +120,7 @@ _Tuesday May 21, 2019_:
 
 _Wednesday May 22, 2019_:
 
-* 830am-930am: Reinforcement learning (MK and RR)
+* 830am-930am: Reinforcement learning (MK)
 * 930am-1030am: Introduction to exploratory data analysis and unsupervised learning: PCA (MH)
 * 1030am-11am: Break, coffee, tea etc
 * 11am-12pm: Clustering and introduction to nonlinear dimension reduction: k-means and t-SNE (MH)
