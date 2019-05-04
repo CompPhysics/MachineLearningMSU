@@ -10,7 +10,7 @@ np.random.seed(2018)
 
 n = 60
 n_boostraps = 100
-maxdegree = 20
+maxdegree = 30
 
 
 # Make data set.
