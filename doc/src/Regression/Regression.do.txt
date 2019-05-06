@@ -2994,7 +2994,7 @@ plt.legend()
 plt.show()
 !ec
 
-
+#improve quality of model, better plots to organize
 
 
 !split 
