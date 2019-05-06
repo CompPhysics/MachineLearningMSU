@@ -8,15 +8,15 @@ from sklearn.utils import resample
 
 np.random.seed(2018)
 
-n = 60
+n = 40
 n_boostraps = 100
-maxdegree = 30
+maxdegree = 14
 
 
 # Make data set.
 x = np.linspace(-3, 3, n).reshape(-1, 1)
-y = x**8#+ np.random.normal(0, 0.1, x.shape) 
-#np.exp(-x**2) + 1.5 * np.exp(-(x-2)**2)+ np.random.normal(0, 0.1, x.shape)
+#y = x**8+ np.random.normal(0, 0.1, x.shape) 
+y = np.exp(-x**2) + 1.5 * np.exp(-(x-2)**2)+ np.random.normal(0, 0.1, x.shape)
 error = np.zeros(maxdegree)
 bias = np.zeros(maxdegree)
 variance = np.zeros(maxdegree)
@@ -41,9 +41,9 @@ for degree in range(maxdegree):
     print('Var:', variance[degree])
     print('{} >= {} + {} = {}'.format(error[degree], bias[degree], variance[degree], bias[degree]+variance[degree]))
 
-plt.plot(polydegree, np.log10(error), label='Error')
-plt.plot(polydegree, np.log10(bias), label='bias')
-plt.plot(polydegree, np.log10(variance), label='Variance')
+#plt.plot(polydegree, np.log10(error), label='Error')
+plt.plot(polydegree, bias, label='bias')
+plt.plot(polydegree, variance, label='Variance')
 plt.legend()
 plt.show()
 
