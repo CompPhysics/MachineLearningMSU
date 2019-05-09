@@ -1139,7 +1139,7 @@ plt.show()
 
 === Seeing the wood for the trees ===
 
-As a teaser, let us now see how we can do this with decision trees using _scikit-learn_. Thereafter we switch to _random forests_!
+As a teaser, let us now see how we can do this with decision trees using _scikit-learn_. Later we will switch to so-called _random forests_!
 
 
 !bc pycod
@@ -1274,7 +1274,7 @@ For protons we would have
 !et
 
 To calculate say the neutron separation we need to multiply or masses with the nucleon number $A$ (why?).
-The we pick the oxygen isotopes and simply compute the separation energis in two lines of code. 
+Thereafter we pick the oxygen isotopes and simply compute the separation energies with  two lines of code (note that most of the code here is a repeat of what you have seen before). 
 !bc pycod
 # Regression analysis using scikit-learn functions
 # Common imports
