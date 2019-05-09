@@ -314,15 +314,8 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>May 6, 2019</h4></center> <!-- date -->
+<center><h4>May 9, 2019</h4></center> <!-- date -->
 <br>
-<p>
-<!-- todo: add example with nuclear mass, use this as an example to read data with pandas -->
-<!-- rewrite bias-variance stuff and add code -->
-<!-- add example of fit of EoS for infinite matter -->
-<!-- think of shell-model effective interactions and how to fit these -->
-<!-- add more about svd calculations and the svd itself -->
-
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
@@ -351,19 +344,19 @@ Fitting a continuous function with linear parameterization in terms of the param
 <p>
 
 <p>
-Regression modeling deals with the description of  the sampling distribution of a given random variable \( y \) and how it varies as function of another variable or a set of such variables \( \hat{x} =[x_0, x_1,\dots, x_p]^T \). 
-The first variable is called the <b>dependent</b>, the <b>outcome</b> or the <b>response</b> variable while the set of variables \( \hat{x} \) is called the independent variable, or the predictor variable or the explanatory variable.
+Regression modeling deals with the description of  the sampling distribution of a given random variable \( y \) and how it varies as function of another variable or a set of such variables \( \boldsymbol{x} =[x_0, x_1,\dots, x_p]^T \). 
+The first variable is called the <b>dependent</b>, the <b>outcome</b> or the <b>response</b> variable while the set of variables \( \boldsymbol{x} \) is called the independent variable, or the predictor variable or the explanatory variable.
 
 <p>
-A regression model aims at finding a likelihood function \( p(y\vert \hat{x}) \), that is the conditional distribution for \( y \) with a given \( \hat{x} \). The estimation of  \( p(y\vert \hat{x}) \) is made using a data set with 
+A regression model aims at finding a likelihood function \( p(y\vert \boldsymbol{x}) \), that is the conditional distribution for \( y \) with a given \( \boldsymbol{x} \). The estimation of  \( p(y\vert \boldsymbol{x}) \) is made using a data set with 
 
 <ul>
 <li> \( n \) cases \( i = 0, 1, 2, \dots, n-1 \)</li> 
 <li> Response (target, dependent or outcome) variable \( y_i \) with \( i = 0, 1, 2, \dots, n-1 \)</li> 
-<li> \( p \) Explanatory (independent or predictor) variables \( \hat{x}_i=[x_{i0}, x_{i1}, \dots, x_{ip}] \) with \( i = 0, 1, 2, \dots, n-1 \)</li>   
+<li> \( p \) Explanatory (independent or predictor) variables \( \boldsymbol{x}_i=[x_{i0}, x_{i1}, \dots, x_{ip}] \) with \( i = 0, 1, 2, \dots, n-1 \)</li>   
 </ul>
 
- The goal of the regression analysis is to extract/exploit relationship between \( y_i \) and \( \hat{x}_i \) in or to infer causal dependencies, approximations to the likelihood functions, functional relationships and to make predictions .
+ The goal of the regression analysis is to extract/exploit relationship between \( y_i \) and \( \boldsymbol{x}_i \) in or to infer causal dependencies, approximations to the likelihood functions, functional relationships and to make predictions, making fits and many other things.
 </div>
 
 
@@ -407,7 +400,7 @@ Linear regression gives us a set of analytical equations for the parameters \( \
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
-Before we proceed let us study a case from linear algebra where we aim at fitting a set of data \( \hat{y}=[y_0,y_1,\dots,y_{n-1}] \). We could think of these data as a result of an experiment or a complicated numerical experiment. These data are functions of a series of variables \( \hat{x}=[x_0,x_1,\dots,x_{n-1}] \), that is \( y_i = y(x_i) \) with \( i=0,1,2,\dots,n-1 \). The variables \( x_i \) could represent physical quantities like time, temperature, position etc. We assume that \( y(x) \) is a smooth function.
+Before we proceed let us study a case from linear algebra where we aim at fitting a set of data \( \boldsymbol{y}=[y_0,y_1,\dots,y_{n-1}] \). We could think of these data as a result of an experiment or a complicated numerical experiment. These data are functions of a series of variables \( \boldsymbol{x}=[x_0,x_1,\dots,x_{n-1}] \), that is \( y_i = y(x_i) \) with \( i=0,1,2,\dots,n-1 \). The variables \( x_i \) could represent physical quantities like time, temperature, position etc. We assume that \( y(x) \) is a smooth function.
 
 <p>
 Since obtaining these data points may not be trivial, we want to use these data to fit a function which can allow us to make predictions for values of \( y \) which are not in the present set. The perhaps simplest approach is to assume we can parametrize our function in terms of a polynomial of degree \( n-1 \) with \( n \) points, that is
@@ -450,22 +443,22 @@ $$
 <p>
 Defining the vectors
 $$
-\hat{y} = [y_0,y_1, y_2,\dots, y_{n-1}]^T,
+\boldsymbol{y} = [y_0,y_1, y_2,\dots, y_{n-1}]^T,
 $$
 
 and
 $$
-\hat{\beta} = [\beta_0,\beta_1, \beta_2,\dots, \beta_{n-1}]^T,
+\boldsymbol{\beta} = [\beta_0,\beta_1, \beta_2,\dots, \beta_{n-1}]^T,
 $$
 
 and
 $$
-\hat{\epsilon} = [\epsilon_0,\epsilon_1, \epsilon_2,\dots, \epsilon_{n-1}]^T,
+\boldsymbol{\epsilon} = [\epsilon_0,\epsilon_1, \epsilon_2,\dots, \epsilon_{n-1}]^T,
 $$
 
 and the design matrix
 $$
-\hat{X}=
+\boldsymbol{X}=
 \begin{bmatrix} 
 1& x_{0}^1 &x_{0}^2& \dots & \dots &x_{0}^{n-1}\\
 1& x_{1}^1 &x_{1}^2& \dots & \dots &x_{1}^{n-1}\\
@@ -477,7 +470,7 @@ $$
 
 we can rewrite our equations as
 $$
-\hat{y} = \hat{X}\hat{\beta}+\hat{\epsilon}.
+\boldsymbol{y} = \boldsymbol{X}\boldsymbol{\beta}+\boldsymbol{\epsilon}.
 $$
 </div>
 
@@ -512,9 +505,9 @@ $$
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
-We redefine in turn the matrix \( \hat{X} \) as
+We redefine in turn the matrix \( \boldsymbol{X} \) as
 $$
-\hat{X}=
+\boldsymbol{X}=
 \begin{bmatrix} 
 x_{00}& x_{01} &x_{02}& \dots & \dots &x_{0,n-1}\\
 x_{10}& x_{11} &x_{12}& \dots & \dots &x_{1,n-1}\\
@@ -526,10 +519,10 @@ $$
 
 and without loss of generality we rewrite again  our equations as
 $$
-\hat{y} = \hat{X}\hat{\beta}+\hat{\epsilon}.
+\boldsymbol{y} = \boldsymbol{X}\boldsymbol{\beta}+\boldsymbol{\epsilon}.
 $$
 
-The left-hand side of this equation is kwown. Our error vector \( \hat{\epsilon} \) and the parameter vector \( \hat{\beta} \) are our unknow quantities. How can we obtain the optimal set of \( \beta_i \) values?
+The left-hand side of this equation is kwown. Our error vector \( \boldsymbol{\epsilon} \) and the parameter vector \( \boldsymbol{\beta} \) are our unknow quantities. How can we obtain the optimal set of \( \beta_i \) values?
 </div>
 
 
@@ -540,7 +533,7 @@ The left-hand side of this equation is kwown. Our error vector \( \hat{\epsilon}
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
-We have defined the matrix \( \hat{X} \)
+We have defined the matrix \( \boldsymbol{X} \)
 $$
 \begin{align*}
 y_0&=\beta_0x_{00}+\beta_1x_{01}+\beta_2x_{02}+\dots+\beta_{n-1}x_{0n-1}+\epsilon_0\\
@@ -562,19 +555,19 @@ $$
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
-We well use this matrix to define the approximation \( \hat{\tilde{y}} \) via the unknown quantity \( \hat{\beta} \) as
+We well use this matrix to define the approximation \( \boldsymbol{\tilde{y}} \) via the unknown quantity \( \boldsymbol{\beta} \) as
 $$
-\hat{\tilde{y}}= \hat{X}\hat{\beta},
+\boldsymbol{\tilde{y}}= \boldsymbol{X}\boldsymbol{\beta},
 $$
 
 and in order to find the optimal parameters \( \beta_i \) instead of solving the above linear algebra problem, we define a function which gives a measure of the spread between the values \( y_i \) (which represent hopefully the exact values) and the parametrized values \( \tilde{y}_i \), namely
 $$
-Q(\hat{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\hat{y}-\hat{\tilde{y}}\right)^T\left(\hat{y}-\hat{\tilde{y}}\right),
+Q(\boldsymbol{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right),
 $$
 
-or using the matrix \( \hat{X} \) as
+or using the matrix \( \boldsymbol{X} \) as
 $$
-Q(\hat{\beta})=\left(\hat{y}-\hat{X}\hat{\beta}\right)^T\left(\hat{y}-\hat{X}\hat{\beta}\right).
+Q(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right).
 $$
 </div>
 
@@ -588,7 +581,7 @@ $$
 <p>
 The function 
 $$
-Q(\hat{\beta})=\left(\hat{y}-\hat{X}\hat{\beta}\right)^T\left(\hat{y}-\hat{X}\hat{\beta}\right),
+Q(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right),
 $$
 
 can be linked to the variance of the quantity \( y_i \) if we interpret the latter as the mean value of for example a numerical  experiment. When linking below with the maximum likelihood approach below, we will indeed interpret \( y_i \) as a mean value
@@ -599,19 +592,19 @@ $$
 where \( \langle y_i \rangle \) is the mean value. Keep in mind also that till now  we have treated \( y_i \) as the exact value. Normally, the response (dependent or outcome) variable \( y_i \) the outcome of a numerical experiment or another type of experiment and is thus only an approximation to the true value. It is then always accompanied by an error estimate, often limited to a statistical error estimate given by the standard deviation discussed earlier. In the discussion here we will treat \( y_i \) as our exact value for the response variable.
 
 <p>
-In order to find the parameters \( \beta_i \) we will then minimize the spread of \( Q(\hat{\beta}) \) by requiring
+In order to find the parameters \( \beta_i \) we will then minimize the spread of \( Q(\boldsymbol{\beta}) \) by requiring
 $$
-\frac{\partial Q(\hat{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
+\frac{\partial Q(\boldsymbol{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
 $$
 
 which results in
 $$
-\frac{\partial Q(\hat{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}x_{ij}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)\right]=0, 
+\frac{\partial Q(\boldsymbol{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}x_{ij}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)\right]=0, 
 $$
 
 or in a matrix-vector form as
 $$
-\frac{\partial Q(\hat{\beta})}{\partial \hat{\beta}} = 0 = \hat{X}^T\left( \hat{y}-\hat{X}\hat{\beta}\right).  
+\frac{\partial Q(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = \boldsymbol{X}^T\left( \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right).  
 $$
 
 
@@ -627,17 +620,17 @@ $$
 <p>
 We can rewrite
 $$
-\frac{\partial Q(\hat{\beta})}{\partial \hat{\beta}} = 0 = \hat{X}^T\left( \hat{y}-\hat{X}\hat{\beta}\right),  
+\frac{\partial Q(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = \boldsymbol{X}^T\left( \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right),  
 $$
 
 as
 $$
-\hat{X}^T\hat{y} = \hat{X}^T\hat{X}\hat{\beta},  
+\boldsymbol{X}^T\boldsymbol{y} = \boldsymbol{X}^T\boldsymbol{X}\boldsymbol{\beta},  
 $$
 
-and if the matrix \( \hat{X}^T\hat{X} \) is invertible we have the solution
+and if the matrix \( \boldsymbol{X}^T\boldsymbol{X} \) is invertible we have the solution
 $$
-\hat{\beta} =\left(\hat{X}^T\hat{X}\right)^{-1}\hat{X}^T\hat{y}.
+\boldsymbol{\beta} =\left(\boldsymbol{X}^T\boldsymbol{X}\right)^{-1}\boldsymbol{X}^T\boldsymbol{y}.
 $$
 
 
@@ -651,22 +644,22 @@ $$
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
-The residuals \( \hat{\epsilon} \) are in turn given by
+The residuals \( \boldsymbol{\epsilon} \) are in turn given by
 $$
-\hat{\epsilon} = \hat{y}-\hat{\tilde{y}} = \hat{y}-\hat{X}\hat{\beta},
+\boldsymbol{\epsilon} = \boldsymbol{y}-\boldsymbol{\tilde{y}} = \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta},
 $$
 
 and with 
 $$
-\hat{X}^T\left( \hat{y}-\hat{X}\hat{\beta}\right)= 0, 
+\boldsymbol{X}^T\left( \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)= 0, 
 $$
 
 we have
 $$
-\hat{X}^T\hat{\epsilon}=\hat{X}^T\left( \hat{y}-\hat{X}\hat{\beta}\right)= 0, 
+\boldsymbol{X}^T\boldsymbol{\epsilon}=\boldsymbol{X}^T\left( \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)= 0, 
 $$
 
-meaning that the solution for \( \hat{\beta} \) is the one which minimizes the residuals.  Later we will link this with the maximum likelihood approach.
+meaning that the solution for \( \boldsymbol{\beta} \) is the one which minimizes the residuals.  Later we will link this with the maximum likelihood approach.
 
 
 </div>
@@ -686,10 +679,10 @@ Normally, the response (dependent or outcome) variable \( y_i \) the outcome of 
 <p>
 Introducing the standard deviation \( \sigma_i \) for each measurement \( y_i \), we define now the \( \chi^2 \) function as  
 $$
-\chi^2(\hat{\beta})=\sum_{i=0}^{n-1}\frac{\left(y_i-\tilde{y}_i\right)^2}{\sigma_i^2}=\left(\hat{y}-\hat{\tilde{y}}\right)^T\frac{1}{\hat{\Sigma^2}}\left(\hat{y}-\hat{\tilde{y}}\right),
+\chi^2(\boldsymbol{\beta})=\sum_{i=0}^{n-1}\frac{\left(y_i-\tilde{y}_i\right)^2}{\sigma_i^2}=\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\frac{1}{\boldsymbol{\Sigma^2}}\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right),
 $$
 
-where the matrix \( \hat{\Sigma} \) is a diagonal matrix with \( \sigma_i \) as matrix elements.
+where the matrix \( \boldsymbol{\Sigma} \) is a diagonal matrix with \( \sigma_i \) as matrix elements.
 
 
 </div>
@@ -704,22 +697,22 @@ where the matrix \( \hat{\Sigma} \) is a diagonal matrix with \( \sigma_i \) as 
 <p>
 
 <p>
-In order to find the parameters \( \beta_i \) we will then minimize the spread of \( \chi^2(\hat{\beta}) \) by requiring
+In order to find the parameters \( \beta_i \) we will then minimize the spread of \( \chi^2(\boldsymbol{\beta}) \) by requiring
 $$
-\frac{\partial \chi^2(\hat{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(\frac{y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}}{\sigma_i}\right)^2\right]=0, 
+\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(\frac{y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}}{\sigma_i}\right)^2\right]=0, 
 $$
 
 which results in
 $$
-\frac{\partial \chi^2(\hat{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}\frac{x_{ij}}{\sigma_i}\left(\frac{y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}}{\sigma_i}\right)\right]=0, 
+\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}\frac{x_{ij}}{\sigma_i}\left(\frac{y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}}{\sigma_i}\right)\right]=0, 
 $$
 
 or in a matrix-vector form as
 $$
-\frac{\partial \chi^2(\hat{\beta})}{\partial \hat{\beta}} = 0 = \hat{A}^T\left( \hat{b}-\hat{A}\hat{\beta}\right).  
+\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = \boldsymbol{A}^T\left( \boldsymbol{b}-\boldsymbol{A}\boldsymbol{\beta}\right).  
 $$
 
-where we have defined the matrix \( \hat{A} =\hat{X}/\hat{\Sigma} \) with matrix elements \( a_{ij} = x_{ij}/\sigma_i \) and the vector \( \hat{b} \) with elements \( b_i = y_i/\sigma_i \).
+where we have defined the matrix \( \boldsymbol{A} =\boldsymbol{X}/\boldsymbol{\Sigma} \) with matrix elements \( a_{ij} = x_{ij}/\sigma_i \) and the vector \( \boldsymbol{b} \) with elements \( b_i = y_i/\sigma_i \).
 </div>
 
 
@@ -734,17 +727,17 @@ where we have defined the matrix \( \hat{A} =\hat{X}/\hat{\Sigma} \) with matrix
 <p>
 We can rewrite
 $$
-\frac{\partial \chi^2(\hat{\beta})}{\partial \hat{\beta}} = 0 = \hat{A}^T\left( \hat{b}-\hat{A}\hat{\beta}\right),  
+\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = \boldsymbol{A}^T\left( \boldsymbol{b}-\boldsymbol{A}\boldsymbol{\beta}\right),  
 $$
 
 as
 $$
-\hat{A}^T\hat{b} = \hat{A}^T\hat{A}\hat{\beta},  
+\boldsymbol{A}^T\boldsymbol{b} = \boldsymbol{A}^T\boldsymbol{A}\boldsymbol{\beta},  
 $$
 
-and if the matrix \( \hat{A}^T\hat{A} \) is invertible we have the solution
+and if the matrix \( \boldsymbol{A}^T\boldsymbol{A} \) is invertible we have the solution
 $$
-\hat{\beta} =\left(\hat{A}^T\hat{A}\right)^{-1}\hat{A}^T\hat{b}.
+\boldsymbol{\beta} =\left(\boldsymbol{A}^T\boldsymbol{A}\right)^{-1}\boldsymbol{A}^T\boldsymbol{b}.
 $$
 </div>
 
@@ -760,10 +753,10 @@ $$
 <p>
 If we then introduce the matrix
 $$
-\hat{H} =  \left(\hat{A}^T\hat{A}\right)^{-1},
+\boldsymbol{H} =  \left(\boldsymbol{A}^T\boldsymbol{A}\right)^{-1},
 $$
 
-we have then the following expression for the parameters \( \beta_j \) (the matrix elements of \( \hat{H} \) are \( h_{ij} \))
+we have then the following expression for the parameters \( \beta_j \) (the matrix elements of \( \boldsymbol{H} \) are \( h_{ij} \))
 $$
 \beta_j = \sum_{k=0}^{p-1}h_{jk}\sum_{i=0}^{n-1}\frac{y_i}{\sigma_i}\frac{x_{ik}}{\sigma_i} = \sum_{k=0}^{p-1}h_{jk}\sum_{i=0}^{n-1}b_ia_{ik}
 $$
@@ -794,12 +787,12 @@ $$
 
 By computing the derivatives of \( \chi^2 \) with respect to \( \beta_0 \) and \( \beta_1 \) show that these are given by
 $$
-\frac{\partial \chi^2(\hat{\beta})}{\partial \beta_0} = -2\left[ \sum_{i=0}^{n-1}\left(\frac{y_i-\beta_0-\beta_1x_{i}}{\sigma_i^2}\right)\right]=0,
+\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \beta_0} = -2\left[ \sum_{i=0}^{n-1}\left(\frac{y_i-\beta_0-\beta_1x_{i}}{\sigma_i^2}\right)\right]=0,
 $$
 
 and
 $$
-\frac{\partial \chi^2(\hat{\beta})}{\partial \beta_0} = -2\left[ \sum_{i=0}^{n-1}x_i\left(\frac{y_i-\beta_0-\beta_1x_{i}}{\sigma_i^2}\right)\right]=0.
+\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \beta_0} = -2\left[ \sum_{i=0}^{n-1}x_i\left(\frac{y_i-\beta_0-\beta_1x_{i}}{\sigma_i^2}\right)\right]=0.
 $$
 </div>
 
@@ -930,7 +923,7 @@ plt.show()
 
 <p>
 We start with perhaps our simplest possible example, using <b>scikit-learn</b> to perform linear regression analysis on a data set produced by us. 
-What follows is a simple Python code where we have defined  function \( y \) in terms of the variable \( x \). Both are defined as vectors of dimension \( 1\times 100 \). The entries to the vector \( \hat{x} \)  are given by random numbers generated with a uniform distribution with entries \( x_i \in [0,1] \) (more about probability distribution functions later). These values are then used to define a function \( y(x) \) (tabulated again as a vector) with a linear dependence on \( x \) plus a random noise added via the normal distribution.
+What follows is a simple Python code where we have defined  function \( y \) in terms of the variable \( x \). Both are defined as vectors of dimension \( 1\times 100 \). The entries to the vector \( \boldsymbol{x} \)  are given by random numbers generated with a uniform distribution with entries \( x_i \in [0,1] \) (more about probability distribution functions later). These values are then used to define a function \( y(x) \) (tabulated again as a vector) with a linear dependence on \( x \) plus a random noise added via the normal distribution.
 
 <p>
 The Numpy functions are imported used the <b>import numpy as np</b>
@@ -952,7 +945,7 @@ where \( N(0,1) \) represents random numbers generated by the normal
 distribution.  From <b>scikit-learn</b> we import then the
 <b>LinearRegression</b> functionality and make a prediction \( \tilde{y} =
 \alpha + \beta x \) using the function <b>fit(x,y)</b>. We call the set of
-data \( (\hat{x},\hat{y}) \) for our training data. The Python package
+data \( (\boldsymbol{x},\boldsymbol{y}) \) for our training data. The Python package
 <b>scikit-learn</b> has also a functionality which extracts the above
 fitting parameters \( \alpha \) and \( \beta \) (see below). Later we will
 distinguish between training data and test data.
@@ -1079,7 +1072,7 @@ There are many ways to define the cost function. A simpler approach is to look a
 the relative error as
 
 $$
-\epsilon_{\mathrm{relative}}= \frac{\vert \hat{y} -\hat{\tilde{y}}\vert}{\vert \hat{y}\vert}.
+\epsilon_{\mathrm{relative}}= \frac{\vert \boldsymbol{y} -\boldsymbol{\tilde{y}}\vert}{\vert \boldsymbol{y}\vert}.
 $$
 
 We can modify easily the above Python code and plot the relative error instead
@@ -1162,7 +1155,7 @@ plt.show()
 <p>
 The function <b>coef</b> gives us the parameter \( \beta \) of our fit while <b>intercept</b> yields 
 \( \alpha \). Depending on the constant in front of the normal distribution, we get values near or far from \( alpha =2 \) and \( \beta =5 \). Try to play around with different parameters in front of the normal distribution. The function <b>meansquarederror</b> gives us the mean square error, a risk metric corresponding to the expected value of the squared (quadratic) error or loss defined as
-$$ MSE(\hat{y},\hat{\tilde{y}}) = \frac{1}{n}
+$$ MSE(\boldsymbol{y},\boldsymbol{\tilde{y}}) = \frac{1}{n}
 \sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2, 
 $$
 
@@ -1181,16 +1174,16 @@ The <b>r2score</b> function computes \( R^2 \), the coefficient of
 determination. It provides a measure of how well future samples are
 likely to be predicted by the model. Best possible score is 1.0 and it
 can be negative (because the model can be arbitrarily worse). A
-constant model that always predicts the expected value of \( \hat{y} \),
+constant model that always predicts the expected value of \( \boldsymbol{y} \),
 disregarding the input features, would get a \( R^2 \) score of \( 0.0 \).
 
 <p>
-If \( \tilde{\hat{y}}_i \) is the predicted value of the \( i-th \) sample and \( y_i \) is the corresponding true value, then the score \( R^2 \) is defined as
+If \( \tilde{\boldsymbol{y}}_i \) is the predicted value of the \( i-th \) sample and \( y_i \) is the corresponding true value, then the score \( R^2 \) is defined as
 $$
-R^2(\hat{y}, \tilde{\hat{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
+R^2(\boldsymbol{y}, \tilde{\boldsymbol{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
 $$
 
-where we have defined the mean value  of \( \hat{y} \) as
+where we have defined the mean value  of \( \boldsymbol{y} \) as
 $$
 \bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
 $$
@@ -1205,13 +1198,13 @@ Another quantity will meet again in our discussions of regression analysis is
  mean absolute error (MAE), a risk metric corresponding to the expected value of the absolute error loss or what we call the \( l1 \)-norm loss. In our discussion above we presented the relative error.
 The MAE is defined as follows
 $$
-\text{MAE}(\hat{y}, \hat{\tilde{y}}) = \frac{1}{n} \sum_{i=0}^{n-1} \left| y_i - \tilde{y}_i \right|.
+\text{MAE}(\boldsymbol{y}, \boldsymbol{\tilde{y}}) = \frac{1}{n} \sum_{i=0}^{n-1} \left| y_i - \tilde{y}_i \right|.
 $$
 
 Finally we present the 
 squared logarithmic (quadratic) error
 $$
-\text{MSLE}(\hat{y}, \hat{\tilde{y}}) = \frac{1}{n} \sum_{i=0}^{n - 1} (\log_e (1 + y_i) - \log_e (1 + \tilde{y}_i) )^2,
+\text{MSLE}(\boldsymbol{y}, \boldsymbol{\tilde{y}}) = \frac{1}{n} \sum_{i=0}^{n - 1} (\log_e (1 + y_i) - \log_e (1 + \tilde{y}_i) )^2,
 $$
 
 <p>
@@ -1370,13 +1363,13 @@ Hence, \( Y_i \sim \mathcal{N}( \mathbf{X}_{i, \ast} \, \beta, \sigma^2) \).
 
 <p>
 A general
-\( m\times n \) matrix \( \hat{A} \) can be written in terms of a diagonal
-matrix \( \hat{D} \) of dimensionality \( n\times n \) and two orthognal
-matrices \( \hat{U} \) and \( \hat{V} \), where the first has dimensionality
+\( m\times n \) matrix \( \boldsymbol{A} \) can be written in terms of a diagonal
+matrix \( \boldsymbol{D} \) of dimensionality \( n\times n \) and two orthognal
+matrices \( \boldsymbol{U} \) and \( \boldsymbol{V} \), where the first has dimensionality
 \( m \times m \) and the last dimensionality \( n\times n \). 
 We have then 
 $$ 
-\hat{A} = \hat{U}\hat{D}\hat{V}^T 
+\boldsymbol{A} = \boldsymbol{U}\boldsymbol{D}\boldsymbol{V}^T 
 $$
 </div>
 
@@ -1388,8 +1381,8 @@ $$
 
 <p>
 One of the typical problems we encounter with linear regression, in particular 
-when the matrix \( \hat{X} \) (our so-called design matrix) is high-dimensional, 
-are problems with near singular or singular matrices. The column vectors of \( \hat{X} \) 
+when the matrix \( \boldsymbol{X} \) (our so-called design matrix) is high-dimensional, 
+are problems with near singular or singular matrices. The column vectors of \( \boldsymbol{X} \) 
 may be linearly dependent, normally referred to as super-collinearity.  
 This means that the matrix may be rank deficient and it is basically impossible to 
 to model the data using linear regression. As an example, consider the matrix
@@ -1409,7 +1402,7 @@ $$
 $$
 
 <p>
-The columns of \( \hat{X} \) are linearly dependent. We se this easily since the 
+The columns of \( \boldsymbol{X} \) are linearly dependent. We se this easily since the 
 the first column is the row-wise sum of the other two columns. The rank (more correct,
 the column rank) of a matrix is the dimension of the space spanned by the
 column vectors. Hence, the rank of \( \mathbf{X} \) is equal to the number
@@ -1417,10 +1410,10 @@ of linearly independent columns. In this particular case the matrix has rank 2.
 
 <p>
 Super-collinearity of an \( (n \times p) \)-dimensional design matrix \( \mathbf{X} \) implies
-that the inverse of the matrix \( \hat{X}^T\hat{x} \) (the matrix we needto invert to solve the linear regression equations) is non-invertible. If we have a square matrix that does not have an inverse, we say this matrix singular. The example here demonstrates this
+that the inverse of the matrix \( \boldsymbol{X}^T\boldsymbol{x} \) (the matrix we needto invert to solve the linear regression equations) is non-invertible. If we have a square matrix that does not have an inverse, we say this matrix singular. The example here demonstrates this
 $$
 \begin{align*}
-\hat{X} & =  \left[
+\boldsymbol{X} & =  \left[
 \begin{array}{rr}
 1 & -1
 \\
@@ -1429,8 +1422,8 @@ $$
 \end{align*}
 $$
 
-We see easily that  \( \mbox{det}(\hat{X}) = x_{11} x_{22} - x_{12} x_{21} = 1 \times (-1) - 1 \times (-1) = 0 \). Hence, \( \mathbf{X} \) is singular and its inverse is undefined.
-This is equivalent to saying that the matrix \( \hat{X} \) has at least an eigenvalue which is zero.
+We see easily that  \( \mbox{det}(\boldsymbol{X}) = x_{11} x_{22} - x_{12} x_{21} = 1 \times (-1) - 1 \times (-1) = 0 \). Hence, \( \mathbf{X} \) is singular and its inverse is undefined.
+This is equivalent to saying that the matrix \( \boldsymbol{X} \) has at least an eigenvalue which is zero.
 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -1438,27 +1431,27 @@ This is equivalent to saying that the matrix \( \hat{X} \) has at least an eigen
 <h2 id="___sec37">Fixing the singularity </h2>
 
 <p>
-If our design matrix \( \hat{X} \) which enters the linear regression problem
+If our design matrix \( \boldsymbol{X} \) which enters the linear regression problem
 $$
 \begin{align}
-\hat{\beta} & =  (\hat{X}^{T} \hat{X})^{-1} \hat{X}^{T} \hat{y},
+\boldsymbol{\beta} & =  (\boldsymbol{X}^{T} \boldsymbol{X})^{-1} \boldsymbol{X}^{T} \boldsymbol{y},
 \label{_auto1}
 \end{align}
 $$
 
 has linearly dependent column vectors, we will not be able to compute the inverse
-of \( \hat{X}^T\hat{X} \) and we cannot find the parameters (estimators) \( \beta_i \). 
-The estimators are only well-defined if \( (\hat{X}^{T}\hat{X})^{-1} \) exits. 
-This is more likely to happen when the matrix \( \hat{X} \) is high-dimensional. In this case it is likely to encounter a situation where 
+of \( \boldsymbol{X}^T\boldsymbol{X} \) and we cannot find the parameters (estimators) \( \beta_i \). 
+The estimators are only well-defined if \( (\boldsymbol{X}^{T}\boldsymbol{X})^{-1} \) exits. 
+This is more likely to happen when the matrix \( \boldsymbol{X} \) is high-dimensional. In this case it is likely to encounter a situation where 
 the regression parameters \( \beta_i \) cannot be estimated.
 
 <p>
 The <em>ad hoc</em> approach which was introduced in the 70s was simply to add a diagonal component to the matrix to invert, that is we change
 $$
-\hat{X}^{T} \hat{X} \rightarrow \hat{X}^{T} \hat{X}+\lambda \hat{I},
+\boldsymbol{X}^{T} \boldsymbol{X} \rightarrow \boldsymbol{X}^{T} \boldsymbol{X}+\lambda \boldsymbol{I},
 $$
 
-where \( \hat{I} \) is the identity matrix.
+where \( \boldsymbol{I} \) is the identity matrix.
 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -2609,12 +2602,12 @@ estimates:
 
 $$
 \begin{align*}
-\mbox{AIC}(\lambda) & =  2 \, p - 2 \log(\hat{L})
+\mbox{AIC}(\lambda) & =  2 \, p - 2 \log(\boldsymbol{L})
 \\
-& =  2 \, \mbox{tr} [\mathbf{H}(\lambda)] - 2 \log\{L[\hat{\beta}(\lambda), \hat{\sigma}^2(\lambda)]\}
+& =  2 \, \mbox{tr} [\mathbf{H}(\lambda)] - 2 \log\{L[\boldsymbol{\beta}(\lambda), \boldsymbol{\sigma}^2(\lambda)]\}
 \\
 & =  2 \, \sum_{j=1}^p \frac{d_{jj}^2}{d_{jj}^2 + \lambda}
-+ 2 n \, \log[\sqrt{2 \, \pi} \, \hat{\sigma}(\lambda)] +  \frac{1}{\hat{\sigma}^2(\lambda)} \sum_{i=1}^n [y_i - \mathbf{X}_{i, \ast} \, \hat{\beta}(\lambda)]^2.
++ 2 n \, \log[\sqrt{2 \, \pi} \, \boldsymbol{\sigma}(\lambda)] +  \frac{1}{\boldsymbol{\sigma}^2(\lambda)} \sum_{i=1}^n [y_i - \mathbf{X}_{i, \ast} \, \boldsymbol{\beta}(\lambda)]^2.
 \end{align*}
 $$
 
@@ -2692,27 +2685,27 @@ cross-validation (LOOCV).
 <ul>
 <li> Define a range of interest for the penalty parameter.</li>
 <li> Divide the data set into training and test set comprising samples \( \{1, \ldots, n\} \setminus i \) and \( \{ i \} \), respectively.</li>
-<li> Fit the linear regression model by means of ridge estimation  for each \( \lambda \) in the grid using the training set, and the corresponding estimate of the error variance \( \hat{\sigma}_{-i}^2(\lambda) \), as</li>
+<li> Fit the linear regression model by means of ridge estimation  for each \( \lambda \) in the grid using the training set, and the corresponding estimate of the error variance \( \boldsymbol{\sigma}_{-i}^2(\lambda) \), as</li>
 </ul>
 
 $$
 \begin{align*}
-\hat{\beta}_{-i}(\lambda) & =  ( \hat{X}_{-i, \ast}^{\top}
-\hat{X}_{-i, \ast} + \lambda \hat{I}_{pp})^{-1}
-\hat{X}_{-i, \ast}^{\top} \hat{y}_{-i}
+\boldsymbol{\beta}_{-i}(\lambda) & =  ( \boldsymbol{X}_{-i, \ast}^{\top}
+\boldsymbol{X}_{-i, \ast} + \lambda \boldsymbol{I}_{pp})^{-1}
+\boldsymbol{X}_{-i, \ast}^{\top} \boldsymbol{y}_{-i}
 \end{align*}
 $$
 
 
 <ul>
-<li> Evaluate the prediction performance of these models on the test set by \( \log\{L[y_i, \hat{X}_{i, \ast}; \hat{\beta}_{-i}(\lambda), \hat{\sigma}_{-i}^2(\lambda)]\} \). Or, by the prediction error \( |y_i - \hat{X}_{i, \ast} \hat{\beta}_{-i}(\lambda)| \), the relative error, the error squared or the R2 score function.</li>
+<li> Evaluate the prediction performance of these models on the test set by \( \log\{L[y_i, \boldsymbol{X}_{i, \ast}; \boldsymbol{\beta}_{-i}(\lambda), \boldsymbol{\sigma}_{-i}^2(\lambda)]\} \). Or, by the prediction error \( |y_i - \boldsymbol{X}_{i, \ast} \boldsymbol{\beta}_{-i}(\lambda)| \), the relative error, the error squared or the R2 score function.</li>
 <li> Repeat the first three steps  such that each sample plays the role of the test set once.</li>
 <li> Average the prediction performances of the test sets at each grid point of the penalty bias/parameter by computing the <em>cross-validated log-likelihood</em>. It is an estimate of the prediction performance of the model corresponding to this value of the penalty parameter on novel data. It is defined as</li>
 </ul>
 
 $$
 \begin{align*}
-\frac{1}{n} \sum_{i = 1}^n \log\{L[y_i, \mathbf{X}_{i, \ast}; \hat{\beta}_{-i}(\lambda), \hat{\sigma}_{-i}^2(\lambda)]\}.
+\frac{1}{n} \sum_{i = 1}^n \log\{L[y_i, \mathbf{X}_{i, \ast}; \boldsymbol{\beta}_{-i}(\lambda), \boldsymbol{\sigma}_{-i}^2(\lambda)]\}.
 \end{align*}
 $$
 
@@ -2733,7 +2726,7 @@ Another approach in the LOOCV scheme is to the use the so-called Predicted Resid
 We can define the optimal penalty parameter to minimize
 $$
 \begin{align*}
-\lambda_{\mbox{{\tiny opt}}} = \arg \min_{\lambda} \frac{1}{n} \sum_{i=1}^n [y_i - \hat{X}_{i, \ast} \hat{\beta}_{-i}(\lambda)]^2.
+\lambda_{\mbox{{\tiny opt}}} = \arg \min_{\lambda} \frac{1}{n} \sum_{i=1}^n [y_i - \boldsymbol{X}_{i, \ast} \boldsymbol{\beta}_{-i}(\lambda)]^2.
 \end{align*}
 $$
 
@@ -2774,14 +2767,14 @@ need for bootstrapping.
 
 <p>
 The Jackknife works by making many replicas of the estimator \( \widehat{\theta} \). 
-The jackknife is a resampling method, we explained that this happens by scrambling the data in some way. When using the jackknife, this is done by systematically leaving out one observation from the vector of observed values \( \hat{x} = (x_1,x_2,\cdots,X_n) \). 
-Let \( \hat{x}_i \) denote the vector
+The jackknife is a resampling method, we explained that this happens by scrambling the data in some way. When using the jackknife, this is done by systematically leaving out one observation from the vector of observed values \( \boldsymbol{x} = (x_1,x_2,\cdots,X_n) \). 
+Let \( \boldsymbol{x}_i \) denote the vector
 $$
-\hat{x}_i = (x_1,x_2,\cdots,x_{i-1},x_{i+1},\cdots,x_n),
+\boldsymbol{x}_i = (x_1,x_2,\cdots,x_{i-1},x_{i+1},\cdots,x_n),
 $$
 
 <p>
-which equals the vector \( \hat{x} \) with the exception that observation
+which equals the vector \( \boldsymbol{x} \) with the exception that observation
 number \( i \) is left out. Using this notation, define
 \( \widehat{\theta}_i \) to be the estimator
 \( \widehat{\theta} \) computed using \( \vec{X}_i \).
@@ -2863,14 +2856,14 @@ advantages:
 <h2 id="___sec83">Resampling methods: Bootstrap background </h2>
 
 <p>
-Since \( \widehat{\theta} = \widehat{\theta}(\hat{X}) \) is a function of random variables,
+Since \( \widehat{\theta} = \widehat{\theta}(\boldsymbol{X}) \) is a function of random variables,
 \( \widehat{\theta} \) itself must be a random variable. Thus it has
-a pdf, call this function \( p(\hat{t}) \). The aim of the bootstrap is to
-estimate \( p(\hat{t}) \) by the relative frequency of
+a pdf, call this function \( p(\boldsymbol{t}) \). The aim of the bootstrap is to
+estimate \( p(\boldsymbol{t}) \) by the relative frequency of
 \( \widehat{\theta} \). You can think of this as using a histogram
-in the place of \( p(\hat{t}) \). If the relative frequency closely
+in the place of \( p(\boldsymbol{t}) \). If the relative frequency closely
 resembles \( p(\vec{t}) \), then using numerics, it is straight forward to
-estimate all the interesting parameters of \( p(\hat{t}) \) using point
+estimate all the interesting parameters of \( p(\boldsymbol{t}) \) using point
 estimators.
 
 <p>
@@ -2893,7 +2886,7 @@ been straight forward to do this by:
 By repeated use of (1) and (2), many
 estimates of \( \widehat{\theta} \) could have been obtained. The
 idea is to use the relative frequency of \( \widehat{\theta}^* \)
-(think of a histogram) as an estimate of \( p(\hat{t}) \).
+(think of a histogram) as an estimate of \( p(\boldsymbol{t}) \).
 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -2914,7 +2907,7 @@ result in some asymptotic sense? The answer is yes.
 Instead of generating the histogram for the relative
 frequency of the observation \( X_i \), just draw the values
 \( (X_1^*,X_2^*,\cdots,X_n^*) \) with replacement from the vector
-\( \hat{X} \).
+\( \boldsymbol{X} \).
 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -2925,9 +2918,9 @@ frequency of the observation \( X_i \), just draw the values
 The independent bootstrap works like this: 
 
 <ol>
-<li> Draw with replacement \( n \) numbers for the observed variables \( \hat{x} = (x_1,x_2,\cdots,x_n) \).</li> 
-<li> Define a vector \( \hat{x}^* \) containing the values which were drawn from \( \hat{x} \).</li> 
-<li> Using the vector \( \hat{x}^* \) compute \( \widehat{\theta}^* \) by evaluating \( \widehat \theta \) under the observations \( \hat{x}^* \).</li> 
+<li> Draw with replacement \( n \) numbers for the observed variables \( \boldsymbol{x} = (x_1,x_2,\cdots,x_n) \).</li> 
+<li> Define a vector \( \boldsymbol{x}^* \) containing the values which were drawn from \( \boldsymbol{x} \).</li> 
+<li> Using the vector \( \boldsymbol{x}^* \) compute \( \widehat{\theta}^* \) by evaluating \( \widehat \theta \) under the observations \( \boldsymbol{x}^* \).</li> 
 <li> Repeat this process \( k \) times.</li> 
 </ol>
 
@@ -3000,7 +2993,7 @@ Assume \( n = 2^d \) for some integer \( d>1 \) and \( X_1,X_2,\cdots, X_n \) is
 Moreover, assume that the time series is asymptotically uncorrelated. We switch to vector notation by arranging \( X_1,X_2,\cdots,X_n \) in an \( n \)-tuple. Define:
 $$
 \begin{align*}
-\hat{X} = (X_1,X_2,\cdots,X_n).
+\boldsymbol{X} = (X_1,X_2,\cdots,X_n).
 \end{align*}
 $$
 
@@ -3069,7 +3062,7 @@ $$
 $$
 
 <p>
-The quantity \( \hat{X} \) is asymptotic uncorrelated by assumption, \( \hat{X}_k \) is also asymptotic uncorrelated. Let's turn our attention to the variance of the sample mean \( V(\overline{X}) \).
+The quantity \( \boldsymbol{X} \) is asymptotic uncorrelated by assumption, \( \boldsymbol{X}_k \) is also asymptotic uncorrelated. Let's turn our attention to the variance of the sample mean \( V(\overline{X}) \).
 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -3102,8 +3095,8 @@ We can show that \( V(\overline{X}_i) = V(\overline{X}_j) \) for all \( 0 \leq i
 We can then wrap up
 $$
 \begin{align}
-n_{j+1} \overline{X}_{j+1}  &= \sum_{i=1}^{n_{j+1}} (\hat{X}_{j+1})_i =  \frac{1}{2}\sum_{i=1}^{n_{j}/2} (\hat{X}_{j})_{2i-1} + (\hat{X}_{j})_{2i} \nonumber \\
-&= \frac{1}{2}\left[ (\hat{X}_j)_1 + (\hat{X}_j)_2 + \cdots + (\hat{X}_j)_{n_j} \right] = \underbrace{\frac{n_j}{2}}_{=n_{j+1}} \overline{X}_j = n_{j+1}\overline{X}_j. 
+n_{j+1} \overline{X}_{j+1}  &= \sum_{i=1}^{n_{j+1}} (\boldsymbol{X}_{j+1})_i =  \frac{1}{2}\sum_{i=1}^{n_{j}/2} (\boldsymbol{X}_{j})_{2i-1} + (\boldsymbol{X}_{j})_{2i} \nonumber \\
+&= \frac{1}{2}\left[ (\boldsymbol{X}_j)_1 + (\boldsymbol{X}_j)_2 + \cdots + (\boldsymbol{X}_j)_{n_j} \right] = \underbrace{\frac{n_j}{2}}_{=n_{j+1}} \overline{X}_j = n_{j+1}\overline{X}_j. 
 \label{_auto16}
 \end{align}
 $$
@@ -3396,13 +3389,13 @@ where \( \epsilon \) is normally distributed with mean zero and standard deviati
 
 <p>
 We have a statistical procedure (e.g. least-squares regression) for
-forming a predictor \( \hat{g}_{\mathcal{L}}(\boldsymbol{x}) \) that gives the
+forming a predictor \( \boldsymbol{g}_{\mathcal{L}}(\boldsymbol{x}) \) that gives the
 prediction of our model for a new data point \( \boldsymbol{x} \).  This estimator
 is chosen by minimizing a cost function which we take to be the
 squared error
 
 $$
- \mathcal{C}( \boldsymbol{X}, \hat{g}(\boldsymbol{x})) =  \sum_i (y_i - \hat{g}_\mathcal{L}(\boldsymbol{x}_i))^2. 
+ \mathcal{C}( \boldsymbol{X}, \boldsymbol{g}(\boldsymbol{x})) =  \sum_i (y_i - \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i))^2. 
 $$
 
 <p>
@@ -3416,7 +3409,7 @@ the true model, not just the error on the particular training dataset
 \( \mathcal{L} \) that we have in hand. This is just the expectation of
 the cost function over many different data sets
 \( \{\mathcal{L}_j\} \). Denote this expectation value by
-\( E_{\mathcal{L}} \). In other words, we can view \( \hat{g}_{\mathcal{L}} \)
+\( E_{\mathcal{L}} \). In other words, we can view \( \boldsymbol{g}_{\mathcal{L}} \)
 as a stochastic functional that depends on the dataset \( \mathcal{L} \)
 and we can think of \( E_{\mathcal{L}} \) as the expected value of the
 functional if we drew an infinite number of datasets \( \{\mathcal{L}_1,
@@ -3435,10 +3428,10 @@ generalization error as
 
 $$
 \begin{align}
-E_\mathcal{L, \epsilon}[\mathcal{C}( \boldsymbol{X}, \hat{g}(\boldsymbol{x})) ]&= E_\mathcal{L,\epsilon}\left[ \sum_i ({y}_i - \hat{g}_\mathcal{L}(\boldsymbol{x}_i))^2 \right] \nonumber \\
- &= E_\mathcal{L, \epsilon}\left[ \sum_{i}({y}_i -f(\boldsymbol{x}_i) +f(\boldsymbol{x}_i)- \hat{g}_\mathcal{L}(\boldsymbol{x}_i))^2\right] \nonumber \\
- &= \sum_i E_\epsilon[ ({y}_i -f(\boldsymbol{x}_i))^2 ]+ E_\mathcal{L, \epsilon}[(f(\boldsymbol{x}_i)- \hat{g}_\mathcal{L}(\boldsymbol{x}_i))^2] + 2E_\epsilon[{y}_i -f(\boldsymbol{x}_i)]E_\mathcal{L}[f(\boldsymbol{x}_i)- \hat{g}_\mathcal{L}(\boldsymbol{x}_i)] \nonumber \\
- &=\sum_i \sigma_\epsilon^2 + E_\mathcal{L}[(f(\boldsymbol{x}_i)- \hat{g}_\mathcal{L}(\boldsymbol{x}_i))^2],
+E_\mathcal{L, \epsilon}[\mathcal{C}( \boldsymbol{X}, \boldsymbol{g}(\boldsymbol{x})) ]&= E_\mathcal{L,\epsilon}\left[ \sum_i ({y}_i - \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i))^2 \right] \nonumber \\
+ &= E_\mathcal{L, \epsilon}\left[ \sum_{i}({y}_i -f(\boldsymbol{x}_i) +f(\boldsymbol{x}_i)- \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i))^2\right] \nonumber \\
+ &= \sum_i E_\epsilon[ ({y}_i -f(\boldsymbol{x}_i))^2 ]+ E_\mathcal{L, \epsilon}[(f(\boldsymbol{x}_i)- \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i))^2] + 2E_\epsilon[{y}_i -f(\boldsymbol{x}_i)]E_\mathcal{L}[f(\boldsymbol{x}_i)- \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)] \nonumber \\
+ &=\sum_i \sigma_\epsilon^2 + E_\mathcal{L}[(f(\boldsymbol{x}_i)- \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i))^2],
 \label{_auto17}
 \end{align}
 $$
@@ -3459,10 +3452,10 @@ follows:
 
 $$
 \begin{align}
-E_\mathcal{L}[(f(\boldsymbol{x}_i)- \hat{g}_\mathcal{L}(\boldsymbol{x}_i))^2] &=E_\mathcal{L}[(f(\mathbf{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)]+ E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)]- \hat{g}_\mathcal{L}(\boldsymbol{x}_i))^2] \nonumber \\
-&=E_\mathcal{L}[(f(\boldsymbol{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)])^2] + E_\mathcal{L}[( \hat{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)])^2] \nonumber \\
-&+2E_\mathcal{L}[(f(\boldsymbol{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)])( \hat{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)])] \nonumber \\
-&=(f(\boldsymbol{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)])^2+E_\mathcal{L}[( \hat{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)])^2].
+E_\mathcal{L}[(f(\boldsymbol{x}_i)- \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i))^2] &=E_\mathcal{L}[(f(\mathbf{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)]+ E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)]- \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i))^2] \nonumber \\
+&=E_\mathcal{L}[(f(\boldsymbol{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)])^2] + E_\mathcal{L}[( \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)])^2] \nonumber \\
+&+2E_\mathcal{L}[(f(\boldsymbol{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)])( \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)])] \nonumber \\
+&=(f(\boldsymbol{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)])^2+E_\mathcal{L}[( \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)])^2].
 \label{_auto18}
 \end{align}
 $$
@@ -3475,7 +3468,7 @@ $$
 <p>
 The first term is called the bias
 $$
-Bias^2= \sum_i (f(\boldsymbol{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)])^2
+Bias^2= \sum_i (f(\boldsymbol{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)])^2
 $$
 
 and measures the deviation of the expectation value of our estimator (i.e. the asymptotic value of our estimator in the infinite data limit) from the true value.
@@ -3486,13 +3479,13 @@ and measures the deviation of the expectation value of our estimator (i.e. the a
 <h2 id="___sec101">The variance </h2>
 The second term is called the variance
 $$
-Var=\sum_i E_\mathcal{L}[( \hat{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\hat{g}_\mathcal{L}(\boldsymbol{x}_i)])^2],
+Var=\sum_i E_\mathcal{L}[( \boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\boldsymbol{g}_\mathcal{L}(\boldsymbol{x}_i)])^2],
 $$
 
 <p>
 and measures how much our estimator fluctuates due to finite-sample effects. Combining these expressions, we see that the expected out-of-sample error of our model can be decomposed as
 $$
-E_\mathrm{out}=E_\mathcal{L, \epsilon}[\mathcal{C}( \boldsymbol{X}, \hat{g}(\boldsymbol{x})) ] = Bias^2 + Var + Noise.
+E_\mathrm{out}=E_\mathcal{L, \epsilon}[\mathcal{C}( \boldsymbol{X}, \boldsymbol{g}(\boldsymbol{x})) ] = Bias^2 + Var + Noise.
 $$
 
 <p>
@@ -4057,12 +4050,12 @@ In order to judge which model performs best at varying values of \( \lambda \) (
 
 $$
 \begin{align}
-    R^2 = 1 - \frac{(y - \hat{y})^2}{(y - \bar{y})^2},
+    R^2 = 1 - \frac{(y - \boldsymbol{y})^2}{(y - \bar{y})^2},
 \label{_auto34}
 \end{align}
 $$
 
-where \( y \) is a vector with the true values of the energy, \( \hat{y} \) is the predicted values of \( y \) from the models and \( \bar{y} \) is the mean of \( \hat{y} \).
+where \( y \) is a vector with the true values of the energy, \( \boldsymbol{y} \) is the predicted values of \( y \) from the models and \( \bar{y} \) is the mean of \( \boldsymbol{y} \).
 
 <p>
 
