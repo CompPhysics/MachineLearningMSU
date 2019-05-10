@@ -59,7 +59,7 @@ Linear regression gives us a set of analytical equations for the parameters $\be
 
 
 !split
-=====  Back to nuclear binding energies =====
+=====  Examples  =====
 !bblock
 In order to understand the relation among the predictors $p$, the set of data $n$ and the target (outcome, output etc) $\bm{y}$,
 consider the model we discussed for describing nuclear binding energies. 
@@ -110,7 +110,7 @@ y_0&=\beta_0+\beta_1x_0^1+\beta_2x_0^2+\dots+\beta_{n-1}x_0^{n-1}+\epsilon_0\\
 y_1&=\beta_0+\beta_1x_1^1+\beta_2x_1^2+\dots+\beta_{n-1}x_1^{n-1}+\epsilon_1\\
 y_2&=\beta_0+\beta_1x_2^1+\beta_2x_2^2+\dots+\beta_{n-1}x_2^{n-1}+\epsilon_2\\
 \dots & \dots \\
-y_{n-1}&=\beta_0+\beta_1x_{n-1}^1+\beta_2x_{n-1}^2+\dots+\beta_1x_{n-1}^{n-1}+\epsilon_{n-1}.\\
+y_{n-1}&=\beta_0+\beta_1x_{n-1}^1+\beta_2x_{n-1}^2+\dots+\beta_{n-1}x_{n-1}^{n-1}+\epsilon_{n-1}.\\
 \end{align*}
 !et
 !eblock
@@ -137,10 +137,10 @@ and
 \bm{\epsilon} = [\epsilon_0,\epsilon_1, \epsilon_2,\dots, \epsilon_{n-1}]^T,
 \]
 !et
-and the transposed design matrix
+and the design matrix
 !bt
 \[
-\bm{X}^T=
+\bm{X}=
 \begin{bmatrix} 
 1& x_{0}^1 &x_{0}^2& \dots & \dots &x_{0}^{n-1}\\
 1& x_{1}^1 &x_{1}^2& \dots & \dots &x_{1}^{n-1}\\
@@ -153,7 +153,7 @@ and the transposed design matrix
 we can rewrite our equations as
 !bt
 \[
-\bm{y} = \bm{X}^T\bm{\beta}+\bm{\epsilon}.
+\bm{y} = \bm{X}\bm{\beta}+\bm{\epsilon}.
 \]
 !et
 !eblock
@@ -173,7 +173,7 @@ y_2&=\beta_0x_{20}+\beta_1x_{21}+\beta_2x_{22}+\dots+\beta_{n-1}x_{2n-1}+\epsilo
 \dots & \dots \\
 y_{i}&=\beta_0x_{i0}+\beta_1x_{i1}+\beta_2x_{i2}+\dots+\beta_{n-1}x_{in-1}+\epsilon_i\\
 \dots & \dots \\
-y_{n-1}&=\beta_0x_{n-1,0}+\beta_1x_{n-1,2}+\beta_2x_{n-1,2}+\dots+\beta_1x_{n-1,n-1}+\epsilon_{n-1}.\\
+y_{n-1}&=\beta_0x_{n-1,0}+\beta_1x_{n-1,2}+\beta_2x_{n-1,2}+\dots+\beta_{n-1}x_{n-1,n-1}+\epsilon_{n-1}.\\
 \end{align*}
 !et
 
@@ -210,7 +210,7 @@ The left-hand side of this equation is kwown. Our error vector $\bm{\epsilon}$ a
 !split
 ===== Optimizing our parameters  =====
 !bblock
-We have defined the matrix $\bm{X}$
+We have defined the matrix $\bm{X}$ via the equations
 !bt
 \begin{align*}
 y_0&=\beta_0x_{00}+\beta_1x_{01}+\beta_2x_{02}+\dots+\beta_{n-1}x_{0n-1}+\epsilon_0\\
@@ -219,16 +219,21 @@ y_2&=\beta_0x_{20}+\beta_1x_{21}+\beta_2x_{22}+\dots+\beta_{n-1}x_{2n-1}+\epsilo
 \dots & \dots \\
 y_{i}&=\beta_0x_{i0}+\beta_1x_{i1}+\beta_2x_{i2}+\dots+\beta_{n-1}x_{in-1}+\epsilon_1\\
 \dots & \dots \\
-y_{n-1}&=\beta_0x_{n-1,0}+\beta_1x_{n-1,2}+\beta_2x_{n-1,2}+\dots+\beta_1x_{n-1,n-1}+\epsilon_{n-1}.\\
+y_{n-1}&=\beta_0x_{n-1,0}+\beta_1x_{n-1,2}+\beta_2x_{n-1,2}+\dots+\beta_{n-1}x_{n-1,n-1}+\epsilon_{n-1}.\\
 \end{align*}
 !et
+
+As we noted above, we stayed with a system with the design matrix 
+ $\bm{X}\in {\mathbb{R}}^{n\times n}$, that is we have $p=n$. For reasons to come later (algorithmic arguments) we will hereafter define 
+our matrix as $\bm{X}\in {\mathbb{R}}^{p\times n}$, with the predictors refering to the row numbers and the entries $n$ being the column elements.
+
 !eblock
 
 
 !split
 ===== Optimizing our parameters, more details  =====
 !bblock
-We well use this matrix to define the approximation $\bm{\tilde{y}}$ via the unknown quantity $\bm{\beta}$ as
+With the above we use the design matrix to define the approximation $\bm{\tilde{y}}$ via the unknown quantity $\bm{\beta}$ as
 !bt
 \[
 \bm{\tilde{y}}= \bm{X}^T\bm{\beta},
@@ -240,15 +245,19 @@ and in order to find the optimal parameters $\beta_i$ instead of solving the abo
 Q(\bm{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\bm{y}-\bm{\tilde{y}}\right)^T\left(\bm{y}-\bm{\tilde{y}}\right),
 \]
 !et
-or using the matrix $\bm{X}$ 
+or using the matrix $\bm{X}$ and in a more compact matrix-vector notation as
 !bt
 \[
-Q(\bm{\beta})=\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right).
+Q(\bm{\beta})=\left(\bm{y}-\bm{X}^T\bm{\beta}\right)^T\left(\bm{y}-\bm{X}^T\bm{\beta}\right).
 \]
 !et
 
-_Note_:  It is normal to have a term $1/n$ in front of this equation since it can then be linked to statistical properties like the variance of a given variable. We come back to this in our discussion of the so-called bias-variance trade-off. 
-It is also common to define the function $Q$ as
+_Note_: It is normal to have a term $1/n$ in front of this equation
+since it can then be linked to statistical properties like the
+variance of a given variable. We come back to this in our discussion
+of the so-called bias-variance trade-off.  It is also common to define
+the function $Q$ as
+
 !bt
 \[
 Q(\bm{\beta})=\frac{1}{2n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2,
@@ -268,7 +277,7 @@ Q(\bm{\beta})=\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta
 \]
 !et
 can be linked to the variance of the quantity $y_i$ if we interpret the latter as the mean value. 
-When linking below with the maximum likelihood approach below, we will indeed interpret $y_i$ as a mean value
+When linking below with the maximum likelihood approach below, we will indeed interpret $y_i$ as a mean value (see exercises)
 !bt
 \[
 y_{i}=\langle y_i \rangle = \beta_0x_{i,0}+\beta_1x_{i,1}+\beta_2x_{i,2}+\dots+\beta_{n-1}x_{i,n-1}+\epsilon_i,
@@ -347,6 +356,13 @@ we have
 meaning that the solution for $\bm{\beta}$ is the one which minimizes the residuals.  Later we will link this with the maximum likelihood approach.
 
 !eblock
+
+
+!split
+===== Back to Nuclear Binding Energies =====
+
+
+
 
 
 !split
