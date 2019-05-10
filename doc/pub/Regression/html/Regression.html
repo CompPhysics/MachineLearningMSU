@@ -79,7 +79,7 @@ div { text-align: justify; text-justify: inter-word; }
                None,
                '___sec5'),
               ('Rewriting the fitting procedure as a linear algebra problem, '
-               'follows',
+               'more details',
                2,
                None,
                '___sec6'),
@@ -320,7 +320,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>May 9, 2019</h4></center> <!-- date -->
+<center><h4>May 10, 2019</h4></center> <!-- date -->
 <br>
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -403,7 +403,8 @@ Linear regression gives us a set of analytical equations for the parameters \( \
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
 <h2 id="___sec3">Back to nuclear binding energies </h2>
-
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
 <p>
 In order to understand the relation among the predictors \( p \), the set of data \( n \) and the target (outcome, output etc) \( \boldsymbol{y} \),
 consider the model we discussed for describing nuclear binding energies.
@@ -421,7 +422,11 @@ This gives \( p=0,1,2,3,4 \). Furthermore we have \( n \) entries for each predi
 
 <p>
 Here the predictors are based on a model we have made. A popular data set which is widely encountered in ML applications is the
-so-called credit card default data from Taiwan. The data set contains data on \( n=30000 \) credit card holders with predictors like gender, marital status, age, profession, education, etc. In total there are \( 24 \) such predictors or attributes leading to a design matrix of dimensionality \( 24 \times 30000 \)
+so-called <a href="https://www.sciencedirect.com/science/article/pii/S0957417407006719?via%3Dihub" target="_blank">credit card default data from Taiwan</a>. The data set contains data on \( n=30000 \) credit card holders with predictors like gender, marital status, age, profession, education, etc. In total there are \( 24 \) such predictors or attributes leading to a design matrix of dimensionality \( 24 \times 30000 \)
+
+
+</div>
+
 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -467,7 +472,7 @@ $$
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec6">Rewriting the fitting procedure as a linear algebra problem, follows  </h2>
+<h2 id="___sec6">Rewriting the fitting procedure as a linear algebra problem, more details  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -512,6 +517,8 @@ $$
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
+
+<p>
 We are obviously not limited to the above polynomial. We could replace the various powers of \( x \) with elements of Fourier series or instead of \( x_i^j \) we could have \( \cos{(j x_i)} \) or \( \sin{(j x_i)} \), or time series or other orthogonal functions.
 For every set of values \( y_i,x_i \) we can then generalize the equations to 
 $$
@@ -525,6 +532,9 @@ y_{i}&=\beta_0x_{i0}+\beta_1x_{i1}+\beta_2x_{i2}+\dots+\beta_{n-1}x_{in-1}+\epsi
 y_{n-1}&=\beta_0x_{n-1,0}+\beta_1x_{n-1,2}+\beta_2x_{n-1,2}+\dots+\beta_1x_{n-1,n-1}+\epsilon_{n-1}.\\
 \end{align*}
 $$
+
+<p>
+<b>Note that we have \( p=n \) here. The matrix is symmetric. This is generally not the case!</b>
 </div>
 
 
@@ -592,13 +602,22 @@ $$
 
 and in order to find the optimal parameters \( \beta_i \) instead of solving the above linear algebra problem, we define a function which gives a measure of the spread between the values \( y_i \) (which represent hopefully the exact values) and the parametrized values \( \tilde{y}_i \), namely
 $$
-Q(\boldsymbol{\beta})=\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right),
+Q(\boldsymbol{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right),
 $$
 
-or using the matrix \( \boldsymbol{X} \) as
+or using the matrix \( \boldsymbol{X} \) 
 $$
 Q(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right).
 $$
+
+<p>
+<b>Note</b>:  It is normal to have a term \( 1/n \) in front of this equation since it can then be linked to statistical properties like the variance of a given variable. We come back to this in our discussion of the so-called bias-variance trade-off. 
+It is also common to define the function \( Q \) as
+$$
+Q(\boldsymbol{\beta})=\frac{1}{2n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2,
+$$
+
+since when taking the first derivative with respect to the unknown parameters \( \beta \), the factor of \( 2 \) cancels out.
 </div>
 
 
@@ -614,7 +633,8 @@ $$
 Q(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right),
 $$
 
-can be linked to the variance of the quantity \( y_i \) if we interpret the latter as the mean value of for example a numerical  experiment. When linking below with the maximum likelihood approach below, we will indeed interpret \( y_i \) as a mean value
+can be linked to the variance of the quantity \( y_i \) if we interpret the latter as the mean value. 
+When linking below with the maximum likelihood approach below, we will indeed interpret \( y_i \) as a mean value
 $$
 y_{i}=\langle y_i \rangle = \beta_0x_{i,0}+\beta_1x_{i,1}+\beta_2x_{i,2}+\dots+\beta_{n-1}x_{i,n-1}+\epsilon_i,
 $$
@@ -707,7 +727,7 @@ meaning that the solution for \( \boldsymbol{\beta} \) is the one which minimize
 Normally, the response (dependent or outcome) variable \( y_i \) the outcome of a numerical experiment or another type of experiment and is thus only an approximation to the true value. It is then always accompanied by an error estimate, often limited to a statistical error estimate given by the standard deviation discussed earlier. In the discussion here we will treat \( y_i \) as our exact value for the response variable.
 
 <p>
-Introducing the standard deviation \( \sigma_i \) for each measurement \( y_i \), we define now the \( \chi^2 \) function as  
+Introducing the standard deviation \( \sigma_i \) for each measurement \( y_i \), we define now the \( \chi^2 \) function (omitting the \( 1/n \) term) as  
 $$
 \chi^2(\boldsymbol{\beta})=\sum_{i=0}^{n-1}\frac{\left(y_i-\tilde{y}_i\right)^2}{\sigma_i^2}=\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\frac{1}{\boldsymbol{\Sigma^2}}\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right),
 $$
