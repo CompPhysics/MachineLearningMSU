@@ -536,7 +536,18 @@ This approach (different linear and non-linear regression) suffers often from bo
 !split
 ===== Simple regression model =====
 
-We are now ready to write our first program which aims at solving the above linear regression equations. We start with data we have produced ourselves, in this case normally distributed random numbers along the $x$-axis. These numbers define then the value of a function $y(x)=4+3x+N(0,1)$. Thereafter we order the $x$ values and employ our linear regression algorithm to set up the best fit. Here we find it useful to use the numpy function $c\_$ arrays where arrays are stacked along their last axis after being upgraded to at least two dimensions with ones post-pended to the shape. The following examples help in understanding what happens 
+
+Before we go back to our nuclear binding energies, we start with a
+simple program which aims at solving the above linear regression
+equations. We start with data we have produced ourselves, in this case
+normally distributed random numbers along the $x$-axis. These numbers
+define then the value of a function $y(x)=4+3x+N(0,1)$. Thereafter we
+order the $x$ values and employ our linear regression algorithm to set
+up the best fit. Here we find it useful to use the numpy function
+$c\_$ arrays where arrays are stacked along their last axis after
+being upgraded to at least two dimensions with ones post-pended to the
+shape. The following examples help in understanding what happens
+
 !bc pycod 
 import numpy as np
 print(np.c_[np.array([1,2,3]), np.array([4,5,6])])
