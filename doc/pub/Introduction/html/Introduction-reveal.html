@@ -625,7 +625,7 @@ $$
 <p>&nbsp;<br>
 
 The Numpy function <b>np.cov</b> calculates the covariance elements using the factor \( 1/(n-1) \) instead of \( 1/n \) since it assumes we do not have the exact mean values. 
-The following simple function uses the <b>np.vstack</b> function which takes each vector of dimension \( 1\times n \) and produces a $ 3\times n$ matrix \( \hat{W} \)
+The following simple function uses the <b>np.vstack</b> function which takes each vector of dimension \( 1\times n \) and produces a \( 3\times n \) matrix \( \hat{W} \)
 <p>&nbsp;<br>
 $$
 \hat{W} = \begin{bmatrix} x_0 & y_0 & z_0 \\
@@ -639,7 +639,7 @@ $$
 <p>&nbsp;<br>
 
 <p>
-which in turn is converted into into the \( 3 times 3 \) covariance matrix
+which in turn is converted into into the \( 3\times 3 \) covariance matrix
 \( \hat{\Sigma} \) via the Numpy function <b>np.cov()</b>. We note that we can also calculate
 the mean value of each set of samples \( \hat{x} \) etc using the Numpy
 function <b>np.mean(x)</b>. We can also extract the eigenvalues of the
