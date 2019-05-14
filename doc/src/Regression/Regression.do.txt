@@ -155,8 +155,8 @@ we can rewrite our equations as
 \[
 \bm{y} = \bm{X}\bm{\beta}+\bm{\epsilon}.
 \]
-The above design matrix is called a "Vandermonde matrix":"https://en.wikipedia.org/wiki/Vandermonde_matrix".
 !et
+The above design matrix is called a "Vandermonde matrix":"https://en.wikipedia.org/wiki/Vandermonde_matrix".
 !eblock
 
 
@@ -433,7 +433,7 @@ and if the matrix $\bm{X}^T\bm{X}$ is invertible we have the solution
 
 We note also that since our design matrix is defined as $\bm{X}\in
 {\mathbb{R}}^{n\times p}$, the product $\bm{X}^T\bm{X} \in
-{\mathbb{R}}^{p\times p}.  In the above case we have that $p \ll n$,
+{\mathbb{R}}^{p\times p}$.  In the above case we have that $p \ll n$,
 in our case $p=5$ meaning that we end up with inverting a small
 $5\times 5$ matrix. This is a rather common situation, in many cases we end up with low-dimensional
 matrices to invert. The methods discussed here and for many other
@@ -492,10 +492,6 @@ Alternatively, you can use the least squares functionality in _Numpy_ as
 fit = np.linalg.lstsq(DesignMatrix, Energies, rcond =None)[0]
 ytildenp = np.dot(fit,DesignMatrix)
 !ec
-and then compare the two
-!bc pycod 
-print(ytilde-ytildep)
-!ec
 
 And finally we plot our fit with and compare with data
 !bc pycod
@@ -513,7 +509,34 @@ save_fig("Masses2016")
 plt.show()
 !ec
 
+!split
+===== Adding error analysis and training set up =====
 
+We can easily test our fit by computing the $R2$ score that we discussed in connection with the functionality of _Scikit_Learn_ in the introductory slides.
+Since we are not using _Scikit-Learn here we can define our $R2$ function as
+!bc pycod 
+def R2(y_data, y_model):
+    return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_model)) ** 2)
+!ec
+and we would be using it as 
+!bc pycod 
+print(R2(Energies,ytilde))
+!ec
+
+We can easily add our _MSE_ score and relative error as
+!bc pycod
+def MSE(y_data,y_model):
+    n = np.size(y_hat)
+    return np.sum((y_data-y_model)**2)/n
+
+print(MSE(Energies,ytilde))
+!ec
+and finally the relative error as
+!bc pycod
+def relativeerror(y_data,y_model):
+    return abs((y_data-y_model)/y_data)
+print(RekativeError(Energies, ytilde))
+!ec
 
 !split
 ===== The $\chi^2$ function  =====

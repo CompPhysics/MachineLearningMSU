@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 import os
 
 # Where to save the figures and data files
@@ -26,6 +27,9 @@ def data_path(dat_id):
 
 def save_fig(fig_id):
     plt.savefig(image_path(fig_id) + ".png", format='png')
+
+def r_squared(y, y_hat):
+    return 1 - np.sum((y - y_hat) ** 2) / np.sum((y - np.mean(y_hat)) ** 2)
 
 infile = open(data_path("MassEval2016.dat"),'r')
 
@@ -61,13 +65,46 @@ X[:,1] = A
 X[:,2] = A**(2.0/3.0)
 X[:,3] = A**(-1.0/3.0)
 X[:,4] = A**(-1.0)
+# Then nice printout using pandas
+DesignMatrix = pd.DataFrame(X)
+DesignMatrix.index = A
+DesignMatrix.columns = ['1', 'A', 'A^(2/3)', 'A^(-1/3)', '1/A']
 
-# Redefine X as its transpose
-from IPython.display import display
 
-df = pd.DataFrame(X)
-df.index = A
-df.columns = ['1', 'A', 'A^(2/3)', 'A^(-1/3)', '1/A']
-display(df)
+X_train, X_test, y_train, y_test = train_test_split(DesignMatrix, Energies, test_size=0.2)
+
+
+# matrix inversion to find beta
+beta = np.linalg.inv(X_train.T.dot(X_train)).dot(X_train.T).dot(y_train)
+# and then make the prediction
+ytilde = X_train @ beta
+y_predict = X_test @ beta
+r_train = r_squared(ytilde, y_train)
+r_test = r_squared(y_predict, y_test)
+print(r_test, r_train)
+Masses['Eapprox']  = y_predict
+Masses['TestData'] = y_test
+display(Masses[['Eapprox']])
+"""
+# Generate a plot comparing the experimental with the fitted values values.
+fig, ax = plt.subplots()
+ax.set_xlabel(r'$A = N + Z$')
+ax.set_ylabel(r'$E_\mathrm{bind}\,/\mathrm{MeV}$')
+ax.plot(Masses['A'], Masses['TestData'], alpha=0.7, lw=2,
+            label='Ame2016')
+ax.plot(Masses['A'], Masses['Eapprox'], alpha=0.7, lw=2, c='m',
+            label='Fit')
+ax.legend()
+save_fig("Masses2016")
+plt.show()
+"""
+
+
+
+
+
+
+
+
 
 
