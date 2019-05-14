@@ -148,7 +148,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>&nbsp;<br>
-<center><h4>May 10, 2019</h4></center> <!-- date -->
+<center><h4>May 14, 2019</h4></center> <!-- date -->
 <br>
 <p>
 
@@ -159,7 +159,7 @@ MathJax.Hub.Config({
 
 
 <section>
-<h2 id="___sec0">Why Linear Regression (aka Ordinary Least Squares) </h2>
+<h2 id="___sec0">Why Linear Regression (aka Ordinary Least Squares and family) </h2>
 
 <p>
 Fitting a continuous function with linear parameterization in terms of the parameters  \( \boldsymbol{\beta} \).
@@ -167,7 +167,7 @@ Fitting a continuous function with linear parameterization in terms of the param
 <ul>
 <p><li> Method of choice for fitting a continuous function!</li>
 <p><li> Gives an excellent introduction to central Machine Learning features with <b>understandable pedagogical</b> links to other methods like <b>Neural Networks</b>, <b>Support Vector Machines</b> etc</li>
-<p><li> Analytical expression for the parameters \( \boldsymbol{\beta} \)</li>
+<p><li> Analytical expression for the fitting parameters \( \boldsymbol{\beta} \)</li>
 <p><li> Analytical expressions for statistical propertiers like mean values, variances, confidence intervals and more</li>
 <p><li> Analytical relation with probabilistic interpretations</li> 
 <p><li> Easy to introduce basic concepts like bias-variance tradeoff, cross-validation, resampling and regularization techniques and many other ML topics</li>
@@ -348,6 +348,8 @@ we can rewrite our equations as
 <p>&nbsp;<br>
 $$
 \boldsymbol{y} = \boldsymbol{X}\boldsymbol{\beta}+\boldsymbol{\epsilon}.
+\]
+The above design matrix is called a "Vandermonde matrix":"https://en.wikipedia.org/wiki/Vandermonde_matrix".
 $$
 <p>&nbsp;<br>
 </div>
@@ -359,8 +361,12 @@ $$
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
-We are obviously not limited to the above polynomial. We could replace the various powers of \( x \) with elements of Fourier series or instead of \( x_i^j \) we could have \( \cos{(j x_i)} \) or \( \sin{(j x_i)} \), or time series or other orthogonal functions.
-For every set of values \( y_i,x_i \) we can then generalize the equations to 
+We are obviously not limited to the above polynomial expansions.  We
+could replace the various powers of \( x \) with elements of Fourier
+series or instead of \( x_i^j \) we could have \( \cos{(j x_i)} \) or \( \sin{(j
+x_i)} \), or time series or other orthogonal functions.  For every set
+of values \( y_i,x_i \) we can then generalize the equations to
+
 <p>&nbsp;<br>
 $$
 \begin{align*}
@@ -435,7 +441,7 @@ $$
 <p>
 As we noted above, we stayed with a system with the design matrix 
  \( \boldsymbol{X}\in {\mathbb{R}}^{n\times n} \), that is we have \( p=n \). For reasons to come later (algorithmic arguments) we will hereafter define 
-our matrix as \( \boldsymbol{X}\in {\mathbb{R}}^{p\times n} \), with the predictors refering to the row numbers and the entries \( n \) being the column elements.
+our matrix as \( \boldsymbol{X}\in {\mathbb{R}}^{n\times p} \), with the predictors refering to the column numbers and the entries \( n \) being the row elements.
 
 
 </div>
@@ -443,14 +449,107 @@ our matrix as \( \boldsymbol{X}\in {\mathbb{R}}^{p\times n} \), with the predict
 
 
 <section>
-<h2 id="___sec10">Optimizing our parameters, more details  </h2>
+<h2 id="___sec10">Our model for the nuclear binding energies </h2>
+
+<p>
+In our <a href="https://compphysics.github.io/MachineLearningMSU/doc/pub/Introduction/html/Introduction.html" target="_blank">introductory notes</a> we looked at the so-called <a href="https://en.wikipedia.org/wiki/Semi-empirical_mass_formula" target="_blank">liguid drop model</a>. Let us remind ourselves about what did by looking at the code.
+
+<p>
+We restate the parts of the code we are most interested in.
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Common imports</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">pandas</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">pd</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">IPython.display</span> <span style="color: #8B008B; font-weight: bold">import</span> display
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">os</span>
+
+<span style="color: #228B22"># Where to save the figures and data files</span>
+PROJECT_ROOT_DIR = <span style="color: #CD5555">&quot;Results&quot;</span>
+FIGURE_ID = <span style="color: #CD5555">&quot;Results/FigureFiles&quot;</span>
+DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+<span style="color: #8B008B; font-weight: bold">if</span> <span style="color: #8B008B">not</span> os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">image_path</span>(fig_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(FIGURE_ID, fig_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">data_path</span>(dat_id):
+    <span style="color: #8B008B; font-weight: bold">return</span> os.path.join(DATA_ID, dat_id)
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">save_fig</span>(fig_id):
+    plt.savefig(image_path(fig_id) + <span style="color: #CD5555">&quot;.png&quot;</span>, format=<span style="color: #CD5555">&#39;png&#39;</span>)
+
+infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;MassEval2016.dat&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
+
+
+<span style="color: #228B22"># Read the experimental data with Pandas</span>
+Masses = pd.read_fwf(infile, usecols=(<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">6</span>,<span style="color: #B452CD">11</span>),
+              names=(<span style="color: #CD5555">&#39;N&#39;</span>, <span style="color: #CD5555">&#39;Z&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;Element&#39;</span>, <span style="color: #CD5555">&#39;Ebinding&#39;</span>),
+              widths=(<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">4</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">13</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">9</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">3</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">12</span>,<span style="color: #B452CD">11</span>,<span style="color: #B452CD">1</span>),
+              header=<span style="color: #B452CD">39</span>,
+              index_col=<span style="color: #658b00">False</span>)
+
+<span style="color: #228B22"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
+<span style="color: #228B22"># the Ebinding column won&#39;t be numeric. Coerce to float and drop these entries.</span>
+Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>] = pd.to_numeric(Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
+Masses = Masses.dropna()
+<span style="color: #228B22"># Convert from keV to MeV.</span>
+Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>] /= <span style="color: #B452CD">1000</span>
+
+<span style="color: #228B22"># Group the DataFrame by nucleon number, A.</span>
+Masses = Masses.groupby(<span style="color: #CD5555">&#39;A&#39;</span>)
+<span style="color: #228B22"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
+Masses = Masses.apply(<span style="color: #8B008B; font-weight: bold">lambda</span> t: t[t.Ebinding==t.Ebinding.max()])
+A = Masses[<span style="color: #CD5555">&#39;A&#39;</span>]
+Z = Masses[<span style="color: #CD5555">&#39;Z&#39;</span>]
+N = Masses[<span style="color: #CD5555">&#39;N&#39;</span>]
+Element = Masses[<span style="color: #CD5555">&#39;Element&#39;</span>]
+Energies = Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>]
+
+<span style="color: #228B22"># Now we set up the design matrix X</span>
+X = np.zeros((<span style="color: #658b00">len</span>(A),<span style="color: #B452CD">5</span>))
+X[:,<span style="color: #B452CD">0</span>] = <span style="color: #B452CD">1</span>
+X[:,<span style="color: #B452CD">1</span>] = A
+X[:,<span style="color: #B452CD">2</span>] = A**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>)
+X[:,<span style="color: #B452CD">3</span>] = A**(-<span style="color: #B452CD">1.0</span>/<span style="color: #B452CD">3.0</span>)
+X[:,<span style="color: #B452CD">4</span>] = A**(-<span style="color: #B452CD">1.0</span>)
+<span style="color: #228B22"># Then nice printout using pandas</span>
+DesignMatrix = pd.DataFrame(X)
+DesignMatrix.index = A
+DesignMatrix.columns = [<span style="color: #CD5555">&#39;1&#39;</span>, <span style="color: #CD5555">&#39;A&#39;</span>, <span style="color: #CD5555">&#39;A^(2/3)&#39;</span>, <span style="color: #CD5555">&#39;A^(-1/3)&#39;</span>, <span style="color: #CD5555">&#39;1/A&#39;</span>]
+display(DesignMatrix)
+</pre></div>
+<p>
+With \( \boldsymbol{\beta}\in {\mathbb{R}}^{p\times 1} \), it means that we will hereafter write our equations for the approximation as
+<p>&nbsp;<br>
+$$
+\boldsymbol{\tilde{y}}= \boldsymbol{X}\boldsymbol{\beta},
+$$
+<p>&nbsp;<br>
+
+throughout these lectures.
+</section>
+
+
+<section>
+<h2 id="___sec11">Optimizing our parameters, more details  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
 With the above we use the design matrix to define the approximation \( \boldsymbol{\tilde{y}} \) via the unknown quantity \( \boldsymbol{\beta} \) as
 <p>&nbsp;<br>
 $$
-\boldsymbol{\tilde{y}}= \boldsymbol{X}^T\boldsymbol{\beta},
+\boldsymbol{\tilde{y}}= \boldsymbol{X}\boldsymbol{\beta},
 $$
 <p>&nbsp;<br>
 
@@ -487,7 +586,7 @@ since when taking the first derivative with respect to the unknown parameters \(
 
 
 <section>
-<h2 id="___sec11">Interpretations and optimizing our parameters  </h2>
+<h2 id="___sec12">Interpretations and optimizing our parameters  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -506,7 +605,15 @@ y_{i}=\langle y_i \rangle = \beta_0x_{i,0}+\beta_1x_{i,1}+\beta_2x_{i,2}+\dots+\
 $$
 <p>&nbsp;<br>
 
-where \( \langle y_i \rangle \) is the mean value. Keep in mind also that till now  we have treated \( y_i \) as the exact value. Normally, the response (dependent or outcome) variable \( y_i \) the outcome of a numerical experiment or another type of experiment and is thus only an approximation to the true value. It is then always accompanied by an error estimate, often limited to a statistical error estimate given by the standard deviation discussed earlier. In the discussion here we will treat \( y_i \) as our exact value for the response variable.
+<p>
+where \( \langle y_i \rangle \) is the mean value. Keep in mind also that
+till now we have treated \( y_i \) as the exact value. Normally, the
+response (dependent or outcome) variable \( y_i \) the outcome of a
+numerical experiment or another type of experiment and is thus only an
+approximation to the true value. It is then always accompanied by an
+error estimate, often limited to a statistical error estimate given by
+the standard deviation discussed earlier. In the discussion here we
+will treat \( y_i \) as our exact value for the response variable.
 
 <p>
 In order to find the parameters \( \beta_i \) we will then minimize the spread of \( Q(\boldsymbol{\beta}) \) by requiring
@@ -536,7 +643,7 @@ $$
 
 
 <section>
-<h2 id="___sec12">Interpretations and optimizing our parameters  </h2>
+<h2 id="___sec13">Interpretations and optimizing our parameters  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -561,13 +668,25 @@ $$
 $$
 <p>&nbsp;<br>
 
+<p>
+We note also that since our design matrix is defined as \( \boldsymbol{X}\in
+{\mathbb{R}}^{n\times p} \), the product $\boldsymbol{X}^T\boldsymbol{X} \in
+{\mathbb{R}}^{p\times p}.  In the above case we have that \( p \ll n \),
+in our case \( p=5 \) meaning that we end up with inverting a small
+\( 5\times 5 \) matrix. This is a rather common situation, in many cases we end up with low-dimensional
+matrices to invert. The methods discussed here and for many other
+supervised learning algorithms like classification with logistic
+regression or support vector machines, exhibit dimensionalities which
+allow for the usage of direct linear algebra methods such as <b>LU</b> decompostiion or <b>Singular Value Decomposition</b> (SVD) for finding the inverse of the matrix
+\( \boldsymbol{X}^T\boldsymbol{X} \).
+
 
 </div>
 </section>
 
 
 <section>
-<h2 id="___sec13">Interpretations and optimizing our parameters  </h2>
+<h2 id="___sec14">Interpretations and optimizing our parameters  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -596,16 +715,64 @@ meaning that the solution for \( \boldsymbol{\beta} \) is the one which minimize
 
 
 </div>
+
+<p>
+Let us now return to our nuclear binding energies and simply code the above equations.
 </section>
 
 
 <section>
-<h2 id="___sec14">Back to Nuclear Binding Energies </h2>
+<h2 id="___sec15">Own code for Ordinary Least Squares </h2>
+
+<p>
+It is rather straightforward to implement the matrix inversion and obtain the parameters \( \boldsymbol{\beta} \). After having defined the matrix \( \boldsymbol{X} \) we simply need to 
+write
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># matrix inversion to find beta</span>
+beta = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(Energies)
+<span style="color: #228B22"># and then make the prediction</span>
+ytilde = X <span style="color: #a61717; background-color: #e3d2d2">@</span> beta
+</pre></div>
+<p>
+Alternatively, you can use the least squares functionality in <b>Numpy</b> as
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>fit = np.linalg.lstsq(DesignMatrix, Energies, rcond =<span style="color: #658b00">None</span>)[<span style="color: #B452CD">0</span>]
+ytildenp = np.dot(fit,DesignMatrix)
+</pre></div>
+<p>
+and then compare the two
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">print</span>(ytilde-ytildep)
+</pre></div>
+<p>
+And finally we plot our fit with and compare with data
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>Masses[<span style="color: #CD5555">&#39;Eapprox&#39;</span>]  = ytilde
+<span style="color: #228B22"># Generate a plot comparing the experimental with the fitted values values.</span>
+fig, ax = plt.subplots()
+ax.set_xlabel(<span style="color: #CD5555">r&#39;$A = N + Z$&#39;</span>)
+ax.set_ylabel(<span style="color: #CD5555">r&#39;$E_\mathrm{bind}\,/\mathrm{MeV}$&#39;</span>)
+ax.plot(Masses[<span style="color: #CD5555">&#39;A&#39;</span>], Masses[<span style="color: #CD5555">&#39;Ebinding&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>,
+            label=<span style="color: #CD5555">&#39;Ame2016&#39;</span>)
+ax.plot(Masses[<span style="color: #CD5555">&#39;A&#39;</span>], Masses[<span style="color: #CD5555">&#39;Eapprox&#39;</span>], alpha=<span style="color: #B452CD">0.7</span>, lw=<span style="color: #B452CD">2</span>, c=<span style="color: #CD5555">&#39;m&#39;</span>,
+            label=<span style="color: #CD5555">&#39;Fit&#39;</span>)
+ax.legend()
+save_fig(<span style="color: #CD5555">&quot;Masses2016&quot;</span>)
+plt.show()
+</pre></div>
 </section>
 
 
 <section>
-<h2 id="___sec15">The \( \chi^2 \) function  </h2>
+<h2 id="___sec16">The \( \chi^2 \) function  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -628,7 +795,7 @@ where the matrix \( \boldsymbol{\Sigma} \) is a diagonal matrix with \( \sigma_i
 
 
 <section>
-<h2 id="___sec16">The \( \chi^2 \) function  </h2>
+<h2 id="___sec17">The \( \chi^2 \) function  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -659,7 +826,7 @@ where we have defined the matrix \( \boldsymbol{A} =\boldsymbol{X}/\boldsymbol{\
 
 
 <section>
-<h2 id="___sec17">The \( \chi^2 \) function  </h2>
+<h2 id="___sec18">The \( \chi^2 \) function  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -688,7 +855,7 @@ $$
 
 
 <section>
-<h2 id="___sec18">The \( \chi^2 \) function  </h2>
+<h2 id="___sec19">The \( \chi^2 \) function  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -724,7 +891,7 @@ $$
 
 
 <section>
-<h2 id="___sec19">The \( \chi^2 \) function  </h2>
+<h2 id="___sec20">The \( \chi^2 \) function  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -753,7 +920,7 @@ $$
 
 
 <section>
-<h2 id="___sec20">The \( \chi^2 \) function  </h2>
+<h2 id="___sec21">The \( \chi^2 \) function  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -809,476 +976,7 @@ This approach (different linear and non-linear regression) suffers often from bo
 
 
 <section>
-<h2 id="___sec21">Simple regression model </h2>
-
-<p>
-We are now ready to write our first program which aims at solving the above linear regression equations. We start with data we have produced ourselves, in this case normally distributed random numbers along the \( x \)-axis. These numbers define then the value of a function \( y(x)=4+3x+N(0,1) \). Thereafter we order the \( x \) values and employ our linear regression algorithm to set up the best fit. Here we find it useful to use the numpy function \( c\_ \) arrays where arrays are stacked along their last axis after being upgraded to at least two dimensions with ones post-pended to the shape. The following examples help in understanding what happens 
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">print</span>(np.c_[np.array([<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>]), np.array([<span style="color: #B452CD">4</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">6</span>])])
-<span style="color: #8B008B; font-weight: bold">print</span>(np.c_[np.array([[<span style="color: #B452CD">1</span>,<span style="color: #B452CD">2</span>,<span style="color: #B452CD">3</span>]]), <span style="color: #B452CD">0</span>, <span style="color: #B452CD">0</span>, np.array([[<span style="color: #B452CD">4</span>,<span style="color: #B452CD">5</span>,<span style="color: #B452CD">6</span>]])])
-</pre></div>
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Importing various packages</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">random</span> <span style="color: #8B008B; font-weight: bold">import</span> random, seed
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-
-x = <span style="color: #B452CD">2</span>*np.random.rand(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-y = <span style="color: #B452CD">4</span>+<span style="color: #B452CD">3</span>*x+np.random.randn(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-
-xb = np.c_[np.ones((<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)), x]
-beta = np.linalg.inv(xb.T.dot(xb)).dot(xb.T).dot(y)
-xnew = np.array([[<span style="color: #B452CD">0</span>],[<span style="color: #B452CD">2</span>]])
-xbnew = np.c_[np.ones((<span style="color: #B452CD">2</span>,<span style="color: #B452CD">1</span>)), xnew]
-ypredict = xbnew.dot(beta)
-
-plt.plot(xnew, ypredict, <span style="color: #CD5555">&quot;r-&quot;</span>)
-plt.plot(x, y ,<span style="color: #CD5555">&#39;ro&#39;</span>)
-plt.axis([<span style="color: #B452CD">0</span>,<span style="color: #B452CD">2.0</span>,<span style="color: #B452CD">0</span>, <span style="color: #B452CD">15.0</span>])
-plt.xlabel(<span style="color: #CD5555">r&#39;$x$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">r&#39;$y$&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Linear Regression&#39;</span>)
-plt.show()
-</pre></div>
-<p>
-We see that, as expected, a linear fit gives a seemingly (from the graph) good representation of the data.
-</section>
-
-
-<section>
-<h2 id="___sec22">Simple regression model, now using <b>scikit-learn</b> </h2>
-
-<p>
-We can repeat the above algorithm using <b>scikit-learn</b> as follows
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Importing various packages</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">random</span> <span style="color: #8B008B; font-weight: bold">import</span> random, seed
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression
-
-x = <span style="color: #B452CD">2</span>*np.random.rand(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-y = <span style="color: #B452CD">4</span>+<span style="color: #B452CD">3</span>*x+np.random.randn(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-linreg = LinearRegression()
-linreg.fit(x,y)
-xnew = np.array([[<span style="color: #B452CD">0</span>],[<span style="color: #B452CD">2</span>]])
-ypredict = linreg.predict(xnew)
-
-plt.plot(xnew, ypredict, <span style="color: #CD5555">&quot;r-&quot;</span>)
-plt.plot(x, y ,<span style="color: #CD5555">&#39;ro&#39;</span>)
-plt.axis([<span style="color: #B452CD">0</span>,<span style="color: #B452CD">2.0</span>,<span style="color: #B452CD">0</span>, <span style="color: #B452CD">15.0</span>])
-plt.xlabel(<span style="color: #CD5555">r&#39;$x$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">r&#39;$y$&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Random numbers &#39;</span>)
-plt.show()
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec23">Simple linear regression model using <b>scikit-learn</b> </h2>
-
-<p>
-We start with perhaps our simplest possible example, using <b>scikit-learn</b> to perform linear regression analysis on a data set produced by us. 
-What follows is a simple Python code where we have defined  function \( y \) in terms of the variable \( x \). Both are defined as vectors of dimension \( 1\times 100 \). The entries to the vector \( \boldsymbol{x} \)  are given by random numbers generated with a uniform distribution with entries \( x_i \in [0,1] \) (more about probability distribution functions later). These values are then used to define a function \( y(x) \) (tabulated again as a vector) with a linear dependence on \( x \) plus a random noise added via the normal distribution.
-
-<p>
-The Numpy functions are imported used the <b>import numpy as np</b>
-statement and the random number generator for the uniform distribution
-is called using the function <b>np.random.rand()</b>, where we specificy
-that we want \( 100 \) random variables.  Using Numpy we define
-automatically an array with the specified number of elements, \( 100 \) in
-our case.  With the Numpy function <b>randn()</b> we can compute random
-numbers with the normal distribution (mean value \( \mu \) equal to zero and
-variance \( \sigma^2 \) set to one) and produce the values of \( y \) assuming a linear
-dependence as function of \( x \)
-
-<p>&nbsp;<br>
-$$
-y = 2x+N(0,1),
-$$
-<p>&nbsp;<br>
-
-<p>
-where \( N(0,1) \) represents random numbers generated by the normal
-distribution.  From <b>scikit-learn</b> we import then the
-<b>LinearRegression</b> functionality and make a prediction \( \tilde{y} =
-\alpha + \beta x \) using the function <b>fit(x,y)</b>. We call the set of
-data \( (\boldsymbol{x},\boldsymbol{y}) \) for our training data. The Python package
-<b>scikit-learn</b> has also a functionality which extracts the above
-fitting parameters \( \alpha \) and \( \beta \) (see below). Later we will
-distinguish between training data and test data.
-
-<p>
-For plotting we use the Python package
-<a href="https://matplotlib.org/" target="_blank">matplotlib</a> which produces publication
-quality figures. Feel free to explore the extensive
-<a href="https://matplotlib.org/gallery/index.html" target="_blank">gallery</a> of examples. In
-this example we plot our original values of \( x \) and \( y \) as well as the
-prediction <b>ypredict</b> (\( \tilde{y} \)), which attempts at fitting our
-data with a straight line.
-
-<p>
-The Python code follows here.
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Importing various packages</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression
-
-x = np.random.rand(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-y = <span style="color: #B452CD">2</span>*x+np.random.randn(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-linreg = LinearRegression()
-linreg.fit(x,y)
-xnew = np.array([[<span style="color: #B452CD">0</span>],[<span style="color: #B452CD">1</span>]])
-ypredict = linreg.predict(xnew)
-
-plt.plot(xnew, ypredict, <span style="color: #CD5555">&quot;r-&quot;</span>)
-plt.plot(x, y ,<span style="color: #CD5555">&#39;ro&#39;</span>)
-plt.axis([<span style="color: #B452CD">0</span>,<span style="color: #B452CD">1.0</span>,<span style="color: #B452CD">0</span>, <span style="color: #B452CD">5.0</span>])
-plt.xlabel(<span style="color: #CD5555">r&#39;$x$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">r&#39;$y$&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Simple Linear Regression&#39;</span>)
-plt.show()
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec24">Simple linear regression model  </h2>
-
-<p>
-This example serves several aims. It allows us to demonstrate several
-aspects of data analysis and later machine learning algorithms. The
-immediate visualization shows that our linear fit is not
-impressive. It goes through the data points, but there are many
-outliers which are not reproduced by our linear regression.  We could
-now play around with this small program and change for example the
-factor in front of \( x \) and the normal distribution.  Try to change the
-function \( y \) to
-
-<p>&nbsp;<br>
-$$
-y = 10x+0.01 \times N(0,1),
-$$
-<p>&nbsp;<br>
-
-<p>
-where \( x \) is defined as before.
-</section>
-
-
-<section>
-<h2 id="___sec25">Less noise </h2>
-
-<p>
-Does the fit look better? Indeed, by
-reducing the role of the normal distribution we see immediately that
-our linear prediction seemingly reproduces better the training
-set. However, this testing 'by the eye' is obviouly not satisfactory in the
-long run. Here we have only defined the training data and our model, and 
-have not discussed a more rigorous approach to the <b>cost</b> function.
-</section>
-
-
-<section>
-<h2 id="___sec26">How to study our fits </h2>
-
-<p>
-We need more rigorous criteria in defining whether we have succeeded or
-not in modeling our training data.  You will be surprised to see that
-many scientists seldomly venture beyond this 'by the eye' approach. A
-standard approach for the <em>cost</em> function is the so-called \( \chi^2 \)
-function
-
-<p>&nbsp;<br>
-$$ \chi^2 = \frac{1}{n}
-\sum_{i=0}^{n-1}\frac{(y_i-\tilde{y}_i)^2}{\sigma_i^2}, 
-$$
-<p>&nbsp;<br>
-
-<p>
-where \( \sigma_i^2 \) is the variance (to be defined later) of the entry
-\( y_i \).  We may not know the explicit value of \( \sigma_i^2 \), it serves
-however the aim of scaling the equations and make the cost function
-dimensionless.
-</section>
-
-
-<section>
-<h2 id="___sec27">Minimizing the cost function </h2>
-
-<p>
-Minimizing the cost function is a central aspect of
-our discussions to come. Finding its minima as function of the model
-parameters (\( \alpha \) and \( \beta \) in our case) will be a recurring
-theme in these series of lectures. Essentially all machine learning
-algorithms we will discuss center around the minimization of the
-chosen cost function. This depends in turn on our specific
-model for describing the data, a typical situation in supervised
-learning. Automatizing the search for the minima of the cost function is a
-central ingredient in all algorithms. Typical methods which are
-employed are various variants of <b>gradient</b> methods. These will be
-discussed in more detail later. Again, you'll be surprised to hear that
-many practitioners minimize the above function ''by the eye', popularly dubbed as 
-'chi by the eye'. That is, change a parameter and see (visually and numerically) that 
-the  \( \chi^2 \) function becomes smaller.
-</section>
-
-
-<section>
-<h2 id="___sec28">Relative error </h2>
-
-<p>
-There are many ways to define the cost function. A simpler approach is to look at the relative difference between the training data and the predicted data, that is we define 
-the relative error as
-
-<p>&nbsp;<br>
-$$
-\epsilon_{\mathrm{relative}}= \frac{\vert \boldsymbol{y} -\boldsymbol{\tilde{y}}\vert}{\vert \boldsymbol{y}\vert}.
-$$
-<p>&nbsp;<br>
-
-We can modify easily the above Python code and plot the relative error instead
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression
-
-x = np.random.rand(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-y = <span style="color: #B452CD">5</span>*x+<span style="color: #B452CD">0.01</span>*np.random.randn(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-linreg = LinearRegression()
-linreg.fit(x,y)
-ypredict = linreg.predict(x)
-
-plt.plot(x, np.abs(ypredict-y)/<span style="color: #658b00">abs</span>(y), <span style="color: #CD5555">&quot;ro&quot;</span>)
-plt.axis([<span style="color: #B452CD">0</span>,<span style="color: #B452CD">1.0</span>,<span style="color: #B452CD">0.0</span>, <span style="color: #B452CD">0.5</span>])
-plt.xlabel(<span style="color: #CD5555">r&#39;$x$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">r&#39;$\epsilon_{\mathrm{relative}}$&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Relative error&#39;</span>)
-plt.show()
-</pre></div>
-<p>
-Depending on the parameter in front of the normal distribution, we may
-have a small or larger relative error. Try to play around with
-different training data sets and study (graphically) the value of the
-relative error.
-</section>
-
-
-<section>
-<h2 id="___sec29">The richness of <b>scikit-learn</b> </h2>
-
-<p>
-As mentioned above, <b>scikit-learn</b> has an impressive functionality.
-We can for example extract the values of \( \alpha \) and \( \beta \) and
-their error estimates, or the variance and standard deviation and many
-other properties from the statistical data analysis.
-
-<p>
-Here we show an
-example of the functionality of scikit-learn.
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span> 
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span> 
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression 
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.metrics</span> <span style="color: #8B008B; font-weight: bold">import</span> mean_squared_error, r2_score, mean_squared_log_error, mean_absolute_error
-
-x = np.random.rand(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-y = <span style="color: #B452CD">2.0</span>+ <span style="color: #B452CD">5</span>*x+<span style="color: #B452CD">0.5</span>*np.random.randn(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
-linreg = LinearRegression()
-linreg.fit(x,y)
-ypredict = linreg.predict(x)
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;The intercept alpha: \n&#39;</span>, linreg.intercept_)
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Coefficient beta : \n&#39;</span>, linreg.coef_)
-<span style="color: #228B22"># The mean squared error                               </span>
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&quot;Mean squared error: %.2f&quot;</span> % mean_squared_error(y, ypredict))
-<span style="color: #228B22"># Explained variance score: 1 is perfect prediction                                 </span>
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Variance score: %.2f&#39;</span> % r2_score(y, ypredict))
-<span style="color: #228B22"># Mean squared log error                                                        </span>
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Mean squared log error: %.2f&#39;</span> % mean_squared_log_error(y, ypredict) )
-<span style="color: #228B22"># Mean absolute error                                                           </span>
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Mean absolute error: %.2f&#39;</span> % mean_absolute_error(y, ypredict))
-plt.plot(x, ypredict, <span style="color: #CD5555">&quot;r-&quot;</span>)
-plt.plot(x, y ,<span style="color: #CD5555">&#39;ro&#39;</span>)
-plt.axis([<span style="color: #B452CD">0.0</span>,<span style="color: #B452CD">1.0</span>,<span style="color: #B452CD">1.5</span>, <span style="color: #B452CD">7.0</span>])
-plt.xlabel(<span style="color: #CD5555">r&#39;$x$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">r&#39;$y$&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Linear Regression fit &#39;</span>)
-plt.show()
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec30">Functions in <b>scikit-learn</b> </h2>
-
-<p>
-The function <b>coef</b> gives us the parameter \( \beta \) of our fit while <b>intercept</b> yields 
-\( \alpha \). Depending on the constant in front of the normal distribution, we get values near or far from \( alpha =2 \) and \( \beta =5 \). Try to play around with different parameters in front of the normal distribution. The function <b>meansquarederror</b> gives us the mean square error, a risk metric corresponding to the expected value of the squared (quadratic) error or loss defined as
-<p>&nbsp;<br>
-$$ MSE(\boldsymbol{y},\boldsymbol{\tilde{y}}) = \frac{1}{n}
-\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2, 
-$$
-<p>&nbsp;<br>
-
-<p>
-The smaller the value, the better the fit. Ideally we would like to
-have an MSE equal zero.  The attentive reader has probably recognized
-this function as being similar to the \( \chi^2 \) function defined above.
-</section>
-
-
-<section>
-<h2 id="___sec31">Other functions in  <b>scikit-learn</b> </h2>
-
-<p>
-The <b>r2score</b> function computes \( R^2 \), the coefficient of
-determination. It provides a measure of how well future samples are
-likely to be predicted by the model. Best possible score is 1.0 and it
-can be negative (because the model can be arbitrarily worse). A
-constant model that always predicts the expected value of \( \boldsymbol{y} \),
-disregarding the input features, would get a \( R^2 \) score of \( 0.0 \).
-
-<p>
-If \( \tilde{\boldsymbol{y}}_i \) is the predicted value of the \( i-th \) sample and \( y_i \) is the corresponding true value, then the score \( R^2 \) is defined as
-<p>&nbsp;<br>
-$$
-R^2(\boldsymbol{y}, \tilde{\boldsymbol{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
-$$
-<p>&nbsp;<br>
-
-where we have defined the mean value  of \( \boldsymbol{y} \) as
-<p>&nbsp;<br>
-$$
-\bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
-$$
-<p>&nbsp;<br>
-</section>
-
-
-<section>
-<h2 id="___sec32">The mean absolute error and other functions in  <b>scikit-learn</b> </h2>
-
-<p>
-Another quantity will meet again in our discussions of regression analysis is 
- mean absolute error (MAE), a risk metric corresponding to the expected value of the absolute error loss or what we call the \( l1 \)-norm loss. In our discussion above we presented the relative error.
-The MAE is defined as follows
-<p>&nbsp;<br>
-$$
-\text{MAE}(\boldsymbol{y}, \boldsymbol{\tilde{y}}) = \frac{1}{n} \sum_{i=0}^{n-1} \left| y_i - \tilde{y}_i \right|.
-$$
-<p>&nbsp;<br>
-
-Finally we present the 
-squared logarithmic (quadratic) error
-<p>&nbsp;<br>
-$$
-\text{MSLE}(\boldsymbol{y}, \boldsymbol{\tilde{y}}) = \frac{1}{n} \sum_{i=0}^{n - 1} (\log_e (1 + y_i) - \log_e (1 + \tilde{y}_i) )^2,
-$$
-<p>&nbsp;<br>
-
-<p>
-where \( \log_e (x) \) stands for the natural logarithm of \( x \). This error
-estimate is best to use when targets having exponential growth, such
-as population counts, average sales of a commodity over a span of
-years etc.
-</section>
-
-
-<section>
-<h2 id="___sec33">Cubic polynomial in  <b>scikit-learn</b> </h2>
-
-<p>
-We will discuss in more
-detail these and other functions in the various lectures.  We conclude this part with another example. Instead of 
-a linear \( x \)-dependence we study now a cubic polynomial and use the polynomial regression analysis tools of scikit-learn. 
-Add description of the various python commands.
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">random</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> Ridge
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.preprocessing</span> <span style="color: #8B008B; font-weight: bold">import</span> PolynomialFeatures
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.pipeline</span> <span style="color: #8B008B; font-weight: bold">import</span> make_pipeline
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression
-
-x=np.linspace(<span style="color: #B452CD">0.02</span>,<span style="color: #B452CD">0.98</span>,<span style="color: #B452CD">200</span>)
-noise = np.asarray(random.sample((<span style="color: #658b00">range</span>(<span style="color: #B452CD">200</span>)),<span style="color: #B452CD">200</span>))
-y=x**<span style="color: #B452CD">3</span>*noise
-yn=x**<span style="color: #B452CD">3</span>*<span style="color: #B452CD">100</span>
-poly3 = PolynomialFeatures(degree=<span style="color: #B452CD">3</span>)
-X = poly3.fit_transform(x[:,np.newaxis])
-clf3 = LinearRegression()
-clf3.fit(X,y)
-
-Xplot=poly3.fit_transform(x[:,np.newaxis])
-poly3_plot=plt.plot(x, clf3.predict(Xplot), label=<span style="color: #CD5555">&#39;Cubic Fit&#39;</span>)
-plt.plot(x,yn, color=<span style="color: #CD5555">&#39;red&#39;</span>, label=<span style="color: #CD5555">&quot;True Cubic&quot;</span>)
-plt.scatter(x, y, label=<span style="color: #CD5555">&#39;Data&#39;</span>, color=<span style="color: #CD5555">&#39;orange&#39;</span>, s=<span style="color: #B452CD">15</span>)
-plt.legend()
-plt.show()
-
-<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">error</span>(a):
-    <span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> y:
-        err=(y-yn)/yn
-    <span style="color: #8B008B; font-weight: bold">return</span> <span style="color: #658b00">abs</span>(np.sum(err))/<span style="color: #658b00">len</span>(err)
-
-<span style="color: #8B008B; font-weight: bold">print</span> (error(y))
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec34">Polynomial Regression </h2>
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Importing various packages</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">math</span> <span style="color: #8B008B; font-weight: bold">import</span> exp, sqrt
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">random</span> <span style="color: #8B008B; font-weight: bold">import</span> random, seed
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-
-m = <span style="color: #B452CD">100</span>
-x = <span style="color: #B452CD">2</span>*np.random.rand(m,<span style="color: #B452CD">1</span>)+<span style="color: #B452CD">4.</span>
-y = <span style="color: #B452CD">4</span>+<span style="color: #B452CD">3</span>*x*x+ +x-np.random.randn(m,<span style="color: #B452CD">1</span>)
-
-xb = np.c_[np.ones((m,<span style="color: #B452CD">1</span>)), x]
-theta = np.linalg.inv(xb.T.dot(xb)).dot(xb.T).dot(y)
-xnew = np.array([[<span style="color: #B452CD">0</span>],[<span style="color: #B452CD">2</span>]])
-xbnew = np.c_[np.ones((<span style="color: #B452CD">2</span>,<span style="color: #B452CD">1</span>)), xnew]
-ypredict = xbnew.dot(theta)
-
-plt.plot(xnew, ypredict, <span style="color: #CD5555">&quot;r-&quot;</span>)
-plt.plot(x, y ,<span style="color: #CD5555">&#39;ro&#39;</span>)
-plt.axis([<span style="color: #B452CD">0</span>,<span style="color: #B452CD">2.0</span>,<span style="color: #B452CD">0</span>, <span style="color: #B452CD">15.0</span>])
-plt.xlabel(<span style="color: #CD5555">r&#39;$x$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">r&#39;$y$&#39;</span>)
-plt.title(<span style="color: #CD5555">r&#39;Random numbers &#39;</span>)
-plt.show()
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec35">Linking the regression analysis with a statistical interpretation </h2>
+<h2 id="___sec22">Linking the regression analysis with a statistical interpretation </h2>
 
 <p>
 Before we proceed, and to link with our discussions of Bayesian statistics to come, it is useful the derive the standard regression analysis equations using a statistical interpretation. This allows us also to derive quantities like the variance and other expectation values in a rather straightforward way.
@@ -1307,7 +1005,7 @@ non-random scalar. To specify the parameters of the distribution of
 
 
 <section>
-<h2 id="___sec36">Expectation value and variance </h2>
+<h2 id="___sec23">Expectation value and variance </h2>
 
 <p>
 Its expectation equals: 
@@ -1345,7 +1043,7 @@ Hence, \( Y_i \sim \mathcal{N}( \mathbf{X}_{i, \ast} \, \beta, \sigma^2) \).
 
 
 <section>
-<h2 id="___sec37">The singular value decompostion  </h2>
+<h2 id="___sec24">The singular value decompostion  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1365,7 +1063,7 @@ $$
 
 
 <section>
-<h2 id="___sec38">From standard regression to Ridge regressions </h2>
+<h2 id="___sec25">From standard regression to Ridge regression </h2>
 
 <p>
 One of the typical problems we encounter with linear regression, in particular 
@@ -1420,7 +1118,7 @@ This is equivalent to saying that the matrix \( \boldsymbol{X} \) has at least a
 
 
 <section>
-<h2 id="___sec39">Fixing the singularity </h2>
+<h2 id="___sec26">Fixing the singularity </h2>
 
 <p>
 If our design matrix \( \boldsymbol{X} \) which enters the linear regression problem
@@ -1452,397 +1150,7 @@ where \( \boldsymbol{I} \) is the identity matrix.
 
 
 <section>
-<h2 id="___sec40">Fitting vs. predicting when data is in the model class </h2>
-
-<p>
-We start by considering the case
-\( f(x)=2x \).
-
-<p>
-Then the data is clearly generated by a model that is contained within
-all three model classes we are using to make predictions (linear
-models, third order polynomials, and tenth order polynomials).
-
-<p>
-Run the code for the following cases:
-
-<ol>
-<p><li> For  \( f(x)=2x \) ,  \( Ntrain=10 \)  and \( \sigma =0 \)  (noiseless case), train the three classes of models (linear, third-order polynomial, and tenth order polynomial) for a training set when  \( x \in [0,1] \) . Make graphs comparing fits for different order of polynomials. Which model fits the data the best?</li>
-<p><li> Do you think that the data that has the least error on the training set will also make the best predictions? Why or why not? Can you try to discuss and formalize your intuition? What can go right and what can go wrong?</li>
-<p><li> Check your answer by seeing how well your fits predict newly generated test data (including on data outside the range you fit on, for example  \( x \in [0,1.2] \) ) using the code below. How well do you do on points in the range of  x  where you trained the model? How about points outside the original training data set?</li>
-<p><li> Repeat the above for  \( f(x)=2x \) ,  \( Ntrain=10 \) , and  \( \sigma=1 \) . What changes?</li>
-</ol>
-<p>
-
-Repeat the exercises above for  \( f(x)=2x \) ,  \( Ntrain=100 \) , and  \( \sigma=1 \) . What changes?
-Summarize what you have learned about the relationship between model complexity (number of parameters), goodness of fit on training data, and the ability to predict well.
-</section>
-
-
-<section>
-<h2 id="___sec41">Fitting versus predicting when data is not in the model class </h2>
-
-<p>
-Thus far, we have considered the case where the data is generated using a model contained in the model class. Now consider \( f(x)=2x-10x^5+15x^{10} \) . Notice that the for linear and third-order polynomial the true model  \( f(x) \)  is not contained in model class.
-
-<ol>
-<p><li> Do better fits lead to better predictions?</li>
-<p><li> What is the relationship between the true model for generating the data and the model class that has the most predictive power? How is this related to the model complexity? How does this depend on the number of data points  \( Ntrain \)  and  \( \sigma \)?</li>
-</ol>
-<p>
-
-Summarize what you think you learned about the relationship of knowing the true model class and predictive power.
-</section>
-
-
-<section>
-<h2 id="___sec42">An example code without the model assessment part </h2>
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">sklearn</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">sk</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn</span> <span style="color: #8B008B; font-weight: bold">import</span> datasets, linear_model
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.preprocessing</span> <span style="color: #8B008B; font-weight: bold">import</span> PolynomialFeatures
-
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">mpl</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">matplotlib</span> <span style="color: #8B008B; font-weight: bold">import</span> pyplot <span style="color: #8B008B; font-weight: bold">as</span> plt
-
-%matplotlib notebook
-
-<span style="color: #228B22"># The Training Data</span>
-
-N_train=<span style="color: #B452CD">100</span>
-
-sigma_train=<span style="color: #B452CD">1</span>;
-
-<span style="color: #228B22"># Train on integers</span>
-x=np.linspace(<span style="color: #B452CD">0.05</span>,<span style="color: #B452CD">0.95</span>,N_train)
-<span style="color: #228B22"># Draw random noise</span>
-s = sigma_train*np.random.randn(N_train)
-
-<span style="color: #228B22">#linear</span>
-y=<span style="color: #B452CD">2</span>*x+s
-
-<span style="color: #228B22">#Tenth Order</span>
-<span style="color: #228B22">#y=2*x-10*x**5+15*x**10+s</span>
-
-p1=plt.plot(x,y, <span style="color: #CD5555">&quot;o&quot;</span>,ms=<span style="color: #B452CD">15</span>, label=<span style="color: #CD5555">&#39;Training&#39;</span>)
-
-<span style="color: #228B22">#Linear Regression</span>
-<span style="color: #228B22"># Create linear regression object</span>
-clf = linear_model.LinearRegression()
-
-<span style="color: #228B22"># Train the model using the training sets</span>
-clf.fit(x[:, np.newaxis], y)
-<span style="color: #228B22"># The coefficients</span>
-
-xplot=np.linspace(<span style="color: #B452CD">0.02</span>,<span style="color: #B452CD">0.98</span>,<span style="color: #B452CD">200</span>)
-linear_plot=plt.plot(xplot, clf.predict(xplot[:, np.newaxis]),label=<span style="color: #CD5555">&#39;Linear&#39;</span>)
-
-<span style="color: #228B22">#Polynomial Regression</span>
-
-
-poly3 = PolynomialFeatures(degree=<span style="color: #B452CD">3</span>)
-X = poly3.fit_transform(x[:,np.newaxis])
-clf3 = linear_model.LinearRegression()
-clf3.fit(X,y)
-
-
-Xplot=poly3.fit_transform(xplot[:,np.newaxis])
-poly3_plot=plt.plot(xplot, clf3.predict(Xplot), label=<span style="color: #CD5555">&#39;Poly 3&#39;</span>)
-
-
-
-<span style="color: #228B22">#poly5 = PolynomialFeatures(degree=5)</span>
-<span style="color: #228B22">#X = poly5.fit_transform(x[:,np.newaxis])</span>
-<span style="color: #228B22">#clf5 = linear_model.LinearRegression()</span>
-<span style="color: #228B22">#clf5.fit(X,y)</span>
-
-<span style="color: #228B22">#Xplot=poly5.fit_transform(xplot[:,np.newaxis])</span>
-<span style="color: #228B22">#plt.plot(xplot, clf5.predict(Xplot), &#39;r--&#39;,linewidth=1)</span>
-
-poly10 = PolynomialFeatures(degree=<span style="color: #B452CD">10</span>)
-X = poly10.fit_transform(x[:,np.newaxis])
-clf10 = linear_model.LinearRegression()
-clf10.fit(X,y)
-
-Xplot=poly10.fit_transform(xplot[:,np.newaxis])
-poly10_plot=plt.plot(xplot, clf10.predict(Xplot), label=<span style="color: #CD5555">&#39;Poly 10&#39;</span>)
-
-axes = plt.gca()
-axes.set_ylim([-<span style="color: #B452CD">7</span>,<span style="color: #B452CD">7</span>])
-
-handles, labels=axes.get_legend_handles_labels()
-plt.legend(handles,labels, loc=<span style="color: #CD5555">&#39;lower center&#39;</span>)
-plt.xlabel(<span style="color: #CD5555">&quot;$x$&quot;</span>)
-plt.ylabel(<span style="color: #CD5555">&quot;$y$&quot;</span>)
-Title=<span style="color: #CD5555">&quot;$N=$&quot;</span>+<span style="color: #658b00">str</span>(N_train)+<span style="color: #CD5555">&quot;, $\sigma=$&quot;</span>+<span style="color: #658b00">str</span>(sigma_train)
-plt.title(Title+<span style="color: #CD5555">&quot; (train)&quot;</span>)
-plt.tight_layout()
-plt.show()
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec43">Generating test data </h2>
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Generate Test Data</span>
-
-<span style="color: #228B22">#Number of test data</span>
-N_test=<span style="color: #B452CD">20</span>
-
-sigma_test=sigma_train
-
-max_x=<span style="color: #B452CD">1.2</span>
-x_test=max_x*np.random.random(N_test)
-<span style="color: #228B22"># Draw random noise</span>
-s_test = sigma_test*np.random.randn(N_test)
-
-<span style="color: #228B22">#Linear</span>
-y_test=<span style="color: #B452CD">2</span>*x_test+s_test
-<span style="color: #228B22">#Tenth order</span>
-<span style="color: #228B22">#y_test=2*x_test-10*x_test**5+15*x_test**10+s_test</span>
-
-<span style="color: #228B22">#Make design matrices for prediction</span>
-x_plot=np.linspace(<span style="color: #B452CD">0</span>,max_x, <span style="color: #B452CD">200</span>)
-X3 = poly3.fit_transform(x_plot[:,np.newaxis])
-X10 = poly10.fit_transform(x_plot[:,np.newaxis])
-
-%matplotlib notebook
-
-fig = plt.figure() 
-p1=plt.plot(x_test,y_test.transpose(), <span style="color: #CD5555">&#39;o&#39;</span>, ms=<span style="color: #B452CD">12</span>, label=<span style="color: #CD5555">&#39;data&#39;</span>)
-p2=plt.plot(x_plot,clf.predict(x_plot[:,np.newaxis]), label=<span style="color: #CD5555">&#39;linear&#39;</span>)
-p3=plt.plot(x_plot,clf3.predict(X3), label=<span style="color: #CD5555">&#39;3rd order&#39;</span>)
-p10=plt.plot(x_plot,clf10.predict(X10), label=<span style="color: #CD5555">&#39;10th order&#39;</span>)
-
-
-plt.legend(loc=<span style="color: #B452CD">2</span>)
-plt.xlabel(<span style="color: #CD5555">&#39;$x$&#39;</span>)
-plt.ylabel(<span style="color: #CD5555">&#39;$y$&#39;</span>)
-plt.legend(loc=<span style="color: #CD5555">&#39;best&#39;</span>)
-plt.title(Title+<span style="color: #CD5555">&quot; (pred.)&quot;</span>)
-plt.tight_layout()
-plt.show()
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec44">How can we effectively evaluate the various models? </h2>
-
-<p>
-In Ridge regression and the subsequent discussion of its properties
-the bias or penalty parameter is considered known or `given'. In
-practice, it is unknown and the user needs to make an informed
-decision on its value. How do we do that?  Much of the same considerations apply to the Lasso method.
-</section>
-
-
-<section>
-<h2 id="___sec45">Code examples for Ridge and Lasso Regression </h2>
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn</span> <span style="color: #8B008B; font-weight: bold">import</span> linear_model
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearRegression
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.metrics</span> <span style="color: #8B008B; font-weight: bold">import</span> mean_squared_error, r2_score
-
-<span style="color: #228B22">#creating data with random noise</span>
-x=np.arange(<span style="color: #B452CD">50</span>)
-
-delta=np.random.uniform(-<span style="color: #B452CD">2.5</span>,<span style="color: #B452CD">2.5</span>, size=(<span style="color: #B452CD">50</span>))
-np.random.shuffle(delta)
-y =<span style="color: #B452CD">0.5</span>*x+<span style="color: #B452CD">5</span>+delta
-
-<span style="color: #228B22">#arranging data into 2x50 matrix</span>
-a=np.array(x) <span style="color: #228B22">#inputs</span>
-b=np.array(y) <span style="color: #228B22">#outputs</span>
-
-<span style="color: #228B22">#Split into training and test</span>
-X_train=a[:<span style="color: #B452CD">37</span>, np.newaxis]
-X_test=a[<span style="color: #B452CD">37</span>:, np.newaxis]
-y_train=b[:<span style="color: #B452CD">37</span>]
-y_test=b[<span style="color: #B452CD">37</span>:]
-
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;X_train: &quot;</span>, X_train.shape)
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;y_train: &quot;</span>, y_train.shape)
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;X_test: &quot;</span>, X_test.shape)
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;y_test: &quot;</span>, y_test.shape)
-
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;------------------------------------&quot;</span>)
-
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;Ordinary Least Squares&quot;</span>)
-<span style="color: #228B22">#Add Ordinary Least Squares fit</span>
-reg=LinearRegression()
-reg.fit(X_train, y_train)
-pred=reg.predict(X_test)
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;Prediction Shape: &quot;</span>, pred.shape)
-
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Coefficients: \n&#39;</span>, reg.coef_)
-<span style="color: #228B22"># The mean squared error</span>
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&quot;Mean squared error: %.2f&quot;</span>
-      % mean_squared_error(y_test, pred))
-<span style="color: #228B22"># Explained variance score: 1 is perfect prediction</span>
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Variance score: %.2f&#39;</span> % r2_score(y_test, pred))
-
-<span style="color: #228B22">#plot</span>
-plt.scatter(X_test,y_test,color=<span style="color: #CD5555">&#39;green&#39;</span>, label=<span style="color: #CD5555">&quot;Training Data&quot;</span>)
-plt.plot(X_test, pred, color=<span style="color: #CD5555">&#39;black&#39;</span>, label=<span style="color: #CD5555">&quot;Fit Line&quot;</span>)
-plt.legend()
-plt.show()
-
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;------------------------------------&quot;</span>)
-
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;Ridge Regression&quot;</span>)
-
-ridge=linear_model.RidgeCV(alphas=[<span style="color: #B452CD">0.1</span>,<span style="color: #B452CD">1.0</span>,<span style="color: #B452CD">10.0</span>])
-ridge.fit(X_train,y_train)
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;Ridge Coefficient: &quot;</span>,ridge.coef_)
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;Ridge Intercept: &quot;</span>, ridge.intercept_)
-<span style="color: #228B22">#Look into graphing with Ridge fit</span>
-
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;------------------------------------&quot;</span>)
-
-<span style="color: #8B008B; font-weight: bold">print</span> (<span style="color: #CD5555">&quot;Lasso&quot;</span>)
-lasso=linear_model.Lasso(alpha=<span style="color: #B452CD">0.1</span>)
-lasso.fit(X_train,y_train)
-predl=lasso.predict(X_test)
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&quot;Lasso Coefficient: &quot;</span>, lasso.coef_)
-<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&quot;Lasso Intercept: &quot;</span>, lasso.intercept_)
-plt.scatter(X_test,y_test,color=<span style="color: #CD5555">&#39;green&#39;</span>, label=<span style="color: #CD5555">&quot;Training Data&quot;</span>)
-plt.plot(X_test, predl, color=<span style="color: #CD5555">&#39;blue&#39;</span>, label=<span style="color: #CD5555">&quot;Lasso&quot;</span>)
-plt.legend()
-plt.show()
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec46">A second-order polynomial with Ridge and Lasso </h2>
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
-<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> Ridge
-<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.metrics</span> <span style="color: #8B008B; font-weight: bold">import</span> r2_score
-
-np.random.seed(<span style="color: #B452CD">4155</span>)
-
-n_samples = <span style="color: #B452CD">100</span>
-
-x = np.random.rand(n_samples,<span style="color: #B452CD">1</span>)
-y = <span style="color: #B452CD">5</span>*x*x + <span style="color: #B452CD">0.1</span>*np.random.rand(n_samples,<span style="color: #B452CD">1</span>)
-
-<span style="color: #228B22"># Centering  x and y.</span>
-x_ = x - np.mean(x)
-y_ = y - np.mean(y) <span style="color: #228B22"># beta_0 = mean(y)</span>
-
-X = np.c_[np.ones((n_samples,<span style="color: #B452CD">1</span>)), x, x**<span style="color: #B452CD">2</span>]
-X_ = np.c_[x_, x_**<span style="color: #B452CD">2</span>]
-
-
-<span style="color: #228B22">### 1.</span>
-lmb_values = [<span style="color: #B452CD">1e-4</span>, <span style="color: #B452CD">1e-3</span>, <span style="color: #B452CD">1e-2</span>, <span style="color: #B452CD">10</span>, <span style="color: #B452CD">1e2</span>, <span style="color: #B452CD">1e4</span>]
-num_values = <span style="color: #658b00">len</span>(lmb_values)
-
-<span style="color: #228B22">## Ridge-regression of centered and not centered data</span>
-beta_ridge = np.zeros((<span style="color: #B452CD">3</span>,num_values))
-beta_ridge_centered = np.zeros((<span style="color: #B452CD">3</span>,num_values))
-
-I3 = np.eye(<span style="color: #B452CD">3</span>)
-I2 = np.eye(<span style="color: #B452CD">2</span>)
-
-<span style="color: #8B008B; font-weight: bold">for</span> i,lmb <span style="color: #8B008B">in</span> <span style="color: #658b00">enumerate</span>(lmb_values):
-    beta_ridge[:,i] = (np.linalg.inv( X.T <span style="color: #a61717; background-color: #e3d2d2">@</span> X + lmb*I3) <span style="color: #a61717; background-color: #e3d2d2">@</span> X.T <span style="color: #a61717; background-color: #e3d2d2">@</span> y).flatten()
-    beta_ridge_centered[<span style="color: #B452CD">1</span>:,i] = (np.linalg.inv( X_.T <span style="color: #a61717; background-color: #e3d2d2">@</span> X_ + lmb*I2) <span style="color: #a61717; background-color: #e3d2d2">@</span> X_.T <span style="color: #a61717; background-color: #e3d2d2">@</span> y_).flatten()
-
-<span style="color: #228B22"># sett beta_0 = np.mean(y)</span>
-beta_ridge_centered[<span style="color: #B452CD">0</span>,:] = np.mean(y)
-
-<span style="color: #228B22">## OLS (ordinary least squares) solution </span>
-beta_ls = np.linalg.inv( X.T <span style="color: #a61717; background-color: #e3d2d2">@</span> X ) <span style="color: #a61717; background-color: #e3d2d2">@</span> X.T <span style="color: #a61717; background-color: #e3d2d2">@</span> y
-
-<span style="color: #228B22">## Evaluate the models</span>
-pred_ls = X <span style="color: #a61717; background-color: #e3d2d2">@</span> beta_ls
-pred_ridge =  X <span style="color: #a61717; background-color: #e3d2d2">@</span> beta_ridge
-pred_ridge_centered =  X_ <span style="color: #a61717; background-color: #e3d2d2">@</span> beta_ridge_centered[<span style="color: #B452CD">1</span>:] + beta_ridge_centered[<span style="color: #B452CD">0</span>,:]
-
-<span style="color: #228B22">## Plot the results</span>
-
-<span style="color: #228B22"># Sorting</span>
-sort_ind = np.argsort(x[:,<span style="color: #B452CD">0</span>])
-
-x_plot = x[sort_ind,<span style="color: #B452CD">0</span>]
-x_centered_plot = x_[sort_ind,<span style="color: #B452CD">0</span>]
-
-pred_ls_plot = pred_ls[sort_ind,<span style="color: #B452CD">0</span>]
-pred_ridge_plot = pred_ridge[sort_ind,:]
-pred_ridge_centered_plot = pred_ridge_centered[sort_ind,:]
-
-<span style="color: #228B22"># Plott not centered</span>
-plt.plot(x_plot,pred_ls_plot,label=<span style="color: #CD5555">&#39;ls&#39;</span>)
-
-<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(num_values):
-    plt.plot(x_plot,pred_ridge_plot[:,i],label=<span style="color: #CD5555">&#39;ridge, lmb=%g&#39;</span>%lmb_values[i])
-
-plt.plot(x,y,<span style="color: #CD5555">&#39;ro&#39;</span>)
-
-plt.title(<span style="color: #CD5555">&#39;linear regression on un-centered data&#39;</span>)
-plt.legend()
-
-<span style="color: #228B22"># Plott centered</span>
-plt.figure()
-
-<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(num_values):
-    plt.plot(x_centered_plot,pred_ridge_centered_plot[:,i],label=<span style="color: #CD5555">&#39;ridge, lmb=%g&#39;</span>%lmb_values[i])
-
-plt.plot(x_,y,<span style="color: #CD5555">&#39;ro&#39;</span>)
-
-plt.title(<span style="color: #CD5555">&#39;linear regression on centered data&#39;</span>)
-plt.legend()
-
-
-<span style="color: #228B22"># 2.</span>
-
-pred_ridge_scikit =  np.zeros((n_samples,num_values))
-<span style="color: #8B008B; font-weight: bold">for</span> i,lmb <span style="color: #8B008B">in</span> <span style="color: #658b00">enumerate</span>(lmb_values):
-    pred_ridge_scikit[:,i] = (Ridge(alpha=lmb,fit_intercept=<span style="color: #658b00">False</span>).fit(X,y).predict(X)).flatten() <span style="color: #228B22"># fit_intercept=False fordi bias er allerede i X</span>
-
-plt.figure()
-
-plt.plot(x_plot,pred_ls_plot,label=<span style="color: #CD5555">&#39;ls&#39;</span>)
-
-<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(num_values):
-    plt.plot(x_plot,pred_ridge_scikit[sort_ind,i],label=<span style="color: #CD5555">&#39;scikit-ridge, lmb=%g&#39;</span>%lmb_values[i])
-
-plt.plot(x,y,<span style="color: #CD5555">&#39;ro&#39;</span>)
-plt.legend()
-plt.title(<span style="color: #CD5555">&#39;linear regression using scikit&#39;</span>)
-
-plt.show()
-
-<span style="color: #228B22">### R2-score of the results</span>
-<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(num_values):
-    <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;lambda = %g&#39;</span>%lmb_values[i])
-    <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;r2 for scikit: %g&#39;</span>%r2_score(y,pred_ridge_scikit[:,i]))
-    <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;r2 for own code, not centered: %g&#39;</span>%r2_score(y,pred_ridge[:,i]))
-    <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;r2 for own, centered: %g\n&#39;</span>%r2_score(y,pred_ridge_centered[:,i]))
-</pre></div>
-</section>
-
-
-<section>
-<h2 id="___sec47">Resampling methods </h2>
+<h2 id="___sec27">Resampling methods </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1861,7 +1169,7 @@ once using the original training sample.
 
 
 <section>
-<h2 id="___sec48">Resampling approaches can be computationally expensive </h2>
+<h2 id="___sec28">Resampling approaches can be computationally expensive </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1885,7 +1193,7 @@ bootstrap is widely used.
 
 
 <section>
-<h2 id="___sec49">Why resampling methods ? </h2>
+<h2 id="___sec29">Why resampling methods ? </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b>Statistical analysis.</b>
 <ul>
@@ -1901,7 +1209,7 @@ bootstrap is widely used.
 
 
 <section>
-<h2 id="___sec50">Statistical analysis </h2>
+<h2 id="___sec30">Statistical analysis </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <ul>
@@ -1923,7 +1231,7 @@ bootstrap is widely used.
 
 
 <section>
-<h2 id="___sec51">Statistics  </h2>
+<h2 id="___sec31">Statistics  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1957,7 +1265,7 @@ selection of a large set of these numbers reproduces this PDF.
 
 
 <section>
-<h2 id="___sec52">Statistics, moments </h2>
+<h2 id="___sec32">Statistics, moments </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1983,7 +1291,7 @@ $$
 
 
 <section>
-<h2 id="___sec53">Statistics, central moments </h2>
+<h2 id="___sec33">Statistics, central moments </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2024,7 +1332,7 @@ qualitatively as the <em>spread</em> of \( p \) around its mean.
 
 
 <section>
-<h2 id="___sec54">Statistics, covariance </h2>
+<h2 id="___sec34">Statistics, covariance </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2058,7 +1366,7 @@ $$
 
 
 <section>
-<h2 id="___sec55">Statistics, more covariance  </h2>
+<h2 id="___sec35">Statistics, more covariance  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2091,7 +1399,7 @@ $$
 
 
 <section>
-<h2 id="___sec56">Statistics, independent variables  </h2>
+<h2 id="___sec36">Statistics, independent variables  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2120,7 +1428,7 @@ $$
 
 
 <section>
-<h2 id="___sec57">Statistics, more variance  </h2>
+<h2 id="___sec37">Statistics, more variance  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2157,7 +1465,7 @@ value of a set of measurements.
 
 
 <section>
-<h2 id="___sec58">Statistics and stochastic processes  </h2>
+<h2 id="___sec38">Statistics and stochastic processes  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2186,7 +1494,7 @@ interested in finding the few lowest moments, like the mean
 
 
 <section>
-<h2 id="___sec59">Statistics and sample variables  </h2>
+<h2 id="___sec39">Statistics and sample variables  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2217,7 +1525,7 @@ $$
 
 
 <section>
-<h2 id="___sec60">Statistics, sample variance and covariance </h2>
+<h2 id="___sec40">Statistics, sample variance and covariance </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2237,7 +1545,7 @@ and covariance \( \mathrm{cov}(X,Y) \).
 
 
 <section>
-<h2 id="___sec61">Statistics, law of large numbers </h2>
+<h2 id="___sec41">Statistics, law of large numbers </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2270,7 +1578,7 @@ true PDFs behind, which we usually do not have.
 
 
 <section>
-<h2 id="___sec62">Statistics, more on sample error </h2>
+<h2 id="___sec42">Statistics, more on sample error </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2293,7 +1601,7 @@ means.
 
 
 <section>
-<h2 id="___sec63">Statistics  </h2>
+<h2 id="___sec43">Statistics  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2315,7 +1623,7 @@ And in particular we are interested in its variance \( \mathrm{var}(\overline X_
 
 
 <section>
-<h2 id="___sec64">Statistics, central limit theorem </h2>
+<h2 id="___sec44">Statistics, central limit theorem </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2341,7 +1649,7 @@ $$
 
 
 <section>
-<h2 id="___sec65">Statistics, more technicalities  </h2>
+<h2 id="___sec45">Statistics, more technicalities  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2371,7 +1679,7 @@ estimate of the PDF of each of the \( X_i \), estimating all properties of
 
 
 <section>
-<h2 id="___sec66">Statistics </h2>
+<h2 id="___sec46">Statistics </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2403,7 +1711,7 @@ $$
 
 
 <section>
-<h2 id="___sec67">Statistics and sample variance  </h2>
+<h2 id="___sec47">Statistics and sample variance  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2447,7 +1755,7 @@ measurements in the sample.
 
 
 <section>
-<h2 id="___sec68">Statistics, uncorrelated results </h2>
+<h2 id="___sec48">Statistics, uncorrelated results </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2483,7 +1791,7 @@ cannot overlook the always present correlations.
 
 
 <section>
-<h2 id="___sec69">Statistics, computations </h2>
+<h2 id="___sec49">Statistics, computations </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2515,7 +1823,7 @@ measurements. For uncorrelated measurements this second term is zero.
 
 
 <section>
-<h2 id="___sec70">Statistics, more on computations of errors </h2>
+<h2 id="___sec50">Statistics, more on computations of errors </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2538,7 +1846,7 @@ have to be stored throughout the experiment.
 
 
 <section>
-<h2 id="___sec71">Statistics, wrapping up 1 </h2>
+<h2 id="___sec51">Statistics, wrapping up 1 </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2576,7 +1884,7 @@ starting always at \( 1 \) for \( d=0 \).
 
 
 <section>
-<h2 id="___sec72">Statistics, final expression </h2>
+<h2 id="___sec52">Statistics, final expression </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2612,7 +1920,7 @@ $$
 
 
 <section>
-<h2 id="___sec73">Statistics, effective number of correlations </h2>
+<h2 id="___sec53">Statistics, effective number of correlations </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2638,7 +1946,7 @@ measurements is very large.
 
 
 <section>
-<h2 id="___sec74">Log-likelihood </h2>
+<h2 id="___sec54">Log-likelihood </h2>
 
 <p>
 A popular strategy is to choose a penalty parameter that yields a good
@@ -2673,7 +1981,7 @@ The value of \( \lambda \) which minimizes \( \mbox{AIC}(\lambda) \) corresponds
 
 
 <section>
-<h2 id="___sec75">Cross-validation </h2>
+<h2 id="___sec55">Cross-validation </h2>
 
 <p>
 Instead of choosing the penalty parameter to balance model fit with
@@ -2704,7 +2012,7 @@ some sense) is then selected.
 
 
 <section>
-<h2 id="___sec76">Computationally expensive </h2>
+<h2 id="___sec56">Computationally expensive </h2>
 
 <p>
 The validation set approach is conceptually simple and is easy to implement. But it has two potential drawbacks:
@@ -2717,7 +2025,7 @@ The validation set approach is conceptually simple and is easy to implement. But
 
 
 <section>
-<h2 id="___sec77">Various steps in cross-validation </h2>
+<h2 id="___sec57">Various steps in cross-validation </h2>
 
 <p>
 When the repetitive splitting of the data set is done randomly,
@@ -2738,7 +2046,7 @@ cross-validation (LOOCV).
 
 
 <section>
-<h2 id="___sec78">How to set up the cross-validation for Ridge and/or Lasso </h2>
+<h2 id="___sec58">How to set up the cross-validation for Ridge and/or Lasso </h2>
 
 <ul>
 <p><li> Define a range of interest for the penalty parameter.</li>
@@ -2777,7 +2085,7 @@ $$
 
 
 <section>
-<h2 id="___sec79">Predicted Residual Error Sum of Squares </h2>
+<h2 id="___sec59">Predicted Residual Error Sum of Squares </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2802,7 +2110,7 @@ the design matrix and the parameters \( \beta \).
 
 
 <section>
-<h2 id="___sec80">Resampling methods: Jackknife and Bootstrap </h2>
+<h2 id="___sec60">Resampling methods: Jackknife and Bootstrap </h2>
 
 <p>
 Two famous
@@ -2825,7 +2133,7 @@ need for bootstrapping.
 
 
 <section>
-<h2 id="___sec81">Resampling methods: Jackknife </h2>
+<h2 id="___sec61">Resampling methods: Jackknife </h2>
 
 <p>
 The Jackknife works by making many replicas of the estimator \( \widehat{\theta} \). 
@@ -2846,7 +2154,7 @@ number \( i \) is left out. Using this notation, define
 
 
 <section>
-<h2 id="___sec82">Resampling methods: Jackknife estimator </h2>
+<h2 id="___sec62">Resampling methods: Jackknife estimator </h2>
 
 <p>
 To get an estimate for the bias and
@@ -2862,7 +2170,7 @@ $$
 
 
 <section>
-<h2 id="___sec83">Jackknife code example </h2>
+<h2 id="___sec63">Jackknife code example </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -2899,7 +2207,7 @@ t = jackknife(x, stat)
 
 
 <section>
-<h2 id="___sec84">Resampling methods: Bootstrap </h2>
+<h2 id="___sec64">Resampling methods: Bootstrap </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2921,7 +2229,7 @@ advantages:
 
 
 <section>
-<h2 id="___sec85">Resampling methods: Bootstrap background </h2>
+<h2 id="___sec65">Resampling methods: Bootstrap background </h2>
 
 <p>
 Since \( \widehat{\theta} = \widehat{\theta}(\boldsymbol{X}) \) is a function of random variables,
@@ -2937,7 +2245,7 @@ estimators.
 
 
 <section>
-<h2 id="___sec86">Resampling methods: More Bootstrap background </h2>
+<h2 id="___sec66">Resampling methods: More Bootstrap background </h2>
 
 <p>
 In the case that \( \widehat{\theta} \) has
@@ -2960,7 +2268,7 @@ idea is to use the relative frequency of \( \widehat{\theta}^* \)
 
 
 <section>
-<h2 id="___sec87">Resampling methods: Bootstrap approach </h2>
+<h2 id="___sec67">Resampling methods: Bootstrap approach </h2>
 
 <p>
 But
@@ -2981,7 +2289,7 @@ frequency of the observation \( X_i \), just draw the values
 
 
 <section>
-<h2 id="___sec88">Resampling methods: Bootstrap steps </h2>
+<h2 id="___sec68">Resampling methods: Bootstrap steps </h2>
 
 <p>
 The independent bootstrap works like this: 
@@ -2999,7 +2307,7 @@ When you are done, you can draw a histogram of the relative frequency of \( \wid
 
 
 <section>
-<h2 id="___sec89">Code example for the Bootstrap method </h2>
+<h2 id="___sec69">Code example for the Bootstrap method </h2>
 The following code starts with a Gaussian distribution with mean value \( \mu =100 \) and variance \( \sigma=15 \). We use this to generate the data used in the bootstrap analysis. The bootstrap analysis returns a data set after a given number of bootstrap operations (as many as we have data points). This data set consists of estimated mean values for each bootstrap operation. The histogram generated by the bootstrap method shows that the distribution for these mean values is also a Gaussian, centered around the mean value \( \mu=100 \) but with standard deviation \( \sigma/\sqrt{n} \), where \( n \) is the number of bootstrap samples (in this case the same as the number of original data points). The value of the standard deviation is what we expect from the central limit theorem. 
 <p>
 
@@ -3051,7 +2359,7 @@ plt.show()
 
 
 <section>
-<h2 id="___sec90">Resampling methods: Blocking  </h2>
+<h2 id="___sec70">Resampling methods: Blocking  </h2>
 
 <p>
 The blocking method was made popular by <a href="https://aip.scitation.org/doi/10.1063/1.457480" target="_blank">Flyvbjerg and Pedersen (1989)</a>
@@ -3079,7 +2387,7 @@ moreover, it becomes more accurate the larger \( n \) is.
 
 
 <section>
-<h2 id="___sec91">Blocking Transformations </h2>
+<h2 id="___sec71">Blocking Transformations </h2>
  We now define
 blocking transformations. The idea is to take the mean of subsequent
 pair of elements from \( \vec{X} \) and form a new vector
@@ -3118,7 +2426,7 @@ elements of \( \vec{X}_i \) and let \( n_i \) be the number of elements of
 
 
 <section>
-<h2 id="___sec92">Blocking Transformations </h2>
+<h2 id="___sec72">Blocking Transformations </h2>
 
 <p>
 Using the
@@ -3144,7 +2452,7 @@ The quantity \( \boldsymbol{X} \) is asymptotic uncorrelated by assumption, \( \
 
 
 <section>
-<h2 id="___sec93">Blocking Transformations, getting there </h2>
+<h2 id="___sec73">Blocking Transformations, getting there </h2>
 We have
 <p>&nbsp;<br>
 $$
@@ -3170,7 +2478,7 @@ We can show that \( V(\overline{X}_i) = V(\overline{X}_j) \) for all \( 0 \leq i
 
 
 <section>
-<h2 id="___sec94">Blocking Transformations, final expressions </h2>
+<h2 id="___sec74">Blocking Transformations, final expressions </h2>
 
 <p>
 We can then wrap up
@@ -3205,7 +2513,7 @@ It means we can apply blocking transformations until
 
 
 <section>
-<h2 id="___sec95"><a href="https://github.com/CompPhysics/MachineLearning/tree/master/doc/Programs/ResamplingAnalysisScripts" target="_blank">Code examples for Blocking, Jackknife and bootstrap</a> </h2>
+<h2 id="___sec75"><a href="https://github.com/CompPhysics/MachineLearning/tree/master/doc/Programs/ResamplingAnalysisScripts" target="_blank">Code examples for Blocking, Jackknife and bootstrap</a> </h2>
 
 <p>
 
@@ -3435,7 +2743,7 @@ dataAnalysis.printOutput()
 
 
 <section>
-<h2 id="___sec96">The bias-variance tradeoff </h2>
+<h2 id="___sec76">The bias-variance tradeoff </h2>
 
 <p>
 We begin  with an unknown function \( y=f(x) \) and fix a \emph{hypothesis set}
@@ -3458,7 +2766,7 @@ The
 
 
 <section>
-<h2 id="___sec97">Training and testing data </h2>
+<h2 id="___sec77">Training and testing data </h2>
 
 <p>
 We will discuss the bias-variance tradeoff in the context of continuous predictions such as regression. However, many of the intuitions and ideas discussed here also carry over to classification tasks. Consider a dataset \( \mathcal{L} \) consisting of the data \( \mathbf{X}_\mathcal{L}=\{(y_j, \boldsymbol{x}_j), j=1\ldots N\} \). Let us assume that the true data is generated from a noisy model
@@ -3473,7 +2781,7 @@ where \( \epsilon \) is normally distributed with mean zero and standard deviati
 
 
 <section>
-<h2 id="___sec98">Procedure to find a predictor </h2>
+<h2 id="___sec78">Procedure to find a predictor </h2>
 
 <p>
 We have a statistical procedure (e.g. least-squares regression) for
@@ -3491,7 +2799,7 @@ $$
 
 
 <section>
-<h2 id="___sec99">What we want </h2>
+<h2 id="___sec79">What we want </h2>
 
 <p>
 We are interested in the generalization error on all data drawn from
@@ -3508,7 +2816,7 @@ functional if we drew an infinite number of datasets \( \{\mathcal{L}_1,
 
 
 <section>
-<h2 id="___sec100">The expected generalization error </h2>
+<h2 id="___sec80">The expected generalization error </h2>
 
 <p>
 We would also like to average over different instances of the
@@ -3536,7 +2844,7 @@ terms.
 
 
 <section>
-<h2 id="___sec101">Elaborating a little bit more </h2>
+<h2 id="___sec81">Elaborating a little bit more </h2>
 
 <p>
 It is also helpful to further decompose the second term as
@@ -3557,7 +2865,7 @@ $$
 
 
 <section>
-<h2 id="___sec102">The bias </h2>
+<h2 id="___sec82">The bias </h2>
 
 <p>
 The first term is called the bias
@@ -3572,7 +2880,7 @@ and measures the deviation of the expectation value of our estimator (i.e. the a
 
 
 <section>
-<h2 id="___sec103">The variance </h2>
+<h2 id="___sec83">The variance </h2>
 The second term is called the variance
 <p>&nbsp;<br>
 $$
@@ -3601,7 +2909,7 @@ finite-sized training dataset (smaller variance).
 
 
 <section>
-<h2 id="___sec104">Example code for Bias-Variance tradeoff </h2>
+<h2 id="___sec84">Example code for Bias-Variance tradeoff </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -3664,7 +2972,7 @@ plt.show()
 
 
 <section>
-<h2 id="___sec105">Understanding what happens </h2>
+<h2 id="___sec85">Understanding what happens </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -3721,7 +3029,7 @@ plt.show()
 
 
 <section>
-<h2 id="___sec106">Summing up </h2>
+<h2 id="___sec86">Summing up </h2>
 
 <p>
 The above equations tell us that in
@@ -3745,7 +3053,7 @@ flexible statistical methods have higher variance.
 
 
 <section>
-<h2 id="___sec107">The one-dimensional Ising model </h2>
+<h2 id="___sec87">The one-dimensional Ising model </h2>
 
 <p>
 The one-dimensional Ising model with nearest neighbor interaction, no external field and a constant coupling constant \( J \) is given by
@@ -3799,7 +3107,7 @@ the coupling constant to achieve this.
 
 
 <section>
-<h2 id="___sec108">Reformulating the problem to suit regression </h2>
+<h2 id="___sec88">Reformulating the problem to suit regression </h2>
 
 <p>
 A more general form for the one-dimensional Ising model is
@@ -3862,7 +3170,7 @@ X_test_own = np.concatenate(
 
 
 <section>
-<h2 id="___sec109">Linear regression </h2>
+<h2 id="___sec89">Linear regression </h2>
 
 <p>
 The problem at hand is to try to fit the equation
@@ -3899,7 +3207,7 @@ the best estimate of \( \omega \).
 
 
 <section>
-<h2 id="___sec110">Ordinary least squares </h2>
+<h2 id="___sec90">Ordinary least squares </h2>
 
 <p>
 In the ordinary least squares method we choose the cost function
@@ -3952,7 +3260,7 @@ omega = get_ols_weights_naive(X_train_own, y_train)
 
 
 <section>
-<h2 id="___sec111">Singular Value decomposition </h2>
+<h2 id="___sec91">Singular Value decomposition </h2>
 Doing the inversion directly turns out to be a bad idea as the matrix
 \( X^TX \) is singular. An alternative approach is to use the <b>singular
 value decomposition</b>. Using the definition of the Moore-Penrose
@@ -4017,7 +3325,7 @@ Before passing in the data to the function we append a column with ones to the t
 
 
 <section>
-<h2 id="___sec112">Fitting with scikit-learn </h2>
+<h2 id="___sec92">Fitting with scikit-learn </h2>
 
 <p>
 Next we fit a <code>LinearRegression</code>-model from Scikit-learn for comparison.
@@ -4068,7 +3376,7 @@ valid matrix elements for \( J \).
 
 
 <section>
-<h2 id="___sec113">Ridge regression </h2>
+<h2 id="___sec93">Ridge regression </h2>
 
 <p>
 Having explored the ordinary least squares we move on to ridge
@@ -4138,7 +3446,7 @@ plt.show()
 
 
 <section>
-<h2 id="___sec114">LASSO regression </h2>
+<h2 id="___sec94">LASSO regression </h2>
 
 <p>
 In the <b>Least Absolute Shrinkage and Selection Operator</b> (LASSO)-method we get a third cost function.
@@ -4178,7 +3486,7 @@ constant as opposed to ridge and OLS. We get a sparse solution with
 
 
 <section>
-<h2 id="___sec115">Performance of the different models </h2>
+<h2 id="___sec95">Performance of the different models </h2>
 
 <p>
 In order to judge which model performs best at varying values of \( \lambda \) (for ridge and LASSO) we compute \( R^2 \) which is given by
@@ -4215,7 +3523,7 @@ sk_r_test = clf.score(X_test, y_test)
 
 
 <section>
-<h2 id="___sec116">Performance as  function of the regularization parameter </h2>
+<h2 id="___sec96">Performance as  function of the regularization parameter </h2>
 
 <p>
 We see how the different models perform for a different set of values for \( \lambda \).
@@ -4297,7 +3605,7 @@ much. Ridge is more stable over a larger range of values for
 
 
 <section>
-<h2 id="___sec117">Finding the optimal value of \( \lambda \) </h2>
+<h2 id="___sec97">Finding the optimal value of \( \lambda \) </h2>
 
 <p>
 To determine which value of \( \lambda \) is best we plot the accuracy of
