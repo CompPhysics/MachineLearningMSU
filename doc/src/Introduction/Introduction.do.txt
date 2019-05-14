@@ -1073,17 +1073,17 @@ The next step, and we will define this mathematically later, is to set up the so
 It has dimensionality $p\times n$, where $n$ is the number of data points and $p$ are the so-called predictors. In our case here they are given by the number of polynomials in $A$ we wish to include in the fit. 
 !bc pycod
 # Now we set up the design matrix X
-X = np.zeros((5,len(A)))
-X[4,:] = A**(-1.0)
-X[3,:] = A**(-1.0/3.0)
-X[2,:] = A**(2.0/3.0)
-X[1,:] = A
-X[0,:] = 1
+X = np.zeros((len(A),5))
+X[:,0] = 1
+X[:,1] = A
+X[:,2] = A**(2.0/3.0)
+X[:,3] = A**(-1.0/3.0)
+X[:,4] = A**(-1.0)
 !ec
 With _scikitlearn_ we are now ready to use linear regression and fit our data.
 !bc pycod 
-clf = skl.LinearRegression().fit(X.T, Energies)
-fity = clf.predict(X.T)
+clf = skl.LinearRegression().fit(X, Energies)
+fity = clf.predict(X)
 !ec
 Pretty simple!  
 Now we can print measures of how our fit is doing, the coefficients from the fits and plot the final fit together with our data.
@@ -1123,14 +1123,14 @@ from sklearn.tree import DecisionTreeRegressor
 regr_1=DecisionTreeRegressor(max_depth=5)
 regr_2=DecisionTreeRegressor(max_depth=7)
 regr_3=DecisionTreeRegressor(max_depth=9)
-regr_1.fit(X.T, Energies)
-regr_2.fit(X.T, Energies)
-regr_3.fit(X.T, Energies)
+regr_1.fit(X, Energies)
+regr_2.fit(X, Energies)
+regr_3.fit(X, Energies)
 
 
-y_1 = regr_1.predict(X.T)
-y_2 = regr_2.predict(X.T)
-y_3=regr_3.predict(X.T)
+y_1 = regr_1.predict(X)
+y_2 = regr_2.predict(X)
+y_3=regr_3.predict(X)
 Masses['Eapprox'] = y_3
 # Plot the results
 plt.figure()
@@ -1158,7 +1158,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import accuracy_score
 import seaborn as sns
 
-X_train = X.T
+X_train = X
 Y_train = Energies
 n_hidden_neurons = 100
 epochs = 100

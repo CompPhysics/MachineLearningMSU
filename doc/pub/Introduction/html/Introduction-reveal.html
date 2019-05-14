@@ -148,7 +148,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>&nbsp;<br>
-<center><h4>May 13, 2019</h4></center> <!-- date -->
+<center><h4>May 14, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -1379,20 +1379,20 @@ It has dimensionality \( p\times n \), where \( n \) is the number of data point
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
 <div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #228B22"># Now we set up the design matrix X</span>
-X = np.zeros((<span style="color: #B452CD">5</span>,<span style="color: #658b00">len</span>(A)))
-X[<span style="color: #B452CD">4</span>,:] = A**(-<span style="color: #B452CD">1.0</span>)
-X[<span style="color: #B452CD">3</span>,:] = A**(-<span style="color: #B452CD">1.0</span>/<span style="color: #B452CD">3.0</span>)
-X[<span style="color: #B452CD">2</span>,:] = A**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>)
-X[<span style="color: #B452CD">1</span>,:] = A
-X[<span style="color: #B452CD">0</span>,:] = <span style="color: #B452CD">1</span>
+X = np.zeros((<span style="color: #658b00">len</span>(A),<span style="color: #B452CD">5</span>))
+X[:,<span style="color: #B452CD">0</span>] = <span style="color: #B452CD">1</span>
+X[:,<span style="color: #B452CD">1</span>] = A
+X[:,<span style="color: #B452CD">2</span>] = A**(<span style="color: #B452CD">2.0</span>/<span style="color: #B452CD">3.0</span>)
+X[:,<span style="color: #B452CD">3</span>] = A**(-<span style="color: #B452CD">1.0</span>/<span style="color: #B452CD">3.0</span>)
+X[:,<span style="color: #B452CD">4</span>] = A**(-<span style="color: #B452CD">1.0</span>)
 </pre></div>
 <p>
 With <b>scikitlearn</b> we are now ready to use linear regression and fit our data.
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
-<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>clf = skl.LinearRegression().fit(X.T, Energies)
-fity = clf.predict(X.T)
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>clf = skl.LinearRegression().fit(X, Energies)
+fity = clf.predict(X)
 </pre></div>
 <p>
 Pretty simple!  
@@ -1435,14 +1435,14 @@ As a teaser, let us now see how we can do this with decision trees using <b>scik
 regr_1=DecisionTreeRegressor(max_depth=<span style="color: #B452CD">5</span>)
 regr_2=DecisionTreeRegressor(max_depth=<span style="color: #B452CD">7</span>)
 regr_3=DecisionTreeRegressor(max_depth=<span style="color: #B452CD">9</span>)
-regr_1.fit(X.T, Energies)
-regr_2.fit(X.T, Energies)
-regr_3.fit(X.T, Energies)
+regr_1.fit(X, Energies)
+regr_2.fit(X, Energies)
+regr_3.fit(X, Energies)
 
 
-y_1 = regr_1.predict(X.T)
-y_2 = regr_2.predict(X.T)
-y_3=regr_3.predict(X.T)
+y_1 = regr_1.predict(X)
+y_2 = regr_2.predict(X)
+y_3=regr_3.predict(X)
 Masses[<span style="color: #CD5555">&#39;Eapprox&#39;</span>] = y_3
 <span style="color: #228B22"># Plot the results</span>
 plt.figure()
@@ -1472,7 +1472,7 @@ functionality.
 <span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.metrics</span> <span style="color: #8B008B; font-weight: bold">import</span> accuracy_score
 <span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">seaborn</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">sns</span>
 
-X_train = X.T
+X_train = X
 Y_train = Energies
 n_hidden_neurons = <span style="color: #B452CD">100</span>
 epochs = <span style="color: #B452CD">100</span>
