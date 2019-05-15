@@ -73,13 +73,13 @@ _Monday May 20, 2019_:  (breaks of 10 min for every lecture)
 
 _Tuesday May 21, 2019_:
 
-- 830am-930am: Neural networks  (MK and RR)
-- 930am-1030am: Neural networks and deep learning  (MK and RR)
+- 830am-930am: Neural networks (NNs) and deep learning (MK and RR)
+- 930am-1030am: Implementation and practical advice for NNs (MK and RR)
 - 1030am-11am: Break, coffee, tea etc
-- 11am-12pm: Convolutional Neural Networks (CNNs) and examples from nuclear physics experiments (MK and RR)
+- 11am-12pm: Convolutional Neural Networks (CNNs) (MK and RR)
 - 12pm-1pm: Lunch
-- 1pm-2pm: CNNs (MK and RR)
-- 2pm-3pm: Autoenconders and recurrent neural networks and examples from nuclear physics experiments  (MK and RR)
+- 1pm-2pm: Implementation and practical advice for CNNs (MK and RR)
+- 2pm-3pm: Autoenconders and other NN architectures  (MK and RR)
 - 3pm-330pm: Break, coffee, tea etc
 - 330pm-6pm: Hands-on sessions with examples from nuclear physics experiments
 
@@ -97,7 +97,7 @@ _Wednesday May 22, 2019_:
 
 _Thursday May 23, 2019_:
 
-- 9am-10am: Current state of Machine Learning research (MK)
+- 9am-10am: Current state of Machine Learning research with nuclear physics applications (MK)
 - 10am-12pm: Hands-on sessions with examples from nuclear physics, experiment and theory
 - Coffee, tea etc at 1030am
 - 12pm-1pm: Lunch
