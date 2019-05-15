@@ -144,7 +144,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>May 14, 2019</h4></center> <!-- date -->
+<center><h4>May 15, 2019</h4></center> <!-- date -->
 <br>
 
 <h2 id="___sec0">Introduction </h2>
@@ -1561,9 +1561,9 @@ df <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>
 Nucleus <span style="color: #666666">=</span> df<span style="color: #666666">.</span>loc[<span style="color: #008000; font-weight: bold">lambda</span> df: df<span style="color: #666666">.</span>Z<span style="color: #666666">==8</span>, :]
 <span style="color: #408080; font-style: italic"># drop cases with no number</span>
 Nucleus <span style="color: #666666">=</span> Nucleus<span style="color: #666666">.</span>dropna()
-<span style="color: #008000; font-weight: bold">print</span>(Nucleus)
 <span style="color: #408080; font-style: italic"># Here we do the magic and obtain the neutron separation energies, one line of code!!</span>
 Nucleus[<span style="color: #BA2121">&#39;NeutronSeparationEnergies&#39;</span>] <span style="color: #666666">=</span> Nucleus[<span style="color: #BA2121">&#39;Energies&#39;</span>]<span style="color: #666666">.</span>diff(<span style="color: #666666">+1</span>)
+<span style="color: #008000; font-weight: bold">print</span>(Nucleus)
 MakePlot([Nucleus<span style="color: #666666">.</span>A], [Nucleus<span style="color: #666666">.</span>NeutronSeparationEnergies], [<span style="color: #BA2121">&#39;b&#39;</span>], [<span style="color: #BA2121">&#39;Neutron Separation Energy&#39;</span>], [<span style="color: #BA2121">&#39;$A$&#39;</span>,<span style="color: #BA2121">&#39;$S_n$&#39;</span>])
 save_fig(<span style="color: #BA2121">&#39;Nucleus&#39;</span>)
 plt<span style="color: #666666">.</span>show()
