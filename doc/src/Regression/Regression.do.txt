@@ -513,7 +513,7 @@ plt.show()
 ===== Adding error analysis and training set up =====
 
 We can easily test our fit by computing the $R2$ score that we discussed in connection with the functionality of _Scikit_Learn_ in the introductory slides.
-Since we are not using _Scikit-Learn here we can define our $R2$ function as
+Since we are not using _Scikit-Learn here we can define our own $R2$ function as
 !bc pycod 
 def R2(y_data, y_model):
     return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_model)) ** 2)
@@ -708,13 +708,256 @@ This approach (different linear and non-linear regression) suffers often from bo
 !eblock
 
 
+!split
+===== Fitting equations of state for dense nuclear matter =====
+
+Before we continue, let us introduce yet another example, fitting the
+nuclear equation of state using results from many-body calculations.
+The equation of state we have made available here, as function of
+density, has been derived using modern nucleon-nucleon potentials with
+"the addition of three-body
+forces":"https://www.sciencedirect.com/science/article/pii/S0370157399001106". This
+time the file is presented as a standard _csv_ file.
+
+The beginning of the Python is similar to what you have seen before,
+with the same initializations and declarations. We use also _pandas_
+again, rather extensively to organize our data.
+
+The difference now is that we use _Scikit-Learn's_ regression tools instead of our own matrix inversion implementation. Furthermore, we sneak _Ridge_ regression (to be discussed below) which includes a hyperparameter $\lambda$, also to be explained below. 
+
+!split
+=====  The code =====
+
+!bc pycod 
+# Common imports
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import sklearn.linear_model as skl
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+
+# Where to save the figures and data files
+PROJECT_ROOT_DIR = "Results"
+FIGURE_ID = "Results/FigureFiles"
+DATA_ID = "DataFiles/"
+
+if not os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+if not os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+if not os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+def image_path(fig_id):
+    return os.path.join(FIGURE_ID, fig_id)
+
+def data_path(dat_id):
+    return os.path.join(DATA_ID, dat_id)
+
+def save_fig(fig_id):
+    plt.savefig(image_path(fig_id) + ".png", format='png')
+
+infile = open(data_path("EoS.csv"),'r')
+
+# Read the EoS data as  csv file and organized into two arrays with density and energies
+EoS = pd.read_csv(infile, names=('Density', 'Energy'))
+EoS['Energy'] = pd.to_numeric(EoS['Energy'], errors='coerce')
+EoS = EoS.dropna()
+Energies = EoS['Energy']
+Density = EoS['Density']
+#  The design matrix now as function of various polytrops
+X = np.zeros((len(Density),4))
+X[:,3] = Density**(4.0/3.0)
+X[:,2] = Density
+X[:,1] = Density**(2.0/3.0)
+X[:,0] = 1
+
+# We use now Scikit-Learn's linear regressor and ridge regressor
+# OLS part
+clf = skl.LinearRegression().fit(X, Energies)
+ytilde = clf.predict(X)
+EoS['Eols']  = ytilde
+# The mean squared error                               
+print("Mean squared error: %.2f" % mean_squared_error(Energies, ytilde))
+# Explained variance score: 1 is perfect prediction                                 
+print('Variance score: %.2f' % r2_score(Energies, ytilde))
+# Mean absolute error                                                           
+print('Mean absolute error: %.2f' % mean_absolute_error(Energies, ytilde))
+print(clf.coef_, clf.intercept_)
+
+# The Ridge regression with a hyperparameter lambda = 0.1
+_lambda = 0.1
+clf_ridge = skl.Ridge(alpha=_lambda).fit(X, Energies)
+yridge = clf_ridge.predict(X)
+EoS['Eridge']  = yridge
+# The mean squared error                               
+print("Mean squared error: %.2f" % mean_squared_error(Energies, yridge))
+# Explained variance score: 1 is perfect prediction                                 
+print('Variance score: %.2f' % r2_score(Energies, yridge))
+# Mean absolute error                                                           
+print('Mean absolute error: %.2f' % mean_absolute_error(Energies, yridge))
+print(clf_ridge.coef_, clf_ridge.intercept_)
+
+fig, ax = plt.subplots()
+ax.set_xlabel(r'$\rho[\mathrm{fm}^{-3}]$')
+ax.set_ylabel(r'Energy per particle')
+ax.plot(EoS['Density'], EoS['Energy'], alpha=0.7, lw=2,
+            label='Theoretical data')
+ax.plot(EoS['Density'], EoS['Eols'], alpha=0.7, lw=2, c='m',
+            label='OLS')
+ax.plot(EoS['Density'], EoS['Eridge'], alpha=0.7, lw=2, c='g',
+            label='Ridge $\lambda = 0.1$')
+ax.legend()
+save_fig("EoSfitting")
+plt.show()
+!ec
+
+The above simple polynomial in density $\rho$ gives an excellent fit
+to the data. Can you give an interpretation of the various powers of $\rho$?
+
+We note also that there is a small deviation between the
+standard OLS and the Ridge regression at higher densities. We discuss this in more detail
+below.
+
+
+!split
+===== The singular value decomposition  =====
+!bblock
+
+The examples we have looked at so far are cases where we normally can
+invert the matrix $\bm{X}^T\bm{X}$. Using a polynomial expansion as we
+did both for the masses and the fitting of the equation of state,
+leads to row vectors of the design matrix which are essentially
+orthogonal due to the polynomial character of our model. This may
+however not the be case in general and a standard matrix inversion
+algorithm based on say LU decomposition may lead to singularities. We will see an example of this below when we try to fit
+the coupling constant of the widely used Ising model. 
+There is however a way to partially circumvent this problem and also gain some insight about the ordinary least squares approach. 
+
+This is given by the _Singular Value Decomposition_ algorithm, perhaps the most powerful linear algebra algorithm.
+
+A general
+$m\times n$ matrix $\bm{A}$ can be written in terms of a diagonal
+matrix $\bm{D}$ of dimensionality $n\times n$ and two orthognal
+matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
+$m \times m$ and the last dimensionality $n\times n$. 
+We have then 
+!bt
+\[ 
+\bm{A} = \bm{U}\bm{D}\bm{V}^T 
+\] 
+!et 
+!eblock
+
+
+
+!split
+===== From standard regression to Ridge regression =====
+
+One of the typical problems we encounter with linear regression, in particular 
+when the matrix $\bm{X}$ (our so-called design matrix) is high-dimensional, 
+are problems with near singular or singular matrices. The column vectors of $\bm{X}$ 
+may be linearly dependent, normally referred to as super-collinearity.  
+This means that the matrix may be rank deficient and it is basically impossible to 
+to model the data using linear regression. As an example, consider the matrix
+!bt
+\begin{align*}
+\mathbf{X} & =  \left[
+\begin{array}{rrr}
+1 & -1 & 2
+\\
+1 & 0 & 1
+\\
+1 & 2  & -1
+\\
+1 & 1  & 0
+\end{array} \right]
+\end{align*}
+!et
+
+The columns of $\bm{X}$ are linearly dependent. We se this easily since the 
+the first column is the row-wise sum of the other two columns. The rank (more correct,
+the column rank) of a matrix is the dimension of the space spanned by the
+column vectors. Hence, the rank of $\mathbf{X}$ is equal to the number
+of linearly independent columns. In this particular case the matrix has rank 2.
+
+Super-collinearity of an $(n \times p)$-dimensional design matrix $\mathbf{X}$ implies
+that the inverse of the matrix $\bm{X}^T\bm{x}$ (the matrix we need to invert to solve the linear regression equations) is non-invertible. If we have a square matrix that does not have an inverse, we say this matrix singular. The example here demonstrates this
+!bt
+\begin{align*}
+\bm{X} & =  \left[
+\begin{array}{rr}
+1 & -1
+\\
+1 & -1
+\end{array} \right].
+\end{align*}
+!et
+We see easily that  $\mbox{det}(\bm{X}) = x_{11} x_{22} - x_{12} x_{21} = 1 \times (-1) - 1 \times (-1) = 0$. Hence, $\mathbf{X}$ is singular and its inverse is undefined.
+This is equivalent to saying that the matrix $\bm{X}$ has at least an eigenvalue which is zero.
+
+!split
+===== Fixing the singularity =====
+
+If our design matrix $\bm{X}$ which enters the linear regression problem
+!bt
+\begin{align}
+\bm{\beta} & =  (\bm{X}^{T} \bm{X})^{-1} \bm{X}^{T} \bm{y},
+\end{align}
+!et
+has linearly dependent column vectors, we will not be able to compute the inverse
+of $\bm{X}^T\bm{X}$ and we cannot find the parameters (estimators) $\beta_i$. 
+The estimators are only well-defined if $(\bm{X}^{T}\bm{X})^{-1}$ exits. 
+This is more likely to happen when the matrix $\bm{X}$ is high-dimensional. In this case it is likely to encounter a situation where 
+the regression parameters $\beta_i$ cannot be estimated.
+
+The *ad hoc* approach which was introduced in the 70s was simply to add a diagonal component to the matrix to invert, that is we change
+!bt
+\[
+\bm{X}^{T} \bm{X} \rightarrow \bm{X}^{T} \bm{X}+\lambda \bm{I},
+\]
+!et 
+where $\bm{I}$ is the identity matrix.
+
+
+
+!split
+===== Where are we going? =====
+
+Before we proceed, we need to rethink what we have been doing. In our
+eager to fit the data, we have omitted several important elements in
+our regression analysis. In what follows we will
+o split data into training and test data
+o discuss Ridge and Lasso regression
+o introduce resampling techniques like cross-validation, bootstrapping and jackknife
+o look at statistical properties, including a discussion of mean values, variance and the so-called bias-variance tradeoff
+o and more.
+
+!split
+===== Training and test data =====
+
+In order avoid issues like overfitting and also introduce some predictions into our modeling, it is common to split the data we have into training, validation and test data. 
+
+!split
+===== Ridge and Lasso Regression =====
+
 
 
 
 !split 
 ===== Linking the regression analysis with a statistical interpretation =====
 
-Before we proceed, and to link with our discussions of Bayesian statistics to come, it is useful the derive the standard regression analysis equations using a statistical interpretation. This allows us also to derive quantities like the variance and other expectation values in a rather straightforward way. 
+Finally, we are going to discuss several statistical properties. The
+advantage of doing linear regression is that we actually end up with
+analytical expressions for several statistical quantities.  
+equations using a statistical interpretation. Regression  allows us to
+derive quantities like the variance and other expectation values in a
+rather straightforward way.
+
 
 It is assumed that $\varepsilon_i
 \sim \mathcal{N}(0, \sigma^2)$ and the $\varepsilon_{i}$ are
@@ -761,114 +1004,6 @@ its variance is
 \end{align*}
 !et
 Hence, $Y_i \sim \mathcal{N}( \mathbf{X}_{i, \ast} \, \beta, \sigma^2)$. 
-
-
-
-
-
-
-!split
-===== The singular value decompostion  =====
-!bblock
-
-
-A general
-$m\times n$ matrix $\bm{A}$ can be written in terms of a diagonal
-matrix $\bm{D}$ of dimensionality $n\times n$ and two orthognal
-matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
-$m \times m$ and the last dimensionality $n\times n$. 
-We have then 
-!bt
-\[ 
-\bm{A} = \bm{U}\bm{D}\bm{V}^T 
-\] 
-!et 
-!eblock
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-!split
-===== From standard regression to Ridge regression =====
-
-One of the typical problems we encounter with linear regression, in particular 
-when the matrix $\bm{X}$ (our so-called design matrix) is high-dimensional, 
-are problems with near singular or singular matrices. The column vectors of $\bm{X}$ 
-may be linearly dependent, normally referred to as super-collinearity.  
-This means that the matrix may be rank deficient and it is basically impossible to 
-to model the data using linear regression. As an example, consider the matrix
-!bt
-\begin{align*}
-\mathbf{X} & =  \left[
-\begin{array}{rrr}
-1 & -1 & 2
-\\
-1 & 0 & 1
-\\
-1 & 2  & -1
-\\
-1 & 1  & 0
-\end{array} \right]
-\end{align*}
-!et
-
-The columns of $\bm{X}$ are linearly dependent. We se this easily since the 
-the first column is the row-wise sum of the other two columns. The rank (more correct,
-the column rank) of a matrix is the dimension of the space spanned by the
-column vectors. Hence, the rank of $\mathbf{X}$ is equal to the number
-of linearly independent columns. In this particular case the matrix has rank 2.
-
-Super-collinearity of an $(n \times p)$-dimensional design matrix $\mathbf{X}$ implies
-that the inverse of the matrix $\bm{X}^T\bm{x}$ (the matrix we needto invert to solve the linear regression equations) is non-invertible. If we have a square matrix that does not have an inverse, we say this matrix singular. The example here demonstrates this
-!bt
-\begin{align*}
-\bm{X} & =  \left[
-\begin{array}{rr}
-1 & -1
-\\
-1 & -1
-\end{array} \right].
-\end{align*}
-!et
-We see easily that  $\mbox{det}(\bm{X}) = x_{11} x_{22} - x_{12} x_{21} = 1 \times (-1) - 1 \times (-1) = 0$. Hence, $\mathbf{X}$ is singular and its inverse is undefined.
-This is equivalent to saying that the matrix $\bm{X}$ has at least an eigenvalue which is zero.
-
-!split
-===== Fixing the singularity =====
-
-If our design matrix $\bm{X}$ which enters the linear regression problem
-!bt
-\begin{align}
-\bm{\beta} & =  (\bm{X}^{T} \bm{X})^{-1} \bm{X}^{T} \bm{y},
-\end{align}
-!et
-has linearly dependent column vectors, we will not be able to compute the inverse
-of $\bm{X}^T\bm{X}$ and we cannot find the parameters (estimators) $\beta_i$. 
-The estimators are only well-defined if $(\bm{X}^{T}\bm{X})^{-1}$ exits. 
-This is more likely to happen when the matrix $\bm{X}$ is high-dimensional. In this case it is likely to encounter a situation where 
-the regression parameters $\beta_i$ cannot be estimated.
-
-The *ad hoc* approach which was introduced in the 70s was simply to add a diagonal component to the matrix to invert, that is we change
-!bt
-\[
-\bm{X}^{T} \bm{X} \rightarrow \bm{X}^{T} \bm{X}+\lambda \bm{I},
-\]
-!et 
-where $\bm{I}$ is the identity matrix.
-
-
-
 
 
 
@@ -2245,9 +2380,9 @@ omega = get_ols_weights(X_train_own,y_train)
 !ec
 
 !split
-===== Fitting with scikit-learn =====
+===== Fitting with Scikit-Learn =====
 
-Next we fit a `LinearRegression`-model from Scikit-learn for comparison.
+Next we fit a `LinearRegression`-model from _Scikit-Learn_ for comparison.
 
 !bc pycod
 clf = skl.LinearRegression().fit(X_train, y_train)
@@ -2284,7 +2419,7 @@ plt.show()
 !ec
 
 We can see that our model for the least squares method performes close
-to the benchmark from Scikit-learn. It is interesting to note that OLS
+to the benchmark from _Scikit-Learn_. It is interesting to note that OLS
 considers both $J_{j, j + 1} = -0.5$ and $J_{j, j - 1} = -0.5$ as
 valid matrix elements for $J$.
 
@@ -2357,7 +2492,7 @@ In the _Least Absolute Shrinkage and Selection Operator_ (LASSO)-method we get a
     = (X\omega - y)^T(X\omega - y) + \lambda \sqrt{\omega^T\omega}.
 \end{align}
 !et
-Finding the extremal point of this cost function is not so straight-forward as in least squares and ridge. We will therefore rely solely on the function ``Lasso`` from Scikit-learn.
+Finding the extremal point of this cost function is not so straight-forward as in least squares and ridge. We will therefore rely solely on the function ``Lasso`` from _Scikit-Learn_.
 
 !bc pycod
 clf_lasso = skl.Lasso(alpha=_lambda).fit(X_train, y_train)

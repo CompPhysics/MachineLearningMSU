@@ -3,7 +3,10 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import sklearn.linear_model as skl
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+
 # Where to save the figures and data files
 PROJECT_ROOT_DIR = "Results"
 FIGURE_ID = "Results/FigureFiles"
@@ -27,50 +30,65 @@ def data_path(dat_id):
 def save_fig(fig_id):
     plt.savefig(image_path(fig_id) + ".png", format='png')
 
-def r_squared(y, y_hat):
-    return 1 - np.sum((y - y_hat) ** 2) / np.sum((y - np.mean(y_hat)) ** 2)
-
 infile = open(data_path("EoS.csv"),'r')
 
-# Read the EoS data as  csv file
+# Read the EoS data as  csv file and organized into two arrays with density and energies
 EoS = pd.read_csv(infile, names=('Density', 'Energy'))
 EoS['Energy'] = pd.to_numeric(EoS['Energy'], errors='coerce')
 EoS = EoS.dropna()
 Energies = EoS['Energy']
 Density = EoS['Density']
-print(EoS)
-X = np.zeros((len(Density),5))
-X[:,4] = Density**(5.0/3.0)
+#  The design matrix now as function of various polytrops
+X = np.zeros((len(Density),4))
 X[:,3] = Density**(4.0/3.0)
 X[:,2] = Density
 X[:,1] = Density**(2.0/3.0)
 X[:,0] = 1
 
-X_train, X_test, y_train, y_test = train_test_split(X, Energies, test_size=0.5)
-# matrix inversion to find beta
-beta = np.linalg.inv(X_train.T.dot(X_train)).dot(X_train.T).dot(y_train)
-# and then make the prediction
-ytilde = X_train @ beta
-y_predict = X_test @ beta
-r_train = r_squared(ytilde, y_train)
-r_test = r_squared(y_predict, y_test)
-print(r_test, r_train)
-"""
-EoS['Eapprox']  = y_predict
-#print(EoS)
-#print(np.mean( (Energies-fity)**2))
-# Generate a plot comparing the experimental with the fitted values values.
+# We use now Scikit-Learn's linear regressor and ridge regressor
+# OLS part
+clf = skl.LinearRegression().fit(X, Energies)
+ytilde = clf.predict(X)
+EoS['Eols']  = ytilde
+# The mean squared error                               
+print("Mean squared error: %.2f" % mean_squared_error(Energies, ytilde))
+# Explained variance score: 1 is perfect prediction                                 
+print('Variance score: %.2f' % r2_score(Energies, ytilde))
+# Mean absolute error                                                           
+print('Mean absolute error: %.2f' % mean_absolute_error(Energies, ytilde))
+print(clf.coef_, clf.intercept_)
+
+# The Ridge regression with a hyperparameter lambda = 0.1
+_lambda = 0.1
+clf_ridge = skl.Ridge(alpha=_lambda).fit(X, Energies)
+yridge = clf_ridge.predict(X)
+EoS['Eridge']  = yridge
+# The mean squared error                               
+print("Mean squared error: %.2f" % mean_squared_error(Energies, yridge))
+# Explained variance score: 1 is perfect prediction                                 
+print('Variance score: %.2f' % r2_score(Energies, yridge))
+# Mean absolute error                                                           
+print('Mean absolute error: %.2f' % mean_absolute_error(Energies, yridge))
+print(clf_ridge.coef_, clf_ridge.intercept_)
+
 fig, ax = plt.subplots()
-ax.set_xlabel(r'$\rho[\mathrm{fm}^{-3}$')
-ax.set_ylabel(r'$E_\mathrm{bind}\,/A$')
+ax.set_xlabel(r'$\rho[\mathrm{fm}^{-3}]$')
+ax.set_ylabel(r'Energy per particle')
 ax.plot(EoS['Density'], EoS['Energy'], alpha=0.7, lw=2,
-            label='Ame2016')
-ax.plot(EoS['Density'], EoS['Eapprox'], alpha=0.7, lw=2, c='m',
-            label='Fit')
+            label='Theoretical data')
+ax.plot(EoS['Density'], EoS['Eols'], alpha=0.7, lw=2, c='m',
+            label='OLS')
+ax.plot(EoS['Density'], EoS['Eridge'], alpha=0.7, lw=2, c='g',
+            label='Ridge $\lambda = 0.1$')
 ax.legend()
-save_fig("EoS2016")
+save_fig("EoSfitting")
 plt.show()
-"""
+
+
+
+
+
+
 
 
 
