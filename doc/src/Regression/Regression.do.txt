@@ -523,20 +523,24 @@ and we would be using it as
 print(R2(Energies,ytilde))
 !ec
 
-We can easily add our _MSE_ score and relative error as
+We can easily add our _MSE_ score as
 !bc pycod
 def MSE(y_data,y_model):
-    n = np.size(y_hat)
+    n = np.size(y_model)
     return np.sum((y_data-y_model)**2)/n
 
 print(MSE(Energies,ytilde))
 !ec
 and finally the relative error as
 !bc pycod
-def relativeerror(y_data,y_model):
+def RelativeError(y_data,y_model):
     return abs((y_data-y_model)/y_data)
-print(RekativeError(Energies, ytilde))
+print(RelativeError(Energies, ytilde))
 !ec
+
+
+
+
 
 !split
 ===== The $\chi^2$ function  =====
@@ -1495,38 +1499,6 @@ measurements is very large.
 
 
 
-
-!split
-===== Log-likelihood =====
-
-A popular strategy is to choose a penalty parameter that yields a good
-but parsimonious model. Information criteria measure the balance
-between model fit and model complexity. One possibility is  Aikaike's
-information criterion (AIC).
-The AIC measures model fit by the log-likelihood
-and model complexity is measured by the number of parameters used by
-the model. The number of model parameters in regular regression simply
-corresponds to the number of covariates in the model. Or, by the
-degrees of freedom consumed by the model, which is equivalent to the
-trace of the hat matrix. For ridge regression it thus seems natural to
-define model complexity analogously by the trace of the ridge hat
-matrix. This yields the AIC for the linear regression model with ridge
-estimates:
-
-
-!bt
-\begin{align*}
-\mbox{AIC}(\lambda) & =  2 \, p - 2 \log(\bm{L})
-\\
-& =  2 \, \mbox{tr} [\mathbf{H}(\lambda)] - 2 \log\{L[\bm{\beta}(\lambda), \bm{\sigma}^2(\lambda)]\}
-\\
-& =  2 \, \sum_{j=1}^p \frac{d_{jj}^2}{d_{jj}^2 + \lambda}
-+ 2 n \, \log[\sqrt{2 \, \pi} \, \bm{\sigma}(\lambda)] +  \frac{1}{\bm{\sigma}^2(\lambda)} \sum_{i=1}^n [y_i - \mathbf{X}_{i, \ast} \, \bm{\beta}(\lambda)]^2.
-\end{align*}
-!et
-The value of $\lambda$ which minimizes $\mbox{AIC}(\lambda)$ corresponds to the `optimal' balance of model complexity and overfitting.
-
-
 !split 
 ===== Cross-validation =====
 
@@ -1614,22 +1586,6 @@ cross-validation (LOOCV).
 
 * The value of the penalty parameter that maximizes the cross-validated log-likelihood is the value of choice. Or we can use the MSE or the R2 score functions.
 
-!split
-===== Predicted Residual Error Sum of Squares =====
-!bblock
-Another approach in the LOOCV scheme is to the use the so-called Predicted Residual Error Sum of Squares (PRESS). 
-
-We can define the optimal penalty parameter to minimize
-!bt
-\begin{align*}
-\lambda_{\mbox{{\tiny opt}}} = \arg \min_{\lambda} \frac{1}{n} \sum_{i=1}^n [y_i - \bm{X}_{i, \ast} \bm{\beta}_{-i}(\lambda)]^2.
-\end{align*}
-!et
-
-The LOOCV prediction performance can be
-expressed analytically in terms of the known quantities derived from
-the design matrix and the parameters $\beta$.
-!eblock
 
 
 !split
@@ -1841,346 +1797,6 @@ plt.show()
 !ec
 
 
-!split
-===== Resampling methods: Blocking  =====
-
-The blocking method was made popular by "Flyvbjerg and Pedersen (1989)":"https://aip.scitation.org/doi/10.1063/1.457480"
-and has become one of the standard ways to estimate
-$V(\widehat{\theta})$ for exactly one $\widehat{\theta}$, namely
-$\widehat{\theta} = \overline{X}$. 
-
-Assume $n = 2^d$ for some integer $d>1$ and $X_1,X_2,\cdots, X_n$ is a stationary time series to begin with. 
-Moreover, assume that the time series is asymptotically uncorrelated. We switch to vector notation by arranging $X_1,X_2,\cdots,X_n$ in an $n$-tuple. Define:
-!bt
-\begin{align*}
-\bm{X} = (X_1,X_2,\cdots,X_n).
-\end{align*}
-!et
-
-The strength of the blocking method is when the number of
-observations, $n$ is large. For large $n$, the complexity of dependent
-bootstrapping scales poorly, but the blocking method does not,
-moreover, it becomes more accurate the larger $n$ is.
-
-!split
-===== Blocking Transformations =====
- We now define
-blocking transformations. The idea is to take the mean of subsequent
-pair of elements from $\vec{X}$ and form a new vector
-$\vec{X}_1$. Continuing in the same way by taking the mean of
-subsequent pairs of elements of $\vec{X}_1$ we obtain $\vec{X}_2$, and
-so on. 
-Define $\vec{X}_i$ recursively by:
-
-!bt 
-\begin{align} 
-(\vec{X}_0)_k &\equiv (\vec{X})_k \nonumber \\
-(\vec{X}_{i+1})_k &\equiv \frac{1}{2}\Big( (\vec{X}_i)_{2k-1} +
-(\vec{X}_i)_{2k} \Big) \qquad \text{for all} \qquad 1 \leq i \leq d-1
-\end{align} 
-!et 
-
-The quantity $\vec{X}_k$ is
-subject to $k$ _blocking transformations_.  We now have $d$ vectors
-$\vec{X}_0, \vec{X}_1,\cdots,\vec X_{d-1}$ containing the subsequent
-averages of observations. It turns out that if the components of
-$\vec{X}$ is a stationary time series, then the components of
-$\vec{X}_i$ is a stationary time series for all $0 \leq i \leq d-1$
-
-We can then compute the autocovariance, the variance, sample mean, and
-number of observations for each $i$. 
-Let $\gamma_i, \sigma_i^2,
-\overline{X}_i$ denote the autocovariance, variance and average of the
-elements of $\vec{X}_i$ and let $n_i$ be the number of elements of
-$\vec{X}_i$. It follows by induction that $n_i = n/2^i$. 
-
-!split
-===== Blocking Transformations =====
-
-Using the
-definition of the blocking transformation and the distributive
-property of the covariance, it is clear that since $h =|i-j|$
-we can define
-!bt
-\begin{align}
-\gamma_{k+1}(h) &= cov\left( ({X}_{k+1})_{i}, ({X}_{k+1})_{j} \right) \nonumber \\
-&=  \frac{1}{4}cov\left( ({X}_{k})_{2i-1} + ({X}_{k})_{2i}, ({X}_{k})_{2j-1} + ({X}_{k})_{2j} \right) \nonumber \\
-&=  \frac{1}{2}\gamma_{k}(2h) + \frac{1}{2}\gamma_k(2h+1) \hspace{0.1cm} \mathrm{h = 0} \\
-&=\frac{1}{4}\gamma_k(2h-1) + \frac{1}{2}\gamma_k(2h) + \frac{1}{4}\gamma_k(2h+1) \quad \mathrm{else}
-\end{align}
-!et
-
-The quantity $\bm{X}$ is asymptotic uncorrelated by assumption, $\bm{X}_k$ is also asymptotic uncorrelated. Let's turn our attention to the variance of the sample mean $V(\overline{X})$. 
-
-!split
-===== Blocking Transformations, getting there =====
-We have
-!bt
-\begin{align}
-V(\overline{X}_k) = \frac{\sigma_k^2}{n_k} + \underbrace{\frac{2}{n_k} \sum_{h=1}^{n_k-1}\left( 1 - \frac{h}{n_k} \right)\gamma_k(h)}_{\equiv e_k} = \frac{\sigma^2_k}{n_k} + e_k \quad \text{if} \quad \gamma_k(0) = \sigma_k^2. 
-\end{align}
-!et
-The term $e_k$ is called the _truncation error_: 
-!bt
-\begin{equation}
-e_k = \frac{2}{n_k} \sum_{h=1}^{n_k-1}\left( 1 - \frac{h}{n_k} \right)\gamma_k(h). 
-\end{equation}
-!et
-We can show that $V(\overline{X}_i) = V(\overline{X}_j)$ for all $0 \leq i \leq d-1$ and $0 \leq j \leq d-1$. 
-
-!split
-===== Blocking Transformations, final expressions =====
-
-We can then wrap up
-!bt
-\begin{align}
-n_{j+1} \overline{X}_{j+1}  &= \sum_{i=1}^{n_{j+1}} (\bm{X}_{j+1})_i =  \frac{1}{2}\sum_{i=1}^{n_{j}/2} (\bm{X}_{j})_{2i-1} + (\bm{X}_{j})_{2i} \nonumber \\
-&= \frac{1}{2}\left[ (\bm{X}_j)_1 + (\bm{X}_j)_2 + \cdots + (\bm{X}_j)_{n_j} \right] = \underbrace{\frac{n_j}{2}}_{=n_{j+1}} \overline{X}_j = n_{j+1}\overline{X}_j. 
-\end{align}
-!et
-By repeated use of this equation we get $V(\overline{X}_i) = V(\overline{X}_0) = V(\overline{X})$ for all $0 \leq i \leq d-1$. This has the consequence that
-!bt
-\begin{align}
-V(\overline{X}) = \frac{\sigma_k^2}{n_k} + e_k \qquad \text{for all} \qquad 0 \leq k \leq d-1. \label{eq:convergence}
-\end{align}
-!et
-
-Fyvbjerg and Petersen demonstrated that the sequence
-$\{e_k\}_{k=0}^{d-1}$ is decreasing, and conjecture that the term
-$e_k$ can be made as small as we would like by making $k$ (and hence
-$d$) sufficiently large. The sequence is decreasing (Master of Science thesis by Marius Jonsson, UiO 2018).
-It means we can apply blocking transformations until
-$e_k$ is sufficiently small, and then estimate $V(\overline{X})$ by
-$\widehat{\sigma}^2_k/n_k$. 
-
-
-!split
-===== "Code examples for Blocking, Jackknife and bootstrap":"https://github.com/CompPhysics/MachineLearning/tree/master/doc/Programs/ResamplingAnalysisScripts" =====
-
-!bc pycod
-from sys import argv
-from os import mkdir, path
-import time
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FormatStrFormatter
-from matplotlib.font_manager import FontProperties
-
-# Timing Decorator
-def timeFunction(f):
-    def wrap(*args):
-        time1 = time.time()
-        ret = f(*args)
-        time2 = time.time()
-        print '%s Function Took: \t %0.3f s' % (f.func_name.title(), (time2-time1))
-        return ret
-    return wrap
-
-class dataAnalysisClass:
-    # General Init functions
-    def __init__(self, fileName, size=0):
-        self.inputFileName = fileName
-        self.loadData(size)
-        self.createOutputFolder()
-        self.avg = np.average(self.data)
-        self.var = np.var(self.data)
-        self.std = np.std(self.data)
-
-    def loadData(self, size=0):
-        if size != 0:
-            with open(self.inputFileName) as inputFile:
-                self.data = np.zeros(size)
-                for x in xrange(size):
-                    self.data[x] = float(next(inputFile))
-        else:
-            self.data = np.loadtxt(self.inputFileName)
-
-    # Statistical Analysis with Multiple Methods
-    def runAllAnalyses(self):
-        if len(self.data) <= 100000:
-            print "Autocorrelation..."
-            self.autocorrelation()
-        print "Bootstrap..."
-        self.bootstrap()
-        print "Jackknife..."
-        self.jackknife()
-        print "Blocking..."
-        self.blocking()
-
-    # Standard Autocorrelation
-    @timeFunction
-    def autocorrelation(self):
-        self.acf = np.zeros(len(self.data)/2)
-        for k in range(0, len(self.data)/2):
-            self.acf[k] = np.corrcoef(np.array([self.data[0:len(self.data)-k], \
-                                            self.data[k:len(self.data)]]))[0,1]
-
-    # Bootstrap
-    @timeFunction
-    def bootstrap(self, nBoots = 1000):
-        bootVec = np.zeros(nBoots)
-        for k in range(0,nBoots):
-            bootVec[k] = np.average(np.random.choice(self.data, len(self.data)))
-        self.bootAvg = np.average(bootVec)
-        self.bootVar = np.var(bootVec)
-        self.bootStd = np.std(bootVec)
-
-    # Jackknife
-    @timeFunction
-    def jackknife(self):
-        jackknVec = np.zeros(len(self.data))
-        for k in range(0,len(self.data)):
-            jackknVec[k] = np.average(np.delete(self.data, k))
-        self.jackknAvg = self.avg - (len(self.data) - 1) * (np.average(jackknVec) - self.avg)
-        self.jackknVar = float(len(self.data) - 1) * np.var(jackknVec)
-        self.jackknStd = np.sqrt(self.jackknVar)
-
-    # Blocking
-    @timeFunction
-    def blocking(self, blockSizeMax = 500):
-        blockSizeMin = 1
-
-        self.blockSizes = []
-        self.meanVec = []
-        self.varVec = []
-
-        for i in range(blockSizeMin, blockSizeMax):
-            if(len(self.data) % i != 0):
-                pass#continue
-            blockSize = i
-            meanTempVec = []
-            varTempVec = []
-            startPoint = 0
-            endPoint = blockSize
-
-            while endPoint <= len(self.data):
-                meanTempVec.append(np.average(self.data[startPoint:endPoint]))
-                startPoint = endPoint
-                endPoint += blockSize
-            mean, var = np.average(meanTempVec), np.var(meanTempVec)/len(meanTempVec)
-            self.meanVec.append(mean)
-            self.varVec.append(var)
-            self.blockSizes.append(blockSize)
-
-        self.blockingAvg = np.average(self.meanVec[-200:])
-        self.blockingVar = (np.average(self.varVec[-200:]))
-        self.blockingStd = np.sqrt(self.blockingVar)
-
-
-
-    # Plot of Data, Autocorrelation Function and Histogram
-    def plotAll(self):
-        self.createOutputFolder()
-        if len(self.data) <= 100000:
-            self.plotAutocorrelation()
-        self.plotData()
-        self.plotHistogram()
-        self.plotBlocking()
-
-    # Create Output Plots Folder
-    def createOutputFolder(self):
-        self.outName = self.inputFileName[:-4]
-        if not path.exists(self.outName):
-            mkdir(self.outName)
-
-    # Plot the Dataset, Mean and Std
-    def plotData(self):
-        # Far away plot
-        font = {'fontname':'serif'}
-        plt.plot(range(0, len(self.data)), self.data, 'r-', linewidth=1)
-        plt.plot([0, len(self.data)], [self.avg, self.avg], 'b-', linewidth=1)
-        plt.plot([0, len(self.data)], [self.avg + self.std, self.avg + self.std], 'g--', linewidth=1)
-        plt.plot([0, len(self.data)], [self.avg - self.std, self.avg - self.std], 'g--', linewidth=1)
-        plt.ylim(self.avg - 5*self.std, self.avg + 5*self.std)
-        plt.gca().yaxis.set_major_formatter(FormatStrFormatter('%.4f'))
-        plt.xlim(0, len(self.data))
-        plt.ylabel(self.outName.title() + ' Monte Carlo Evolution', **font)
-        plt.xlabel('MonteCarlo History', **font)
-        plt.title(self.outName.title(), **font)
-        plt.savefig(self.outName + "/data.eps")
-        plt.savefig(self.outName + "/data.png")
-        plt.clf()
-
-    # Plot Histogram of Dataset and Gaussian around it
-    def plotHistogram(self):
-        binNumber = 50
-        font = {'fontname':'serif'}
-        count, bins, ignore = plt.hist(self.data, bins=np.linspace(self.avg - 5*self.std, self.avg + 5*self.std, binNumber))
-        plt.plot([self.avg, self.avg], [0,np.max(count)+10], 'b-', linewidth=1)
-        plt.ylim(0,np.max(count)+10)
-        plt.ylabel(self.outName.title() + ' Histogram', **font)
-        plt.xlabel(self.outName.title() , **font)
-        plt.title('Counts', **font)
-
-        #gaussian
-        norm = 0
-        for i in range(0,len(bins)-1):
-            norm += (bins[i+1]-bins[i])*count[i]
-        plt.plot(bins,  norm/(self.std * np.sqrt(2 * np.pi)) * np.exp( - (bins - self.avg)**2 / (2 * self.std**2) ), linewidth=1, color='r')
-        plt.savefig(self.outName + "/hist.eps")
-        plt.savefig(self.outName + "/hist.png")
-        plt.clf()
-
-    # Plot the Autocorrelation Function
-    def plotAutocorrelation(self):
-        font = {'fontname':'serif'}
-        plt.plot(range(1, len(self.data)/2), self.acf[1:], 'r-')
-        plt.ylim(-1, 1)
-        plt.xlim(0, len(self.data)/2)
-        plt.ylabel('Autocorrelation Function', **font)
-        plt.xlabel('Lag', **font)
-        plt.title('Autocorrelation', **font)
-        plt.savefig(self.outName + "/autocorrelation.eps")
-        plt.savefig(self.outName + "/autocorrelation.png")
-        plt.clf()
-
-    def plotBlocking(self):
-        font = {'fontname':'serif'}
-        plt.plot(self.blockSizes, self.varVec, 'r-')
-        plt.ylabel('Variance', **font)
-        plt.xlabel('Block Size', **font)
-        plt.title('Blocking', **font)
-        plt.savefig(self.outName + "/blocking.eps")
-        plt.savefig(self.outName + "/blocking.png")
-        plt.clf()
-
-    # Print Stuff to the Terminal
-    def printOutput(self):
-        print "\nSample Size:    \t", len(self.data)
-        print "\n=========================================\n"
-        print "Sample Average: \t", self.avg
-        print "Sample Variance:\t", self.var
-        print "Sample Std:     \t", self.std
-        print "\n=========================================\n"
-        print "Bootstrap Average: \t", self.bootAvg
-        print "Bootstrap Variance:\t", self.bootVar
-        print "Bootstrap Error:   \t", self.bootStd
-        print "\n=========================================\n"
-        print "Jackknife Average: \t", self.jackknAvg
-        print "Jackknife Variance:\t", self.jackknVar
-        print "Jackknife Error:   \t", self.jackknStd
-        print "\n=========================================\n"
-        print "Blocking Average: \t", self.blockingAvg
-        print "Blocking Variance:\t", self.blockingVar
-        print "Blocking Error:   \t", self.blockingStd, "\n"
-
-# Initialize the class
-if len(argv) > 2:
-    dataAnalysis = dataAnalysisClass(argv[1], int(argv[2]))
-else:
-    dataAnalysis = dataAnalysisClass(argv[1])
-
-# Run Analyses
-dataAnalysis.runAllAnalyses()
-
-# Plot the data
-dataAnalysis.plotAll()
-
-# Print Some Output
-dataAnalysis.printOutput()
-
-!ec
-
 
 !split
 ===== The bias-variance tradeoff =====
@@ -2243,42 +1859,6 @@ functional if we drew an infinite number of datasets $\{\mathcal{L}_1,
 \mathcal{L}_2, \ldots \}$.
 
 
-!split
-===== The expected generalization error =====
-
-We would also like to average over different instances of the
-``noise'' $\epsilon$ and we denote the expectation value over the
-noise by $E_\epsilon$. Thus, we can decompose the expected
-generalization error as
-
-
-!bt
-\begin{align}
-E_\mathcal{L, \epsilon}[\mathcal{C}( \boldsymbol{X}, \bm{g}(\boldsymbol{x})) ]&= E_\mathcal{L,\epsilon}\left[ \sum_i ({y}_i - \bm{g}_\mathcal{L}(\boldsymbol{x}_i))^2 \right] \nonumber \\
- &= E_\mathcal{L, \epsilon}\left[ \sum_{i}({y}_i -f(\boldsymbol{x}_i) +f(\boldsymbol{x}_i)- \bm{g}_\mathcal{L}(\boldsymbol{x}_i))^2\right] \nonumber \\
- &= \sum_i E_\epsilon[ ({y}_i -f(\boldsymbol{x}_i))^2 ]+ E_\mathcal{L, \epsilon}[(f(\boldsymbol{x}_i)- \bm{g}_\mathcal{L}(\boldsymbol{x}_i))^2] + 2E_\epsilon[{y}_i -f(\boldsymbol{x}_i)]E_\mathcal{L}[f(\boldsymbol{x}_i)- \bm{g}_\mathcal{L}(\boldsymbol{x}_i)] \nonumber \\
- &=\sum_i \sigma_\epsilon^2 + E_\mathcal{L}[(f(\boldsymbol{x}_i)- \bm{g}_\mathcal{L}(\boldsymbol{x}_i))^2],
-\end{align}
-!et
-
-where in the last line we used the fact that our noise has zero mean
-and variance $\sigma_\epsilon^2$ and the sum over $i$ applies to all
-terms. 
-
-!split
-===== Elaborating a little bit more =====
-
-It is also helpful to further decompose the second term as
-follows:
-
-!bt
-\begin{align}
-E_\mathcal{L}[(f(\boldsymbol{x}_i)- \bm{g}_\mathcal{L}(\boldsymbol{x}_i))^2] &=E_\mathcal{L}[(f(\mathbf{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)]+ E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)]- \bm{g}_\mathcal{L}(\boldsymbol{x}_i))^2] \nonumber \\
-&=E_\mathcal{L}[(f(\boldsymbol{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)])^2] + E_\mathcal{L}[( \bm{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)])^2] \nonumber \\
-&+2E_\mathcal{L}[(f(\boldsymbol{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)])( \bm{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)])] \nonumber \\
-&=(f(\boldsymbol{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)])^2+E_\mathcal{L}[( \bm{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)])^2].
-\end{align}
-!et
 
 !split
 ===== The bias =====
