@@ -1,4 +1,4 @@
-# Common imports
+
 import os
 import numpy as np
 import pandas as pd
@@ -27,8 +27,11 @@ def data_path(dat_id):
 def save_fig(fig_id):
     plt.savefig(image_path(fig_id) + ".png", format='png')
 
-def r_squared(y, y_hat):
-    return 1 - np.sum((y - y_hat) ** 2) / np.sum((y - np.mean(y_hat)) ** 2)
+def R2(y_data, y_model):
+    return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_model)) ** 2)
+def MSE(y_data,y_model):
+    n = np.size(y_model)
+    return np.sum((y_data-y_model)**2)/n
 
 infile = open(data_path("EoS.csv"),'r')
 
@@ -40,39 +43,25 @@ Energies = EoS['Energy']
 Density = EoS['Density']
 #  The design matrix now as function of various polytrops
 X = np.zeros((len(Density),5))
-X[:,4] = Density**(5.0/3.0)
-X[:,3] = Density**(4.0/3.0)
-X[:,2] = Density
-X[:,1] = Density**(2.0/3.0)
 X[:,0] = 1
-
-X_train, X_test, y_train, y_test = train_test_split(X, Energies, test_size=0.5)
+X[:,1] = Density**(2.0/3.0)
+X[:,2] = Density
+X[:,3] = Density**(4.0/3.0)
+X[:,4] = Density**(5.0/3.0)
+# We split the data in test and training data
+X_train, X_test, y_train, y_test = train_test_split(X, Energies, test_size=0.2)
 # matrix inversion to find beta
 beta = np.linalg.inv(X_train.T.dot(X_train)).dot(X_train.T).dot(y_train)
 # and then make the prediction
 ytilde = X_train @ beta
-y_predict = X_test @ beta
-r_train = r_squared(ytilde, y_train)
-r_test = r_squared(y_predict, y_test)
-print(r_test, r_train)
-"""
-EoS['Eapprox']  = y_predict
-#print(EoS)
-#print(np.mean( (Energies-fity)**2))
-# Generate a plot comparing the experimental with the fitted values values.
-fig, ax = plt.subplots()
-ax.set_xlabel(r'$\rho[\mathrm{fm}^{-3}$')
-ax.set_ylabel(r'$E_\mathrm{bind}\,/A$')
-ax.plot(EoS['Density'], EoS['Energy'], alpha=0.7, lw=2,
-            label='Ame2016')
-ax.plot(EoS['Density'], EoS['Eapprox'], alpha=0.7, lw=2, c='m',
-            label='Fit')
-ax.legend()
-save_fig("EoS2016")
-plt.show()
-"""
-
-
-
+print("Training R2")
+print(R2(y_train,ytilde))
+print("Training MSE")
+print(MSE(y_train,ytilde))
+ypredict = X_test @ beta
+print("Test R2")
+print(R2(y_test,ypredict))
+print("Test MSE")
+print(MSE(y_test,ypredict))
 
 

@@ -489,8 +489,8 @@ ytilde = X @ beta
 !ec
 Alternatively, you can use the least squares functionality in _Numpy_ as
 !bc pycod 
-fit = np.linalg.lstsq(DesignMatrix, Energies, rcond =None)[0]
-ytildenp = np.dot(fit,DesignMatrix)
+fit = np.linalg.lstsq(X, Energies, rcond =None)[0]
+ytildenp = np.dot(fit,X.T)
 !ec
 
 And finally we plot our fit with and compare with data
@@ -505,7 +505,7 @@ ax.plot(Masses['A'], Masses['Ebinding'], alpha=0.7, lw=2,
 ax.plot(Masses['A'], Masses['Eapprox'], alpha=0.7, lw=2, c='m',
             label='Fit')
 ax.legend()
-save_fig("Masses2016")
+save_fig("Masses2016OLS")
 plt.show()
 !ec
 
@@ -546,9 +546,18 @@ print(RelativeError(Energies, ytilde))
 ===== The $\chi^2$ function  =====
 !bblock
 
-Normally, the response (dependent or outcome) variable $y_i$ the outcome of a numerical experiment or another type of experiment and is thus only an approximation to the true value. It is then always accompanied by an error estimate, often limited to a statistical error estimate given by the standard deviation discussed earlier. In the discussion here we will treat $y_i$ as our exact value for the response variable.
+Normally, the response (dependent or outcome) variable $y_i$ is the
+outcome of a numerical experiment or another type of experiment and is
+thus only an approximation to the true value. It is then always
+accompanied by an error estimate, often limited to a statistical error
+estimate given by the standard deviation discussed earlier. In the
+discussion here we will treat $y_i$ as our exact value for the
+response variable.
 
-Introducing the standard deviation $\sigma_i$ for each measurement $y_i$, we define now the $\chi^2$ function (omitting the $1/n$ term) as  
+Introducing the standard deviation $\sigma_i$ for each measurement
+$y_i$, we define now the $\chi^2$ function (omitting the $1/n$ term)
+as
+
 !bt
 \[
 \chi^2(\bm{\beta})=\sum_{i=0}^{n-1}\frac{\left(y_i-\tilde{y}_i\right)^2}{\sigma_i^2}=\left(\bm{y}-\bm{\tilde{y}}\right)^T\frac{1}{\bm{\Sigma^2}}\left(\bm{y}-\bm{\tilde{y}}\right),
@@ -664,7 +673,7 @@ and
 ===== The $\chi^2$ function  =====
 !bblock
 
-For a linear fit we don't need to invert a matrix!!  
+For a linear fit (a first-order polynomial) we don't need to invert a matrix!!  
 Defining
 !bt
 \[
@@ -677,41 +686,52 @@ Defining
 \gamma_x =  \sum_{i=0}^{n-1}\frac{x_{i}}{\sigma_i^2},
 \]
 !et
+
 !bt
 \[
 \gamma_y = \sum_{i=0}^{n-1}\left(\frac{y_i}{\sigma_i^2}\right),
 \]
 !et
+
 !bt
 \[
 \gamma_{xx} =  \sum_{i=0}^{n-1}\frac{x_ix_{i}}{\sigma_i^2},
 \]
 !et
+
 !bt
 \[
 \gamma_{xy} = \sum_{i=0}^{n-1}\frac{y_ix_{i}}{\sigma_i^2},
 \]
 !et
+
 we obtain
+
 !bt
 \[
 \beta_0 = \frac{\gamma_{xx}\gamma_y-\gamma_x\gamma_y}{\gamma\gamma_{xx}-\gamma_x^2},
 \]
 !et
+
 !bt
 \[
 \beta_1 = \frac{\gamma_{xy}\gamma-\gamma_x\gamma_y}{\gamma\gamma_{xx}-\gamma_x^2}.
 \]
 !et
 
-This approach (different linear and non-linear regression) suffers often from both being underdetermined and overdetermined in the unknown coefficients $\beta_i$.  A better approach is to use the Singular Value Decomposition (SVD) method discussed below. Or using Lasso and Ridge regression. See below.
+This approach (different linear and non-linear regression) suffers
+often from both being underdetermined and overdetermined in the
+unknown coefficients $\beta_i$.  A better approach is to use the
+Singular Value Decomposition (SVD) method discussed below. Or using
+Lasso and Ridge regression. See below.
+
 !eblock
 
 
 !split
-===== Fitting equations of state for dense nuclear matter =====
+===== Fitting an Equation of State for Dense Nuclear Matter =====
 
-Before we continue, let us introduce yet another example, fitting the
+Before we continue, let us introduce yet another example. We are going to fit the
 nuclear equation of state using results from many-body calculations.
 The equation of state we have made available here, as function of
 density, has been derived using modern nucleon-nucleon potentials with
@@ -719,13 +739,13 @@ density, has been derived using modern nucleon-nucleon potentials with
 forces":"https://www.sciencedirect.com/science/article/pii/S0370157399001106". This
 time the file is presented as a standard _csv_ file.
 
-The beginning of the Python is similar to what you have seen before,
+The beginning of the Python code here is similar to what you have seen before,
 with the same initializations and declarations. We use also _pandas_
-again, rather extensively to organize our data.
+again, rather extensively in order to organize our data.
 
 The difference now is that we use _Scikit-Learn's_ regression tools
 instead of our own matrix inversion implementation. Furthermore, we
-sneak _Ridge_ regression (to be discussed below) which includes a
+sneak in _Ridge_ regression (to be discussed below) which includes a
 hyperparameter $\lambda$, also to be explained below.
 
 !split
@@ -828,7 +848,90 @@ below.
 
 
 !split
+===== Splitting our Data in Training and Test data =====
+
+It is normal in essentially all Machine Learning studies to split the
+data in a training set and a test set (sometimes also an additional
+validation set).  _Scikit-Learn_ has an own function for this. There
+is no explicit recipe for how much data should be included as training
+data and say test data.  An accepted rule of thumb is to use
+approximately $2/3$ to $4/5$ of the data as training data. We will
+postpone a discussion of this splitting to the end of these notes and
+our discussion of the so-called _bias-variance_ tradeoff. Here we
+limit ourselves to repeat the above equation of state fitting example
+but now splitting the data into a training set and a test set.
+
+!bc pycod 
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+# Where to save the figures and data files
+PROJECT_ROOT_DIR = "Results"
+FIGURE_ID = "Results/FigureFiles"
+DATA_ID = "DataFiles/"
+
+if not os.path.exists(PROJECT_ROOT_DIR):
+    os.mkdir(PROJECT_ROOT_DIR)
+
+if not os.path.exists(FIGURE_ID):
+    os.makedirs(FIGURE_ID)
+
+if not os.path.exists(DATA_ID):
+    os.makedirs(DATA_ID)
+
+def image_path(fig_id):
+    return os.path.join(FIGURE_ID, fig_id)
+
+def data_path(dat_id):
+    return os.path.join(DATA_ID, dat_id)
+
+def save_fig(fig_id):
+    plt.savefig(image_path(fig_id) + ".png", format='png')
+
+def R2(y_data, y_model):
+    return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_model)) ** 2)
+def MSE(y_data,y_model):
+    n = np.size(y_model)
+    return np.sum((y_data-y_model)**2)/n
+
+infile = open(data_path("EoS.csv"),'r')
+
+# Read the EoS data as  csv file and organized into two arrays with density and energies
+EoS = pd.read_csv(infile, names=('Density', 'Energy'))
+EoS['Energy'] = pd.to_numeric(EoS['Energy'], errors='coerce')
+EoS = EoS.dropna()
+Energies = EoS['Energy']
+Density = EoS['Density']
+#  The design matrix now as function of various polytrops
+X = np.zeros((len(Density),5))
+X[:,0] = 1
+X[:,1] = Density**(2.0/3.0)
+X[:,2] = Density
+X[:,3] = Density**(4.0/3.0)
+X[:,4] = Density**(5.0/3.0)
+# We split the data in test and training data
+X_train, X_test, y_train, y_test = train_test_split(X, Energies, test_size=0.2)
+# matrix inversion to find beta
+beta = np.linalg.inv(X_train.T.dot(X_train)).dot(X_train.T).dot(y_train)
+# and then make the prediction
+ytilde = X_train @ beta
+print("Training R2")
+print(R2(y_train,ytilde))
+print("Training MSE")
+print(MSE(y_train,ytilde))
+ypredict = X_test @ beta
+print("Test R2")
+print(R2(y_test,ypredict))
+print("Test MSE")
+print(MSE(y_test,ypredict))
+!ec
+
+
+!split
 ===== The singular value decomposition  =====
+
 !bblock
 
 The examples we have looked at so far are cases where we normally can
@@ -841,23 +944,32 @@ algorithm based on say LU decomposition may lead to singularities. We will see a
 the coupling constant of the widely used Ising model. 
 There is however a way to partially circumvent this problem and also gain some insight about the ordinary least squares approach. 
 
-This is given by the _Singular Value Decomposition_ algorithm, perhaps the most powerful linear algebra algorithm.
-Let us look at a different example where we may have problems with the standard matrix inversion algorithm. 
+This is given by the _Singular Value Decomposition_ algorithm, perhaps
+the most powerful linear algebra algorithm.  Let us look at a
+different example where we may have problems with the standard matrix
+inversion algorithm. Thereafter we dive into the math of the SVD.
+
 !eblock
 
 !split
 =====  The Ising model =====
 
-The one-dimensional Ising model with nearest neighbor interaction, no external field and a constant coupling constant $J$ is given by
+The one-dimensional Ising model with nearest neighbor interaction, no
+external field and a constant coupling constant $J$ is given by
 
 !bt
 \begin{align}
     H = -J \sum_{k}^L s_k s_{k + 1},
 \end{align}
 !et
-where $s_i \in \{-1, 1\}$ and $s_{N + 1} = s_1$. The number of spins in the system is determined by $L$. For the one-dimensional system there is no phase transition.
 
-We will look at a system of $L = 40$ spins with a coupling constant of $J = 1$. To get enough training data we will generate 10000 states with their respective energies.
+where $s_i \in \{-1, 1\}$ and $s_{N + 1} = s_1$. The number of spins
+in the system is determined by $L$. For the one-dimensional system
+there is no phase transition.
+
+We will look at a system of $L = 40$ spins with a coupling constant of
+$J = 1$. To get enough training data we will generate 10000 states
+with their respective energies.
 
 
 !bc pycod
@@ -883,10 +995,10 @@ for i in range(n):
     energies[i] = - J * np.dot(spins[i], np.roll(spins[i], 1))
 !ec
 
-Here we use linear (ordinary least squares), ridge and LASSO
-regression to predict the energy in the nearest neighbor
+Here we use ordinary least squares
+regression to predict the energy for the nearest neighbor
 one-dimensional Ising model on a ring, i.e., the endpoints wrap
-around. We will use the linear regression models to fit a value for
+around. We will use linear regression to fit a value for
 the coupling constant to achieve this.
 
 !split
@@ -900,54 +1012,49 @@ A more general form for the one-dimensional Ising model is
 \end{align}
 !et
 
-Here we allow for interactions beyond the nearest neighbors and a more
-adaptive coupling matrix. This latter expression can be formulated as
-a matrix-product on the form
+Here we allow for interactions beyond the nearest neighbors and a state dependent
+coupling constant. This latter expression can be formulated as
+a matrix-product
 !bt
 \begin{align}
     \bm{H} = \bm{X} J,
 \end{align}
 !et
 
-where $X_{jk} = s_j s_k$ and $J$ is the matrix consisting of the
+where $X_{jk} = s_j s_k$ and $J$ is a matrix which consists of the
 elements $-J_{jk}$. This form of writing the energy fits perfectly
-with the form utilized in linear regression, viz.
+with the form utilized in linear regression, that is
+
 !bt
 \begin{align}
     \bm{y} = \bm{X}\bm{\beta} + \bm{\epsilon},
 \end{align}
 !et
-We split the data in training and test data
+
+We split the data in training and test data as discussed in the previous example
+
 !bc pycod
 X = np.zeros((n, L ** 2))
 for i in range(n):
     X[i] = np.outer(spins[i], spins[i]).ravel()
 y = energies
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.96)
-
-X_train_own = np.concatenate(
-    (np.ones(len(X_train))[:, np.newaxis], X_train),
-    axis=1
-)
-
-X_test_own = np.concatenate(
-    (np.ones(len(X_test))[:, np.newaxis], X_test),
-    axis=1
-)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 !ec
 
 !split
 ===== Linear regression =====
 
 In the ordinary least squares method we choose the cost function
+
 !bt
 \begin{align}
-    C(\bm{X}, \bm{\beta}) = ||\bm{X}\bm{\beta} - \bm{y}||^2
-    = (X\omega - y)^T(X\omega - y)
+    C(\bm{X}, \bm{\beta})= (\bm{X}\bm{\beta} - \bm{y})^T(\bm{X}\bm{\beta} - \bm{y}).
 \end{align}
 !et
+
 We then find the extremal point of $C$ by taking the derivative with respect to $\bm{\beta}$ as discussed above.
 This yields the expression for $\bm{\beta}$ to be
+
 !bt
 \begin{align}
     \bm{\beta} = \frac{\bm{X}^T \bm{y}}{\bm{X}^T \bm{X}},
@@ -955,21 +1062,34 @@ This yields the expression for $\bm{\beta}$ to be
 !et
 
 which immediately imposes some requirements on $\bm{X}$ as there must exist
-an inverse of $\bm{X}^T \bm{X}$. If the expression we are modelling contains an
-intercept, i.e., a constant expression we must make sure that the
-first column of $\bm{X}$ consists of $1$.
+an inverse of $\bm{X}^T \bm{X}$. If the expression we are modeling contains an
+intercept, i.e., a constant term, we must make sure that the
+first column of $\bm{X}$ consists of $1$. We do this here
+
+!bc pycod
+X_train_own = np.concatenate(
+    (np.ones(len(X_train))[:, np.newaxis], X_train),
+    axis=1
+)
+X_test_own = np.concatenate(
+    (np.ones(len(X_test))[:, np.newaxis], X_test),
+    axis=1
+)
+!ec
+
 
 
 !bc pycod
-def get_ols_weights_naive(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+def ols_inv(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     return scl.inv(x.T @ x) @ (x.T @ y)
-omega = get_ols_weights_naive(X_train_own, y_train)
+beta = ols_inv(X_train_own, y_train)
 !ec
 
 
 !split
 ===== Singular Value decomposition =====
-Doing the inversion directly turns out to be a bad idea as the matrix
+
+Doing the inversion directly turns out to be a bad idea since the matrix
 $\bm{X}^T\bm{X}$ is singular. An alternative approach is to use the _singular
 value decomposition_. Using the definition of the Moore-Penrose
 pseudoinverse we can write the equation for $\bm{\beta}$ as
@@ -1005,18 +1125,16 @@ $\mathcal{O}(n^2)$ operations.
 
 
 !bc pycod
-def get_ols_weights(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+def ols_svd(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     u, s, v = scl.svd(x)
     return v.T @ scl.pinv(scl.diagsvd(s, u.shape[0], v.shape[0])) @ u.T @ y
 !ec
-Before passing in the data to the function we append a column with ones to the training data.
-
 
 !bc pycod
-beta = get_ols_weights(X_train_own,y_train)
+beta = ols_svd(X_train_own,y_train)
 !ec
 
-Extracting the $J$-matrix from both our own methods we need to make sure that we remove the intercept.
+When extracting the $J$-matrix  we need to make sure that we remove the intercept, as is done here
 
 !bc pycod
 J = beta[1:].reshape(L, L)
@@ -1039,23 +1157,25 @@ It is interesting to note that OLS
 considers both $J_{j, j + 1} = -0.5$ and $J_{j, j - 1} = -0.5$ as
 valid matrix elements for $J$.
 In our discussion below on hyperparameters and Ridge and Lasso regression we will see that
-this problem can be removed. 
+this problem can be removed, partly and only with Lasso regression. 
 
-In this case our matrix inversion was actually possible. What is the mathematics behind the SVD?
+In this case our matrix inversion was actually possible. The obvious question now is what is the mathematics behind the SVD?
 
 
 !split
 ===== Basic math of the SVD =====
 !bblock
+
+The "Singular Value Decompostion (SVD) theorem":"https://en.wikipedia.org/wiki/Singular_value_decomposition" states that 
 A general
 $m\times n$ matrix $\bm{A}$ can be written in terms of a diagonal
-matrix $\bm{D}$ of dimensionality $n\times n$ and two orthognal
+matrix $\bm{\Sigma}$ of dimensionality $n\times n$ and two orthognal
 matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
 $m \times m$ and the last dimensionality $n\times n$. 
 We have then 
 !bt
 \[ 
-\bm{A} = \bm{U}\bm{D}\bm{V}^T 
+\bm{A} = \bm{U}\bm{\Sigma}\bm{V}^T 
 \] 
 !et 
 !eblock
@@ -1086,7 +1206,7 @@ to model the data using linear regression. As an example, consider the matrix
 \end{align*}
 !et
 
-The columns of $\bm{X}$ are linearly dependent. We se this easily since the 
+The columns of $\bm{X}$ are linearly dependent. We see this easily since the 
 the first column is the row-wise sum of the other two columns. The rank (more correct,
 the column rank) of a matrix is the dimension of the space spanned by the
 column vectors. Hence, the rank of $\mathbf{X}$ is equal to the number
@@ -1138,19 +1258,11 @@ where $\bm{I}$ is the identity matrix.
 Before we proceed, we need to rethink what we have been doing. In our
 eager to fit the data, we have omitted several important elements in
 our regression analysis. In what follows we will
-o split data into training and test data
-o discuss Ridge and Lasso regression
-o introduce resampling techniques like cross-validation, bootstrapping and jackknife
 o look at statistical properties, including a discussion of mean values, variance and the so-called bias-variance tradeoff
+o introduce resampling techniques like cross-validation, bootstrapping and jackknife
+o discuss Ridge and Lasso regression
 o and more.
 
-!split
-===== Training and test data =====
-
-In order avoid issues like overfitting and also introduce some predictions into our modeling, it is common to split the data we have into training, validation and test data. 
-
-!split
-===== Ridge and Lasso Regression =====
 
 
 
