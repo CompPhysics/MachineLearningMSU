@@ -439,7 +439,7 @@ $5\times 5$ matrix. This is a rather common situation, in many cases we end up w
 matrices to invert. The methods discussed here and for many other
 supervised learning algorithms like classification with logistic
 regression or support vector machines, exhibit dimensionalities which
-allow for the usage of direct linear algebra methods such as _LU_ decompostiion or _Singular Value Decomposition_ (SVD) for finding the inverse of the matrix
+allow for the usage of direct linear algebra methods such as _LU_ decomposition or _Singular Value Decomposition_ (SVD) for finding the inverse of the matrix
 $\bm{X}^T\bm{X}$. 
 
 
@@ -723,7 +723,10 @@ The beginning of the Python is similar to what you have seen before,
 with the same initializations and declarations. We use also _pandas_
 again, rather extensively to organize our data.
 
-The difference now is that we use _Scikit-Learn's_ regression tools instead of our own matrix inversion implementation. Furthermore, we sneak _Ridge_ regression (to be discussed below) which includes a hyperparameter $\lambda$, also to be explained below. 
+The difference now is that we use _Scikit-Learn's_ regression tools
+instead of our own matrix inversion implementation. Furthermore, we
+sneak _Ridge_ regression (to be discussed below) which includes a
+hyperparameter $\lambda$, also to be explained below.
 
 !split
 =====  The code =====
@@ -763,7 +766,7 @@ def save_fig(fig_id):
 
 infile = open(data_path("EoS.csv"),'r')
 
-# Read the EoS data as  csv file and organized into two arrays with density and energies
+# Read the EoS data as  csv file and organize the data into two arrays with density and energies
 EoS = pd.read_csv(infile, names=('Density', 'Energy'))
 EoS['Energy'] = pd.to_numeric(EoS['Energy'], errors='coerce')
 EoS = EoS.dropna()
@@ -839,7 +842,211 @@ the coupling constant of the widely used Ising model.
 There is however a way to partially circumvent this problem and also gain some insight about the ordinary least squares approach. 
 
 This is given by the _Singular Value Decomposition_ algorithm, perhaps the most powerful linear algebra algorithm.
+Let us look at a different example where we may have problems with the standard matrix inversion algorithm. 
+!eblock
 
+!split
+=====  The Ising model =====
+
+The one-dimensional Ising model with nearest neighbor interaction, no external field and a constant coupling constant $J$ is given by
+
+!bt
+\begin{align}
+    H = -J \sum_{k}^L s_k s_{k + 1},
+\end{align}
+!et
+where $s_i \in \{-1, 1\}$ and $s_{N + 1} = s_1$. The number of spins in the system is determined by $L$. For the one-dimensional system there is no phase transition.
+
+We will look at a system of $L = 40$ spins with a coupling constant of $J = 1$. To get enough training data we will generate 10000 states with their respective energies.
+
+
+!bc pycod
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import seaborn as sns
+import scipy.linalg as scl
+from sklearn.model_selection import train_test_split
+import tqdm
+sns.set(color_codes=True)
+cmap_args=dict(vmin=-1., vmax=1., cmap='seismic')
+
+L = 40
+n = int(1e4)
+
+spins = np.random.choice([-1, 1], size=(n, L))
+J = 1.0
+
+energies = np.zeros(n)
+
+for i in range(n):
+    energies[i] = - J * np.dot(spins[i], np.roll(spins[i], 1))
+!ec
+
+Here we use linear (ordinary least squares), ridge and LASSO
+regression to predict the energy in the nearest neighbor
+one-dimensional Ising model on a ring, i.e., the endpoints wrap
+around. We will use the linear regression models to fit a value for
+the coupling constant to achieve this.
+
+!split
+===== Reformulating the problem to suit regression =====
+
+A more general form for the one-dimensional Ising model is
+
+!bt
+\begin{align}
+    H = - \sum_j^L \sum_k^L s_j s_k J_{jk}.
+\end{align}
+!et
+
+Here we allow for interactions beyond the nearest neighbors and a more
+adaptive coupling matrix. This latter expression can be formulated as
+a matrix-product on the form
+!bt
+\begin{align}
+    \bm{H} = \bm{X} J,
+\end{align}
+!et
+
+where $X_{jk} = s_j s_k$ and $J$ is the matrix consisting of the
+elements $-J_{jk}$. This form of writing the energy fits perfectly
+with the form utilized in linear regression, viz.
+!bt
+\begin{align}
+    \bm{y} = \bm{X}\bm{\beta} + \bm{\epsilon},
+\end{align}
+!et
+We split the data in training and test data
+!bc pycod
+X = np.zeros((n, L ** 2))
+for i in range(n):
+    X[i] = np.outer(spins[i], spins[i]).ravel()
+y = energies
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.96)
+
+X_train_own = np.concatenate(
+    (np.ones(len(X_train))[:, np.newaxis], X_train),
+    axis=1
+)
+
+X_test_own = np.concatenate(
+    (np.ones(len(X_test))[:, np.newaxis], X_test),
+    axis=1
+)
+!ec
+
+!split
+===== Linear regression =====
+
+In the ordinary least squares method we choose the cost function
+!bt
+\begin{align}
+    C(\bm{X}, \bm{\beta}) = ||\bm{X}\bm{\beta} - \bm{y}||^2
+    = (X\omega - y)^T(X\omega - y)
+\end{align}
+!et
+We then find the extremal point of $C$ by taking the derivative with respect to $\bm{\beta}$ as discussed above.
+This yields the expression for $\bm{\beta}$ to be
+!bt
+\begin{align}
+    \bm{\beta} = \frac{\bm{X}^T \bm{y}}{\bm{X}^T \bm{X}},
+\end{align}
+!et
+
+which immediately imposes some requirements on $\bm{X}$ as there must exist
+an inverse of $\bm{X}^T \bm{X}$. If the expression we are modelling contains an
+intercept, i.e., a constant expression we must make sure that the
+first column of $\bm{X}$ consists of $1$.
+
+
+!bc pycod
+def get_ols_weights_naive(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    return scl.inv(x.T @ x) @ (x.T @ y)
+omega = get_ols_weights_naive(X_train_own, y_train)
+!ec
+
+
+!split
+===== Singular Value decomposition =====
+Doing the inversion directly turns out to be a bad idea as the matrix
+$\bm{X}^T\bm{X}$ is singular. An alternative approach is to use the _singular
+value decomposition_. Using the definition of the Moore-Penrose
+pseudoinverse we can write the equation for $\bm{\beta}$ as
+
+!bt
+\begin{align}
+    \bm{\beta} = \bm{X}^{+}\bm{y},
+\end{align}
+!et
+where the pseudoinverse of $\bm{X}$ is given by
+!bt
+\begin{align}
+    \bm{X}^{+} = \frac{{\bm{X}^T}{\bm{X}^T \bm{X}}.
+\end{align}
+!et
+
+Using singular value decomposition we can decompose the matrix  $\bm{X} = \bm{U}\bm{\Sigma} \bm{V}^T$,
+where $\bm{U}$ and $\bm{V}$ are orthogonal(unitary) matrices and $\bm{\Sigma}$ contains the singular values (more details below).
+where $X^{+} = V\Sigma^{+} U^T$. This reduces the equation for
+$\omega$ to
+!bt
+\begin{align}
+    \bm{\beta} = \bm{V}\bm{\Sigma}^{+} \bm{U}^T \bm{y}.
+\end{align}
+!et
+
+Note that solving this equation by actually doing the pseudoinverse
+(which is what we will do) is not a good idea as this operation scales
+as $\mathcal{O}(n^3)$, where $n$ is the number of elements in a
+general matrix. Instead, doing $QR$-factorization and solving the
+linear system as an equation would reduce this down to
+$\mathcal{O}(n^2)$ operations.
+
+
+!bc pycod
+def get_ols_weights(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    u, s, v = scl.svd(x)
+    return v.T @ scl.pinv(scl.diagsvd(s, u.shape[0], v.shape[0])) @ u.T @ y
+!ec
+Before passing in the data to the function we append a column with ones to the training data.
+
+
+!bc pycod
+beta = get_ols_weights(X_train_own,y_train)
+!ec
+
+Extracting the $J$-matrix from both our own methods we need to make sure that we remove the intercept.
+
+!bc pycod
+J = beta[1:].reshape(L, L)
+!ec
+
+A way of looking at the coefficients in $J$ is to plot the matrices as images.
+
+
+!bc pycod
+fig = plt.figure(figsize=(20, 14))
+im = plt.imshow(J, **cmap_args)
+plt.title("OLS", fontsize=18)
+plt.xticks(fontsize=18)
+plt.yticks(fontsize=18)
+cb = fig.colorbar(im)
+cb.ax.set_yticklabels(cb.ax.get_yticklabels(), fontsize=18)
+plt.show()
+!ec
+It is interesting to note that OLS
+considers both $J_{j, j + 1} = -0.5$ and $J_{j, j - 1} = -0.5$ as
+valid matrix elements for $J$.
+In our discussion below on hyperparameters and Ridge and Lasso regression we will see that
+this problem can be removed. 
+
+In this case our matrix inversion was actually possible. What is the mathematics behind the SVD?
+
+
+!split
+===== Basic math of the SVD =====
+!bblock
 A general
 $m\times n$ matrix $\bm{A}$ can be written in terms of a diagonal
 matrix $\bm{D}$ of dimensionality $n\times n$ and two orthognal

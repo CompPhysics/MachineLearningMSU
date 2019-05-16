@@ -148,7 +148,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>&nbsp;<br>
-<center><h4>May 15, 2019</h4></center> <!-- date -->
+<center><h4>May 16, 2019</h4></center> <!-- date -->
 <br>
 <p>
 
@@ -677,7 +677,7 @@ in our case \( p=5 \) meaning that we end up with inverting a small
 matrices to invert. The methods discussed here and for many other
 supervised learning algorithms like classification with logistic
 regression or support vector machines, exhibit dimensionalities which
-allow for the usage of direct linear algebra methods such as <b>LU</b> decompostiion or <b>Singular Value Decomposition</b> (SVD) for finding the inverse of the matrix
+allow for the usage of direct linear algebra methods such as <b>LU</b> decomposition or <b>Singular Value Decomposition</b> (SVD) for finding the inverse of the matrix
 \( \boldsymbol{X}^T\boldsymbol{X} \).
 
 
@@ -1028,7 +1028,10 @@ with the same initializations and declarations. We use also <b>pandas</b>
 again, rather extensively to organize our data.
 
 <p>
-The difference now is that we use <b>Scikit-Learn's</b> regression tools instead of our own matrix inversion implementation. Furthermore, we sneak <b>Ridge</b> regression (to be discussed below) which includes a hyperparameter \( \lambda \), also to be explained below.
+The difference now is that we use <b>Scikit-Learn's</b> regression tools
+instead of our own matrix inversion implementation. Furthermore, we
+sneak <b>Ridge</b> regression (to be discussed below) which includes a
+hyperparameter \( \lambda \), also to be explained below.
 </section>
 
 
@@ -1072,7 +1075,7 @@ DATA_ID = <span style="color: #CD5555">&quot;DataFiles/&quot;</span>
 
 infile = <span style="color: #658b00">open</span>(data_path(<span style="color: #CD5555">&quot;EoS.csv&quot;</span>),<span style="color: #CD5555">&#39;r&#39;</span>)
 
-<span style="color: #228B22"># Read the EoS data as  csv file and organized into two arrays with density and energies</span>
+<span style="color: #228B22"># Read the EoS data as  csv file and organize the data into two arrays with density and energies</span>
 EoS = pd.read_csv(infile, names=(<span style="color: #CD5555">&#39;Density&#39;</span>, <span style="color: #CD5555">&#39;Energy&#39;</span>))
 EoS[<span style="color: #CD5555">&#39;Energy&#39;</span>] = pd.to_numeric(EoS[<span style="color: #CD5555">&#39;Energy&#39;</span>], errors=<span style="color: #CD5555">&#39;coerce&#39;</span>)
 EoS = EoS.dropna()
@@ -1152,7 +1155,272 @@ There is however a way to partially circumvent this problem and also gain some i
 
 <p>
 This is given by the <b>Singular Value Decomposition</b> algorithm, perhaps the most powerful linear algebra algorithm.
+Let us look at a different example where we may have problems with the standard matrix inversion algorithm.
+</div>
+</section>
 
+
+<section>
+<h2 id="___sec26">The Ising model </h2>
+
+<p>
+The one-dimensional Ising model with nearest neighbor interaction, no external field and a constant coupling constant \( J \) is given by
+
+<p>&nbsp;<br>
+$$
+\begin{align}
+    H = -J \sum_{k}^L s_k s_{k + 1},
+\tag{1}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+where \( s_i \in \{-1, 1\} \) and \( s_{N + 1} = s_1 \). The number of spins in the system is determined by \( L \). For the one-dimensional system there is no phase transition.
+
+<p>
+We will look at a system of \( L = 40 \) spins with a coupling constant of \( J = 1 \). To get enough training data we will generate 10000 states with their respective energies.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">mpl_toolkits.axes_grid1</span> <span style="color: #8B008B; font-weight: bold">import</span> make_axes_locatable
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">seaborn</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">sns</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">scipy.linalg</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">scl</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.model_selection</span> <span style="color: #8B008B; font-weight: bold">import</span> train_test_split
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">tqdm</span>
+sns.set(color_codes=<span style="color: #658b00">True</span>)
+cmap_args=<span style="color: #658b00">dict</span>(vmin=-<span style="color: #B452CD">1.</span>, vmax=<span style="color: #B452CD">1.</span>, cmap=<span style="color: #CD5555">&#39;seismic&#39;</span>)
+
+L = <span style="color: #B452CD">40</span>
+n = <span style="color: #658b00">int</span>(<span style="color: #B452CD">1e4</span>)
+
+spins = np.random.choice([-<span style="color: #B452CD">1</span>, <span style="color: #B452CD">1</span>], size=(n, L))
+J = <span style="color: #B452CD">1.0</span>
+
+energies = np.zeros(n)
+
+<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(n):
+    energies[i] = - J * np.dot(spins[i], np.roll(spins[i], <span style="color: #B452CD">1</span>))
+</pre></div>
+<p>
+Here we use linear (ordinary least squares), ridge and LASSO
+regression to predict the energy in the nearest neighbor
+one-dimensional Ising model on a ring, i.e., the endpoints wrap
+around. We will use the linear regression models to fit a value for
+the coupling constant to achieve this.
+</section>
+
+
+<section>
+<h2 id="___sec27">Reformulating the problem to suit regression </h2>
+
+<p>
+A more general form for the one-dimensional Ising model is
+
+<p>&nbsp;<br>
+$$
+\begin{align}
+    H = - \sum_j^L \sum_k^L s_j s_k J_{jk}.
+\tag{2}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+<p>
+Here we allow for interactions beyond the nearest neighbors and a more
+adaptive coupling matrix. This latter expression can be formulated as
+a matrix-product on the form
+<p>&nbsp;<br>
+$$
+\begin{align}
+    \boldsymbol{H} = \boldsymbol{X} J,
+\tag{3}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+<p>
+where \( X_{jk} = s_j s_k \) and \( J \) is the matrix consisting of the
+elements \( -J_{jk} \). This form of writing the energy fits perfectly
+with the form utilized in linear regression, viz.
+<p>&nbsp;<br>
+$$
+\begin{align}
+    \boldsymbol{y} = \boldsymbol{X}\boldsymbol{\beta} + \boldsymbol{\epsilon},
+\tag{4}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+We split the data in training and test data
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>X = np.zeros((n, L ** <span style="color: #B452CD">2</span>))
+<span style="color: #8B008B; font-weight: bold">for</span> i <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(n):
+    X[i] = np.outer(spins[i], spins[i]).ravel()
+y = energies
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span style="color: #B452CD">0.96</span>)
+
+X_train_own = np.concatenate(
+    (np.ones(<span style="color: #658b00">len</span>(X_train))[:, np.newaxis], X_train),
+    axis=<span style="color: #B452CD">1</span>
+)
+
+X_test_own = np.concatenate(
+    (np.ones(<span style="color: #658b00">len</span>(X_test))[:, np.newaxis], X_test),
+    axis=<span style="color: #B452CD">1</span>
+)
+</pre></div>
+</section>
+
+
+<section>
+<h2 id="___sec28">Linear regression </h2>
+
+<p>
+In the ordinary least squares method we choose the cost function
+<p>&nbsp;<br>
+$$
+\begin{align}
+    C(\boldsymbol{X}, \boldsymbol{\beta}) = ||\boldsymbol{X}\boldsymbol{\beta} - \boldsymbol{y}||^2
+    = (X\omega - y)^T(X\omega - y)
+\tag{5}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+We then find the extremal point of \( C \) by taking the derivative with respect to \( \boldsymbol{\beta} \) as discussed above.
+This yields the expression for \( \boldsymbol{\beta} \) to be
+<p>&nbsp;<br>
+$$
+\begin{align}
+    \boldsymbol{\beta} = \frac{\boldsymbol{X}^T \boldsymbol{y}}{\boldsymbol{X}^T \boldsymbol{X}},
+\tag{6}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+<p>
+which immediately imposes some requirements on \( \boldsymbol{X} \) as there must exist
+an inverse of \( \boldsymbol{X}^T \boldsymbol{X} \). If the expression we are modelling contains an
+intercept, i.e., a constant expression we must make sure that the
+first column of \( \boldsymbol{X} \) consists of \( 1 \).
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">get_ols_weights_naive</span>(x: np.ndarray, y: np.ndarray) -&gt; np.ndarray:
+    <span style="color: #8B008B; font-weight: bold">return</span> scl.inv(x.T <span style="color: #a61717; background-color: #e3d2d2">@</span> x) <span style="color: #a61717; background-color: #e3d2d2">@</span> (x.T <span style="color: #a61717; background-color: #e3d2d2">@</span> y)
+omega = get_ols_weights_naive(X_train_own, y_train)
+</pre></div>
+</section>
+
+
+<section>
+<h2 id="___sec29">Singular Value decomposition </h2>
+Doing the inversion directly turns out to be a bad idea as the matrix
+\( \boldsymbol{X}^T\boldsymbol{X} \) is singular. An alternative approach is to use the <b>singular
+value decomposition</b>. Using the definition of the Moore-Penrose
+pseudoinverse we can write the equation for \( \boldsymbol{\beta} \) as
+
+<p>&nbsp;<br>
+$$
+\begin{align}
+    \boldsymbol{\beta} = \boldsymbol{X}^{+}\boldsymbol{y},
+\tag{7}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+where the pseudoinverse of \( \boldsymbol{X} \) is given by
+<p>&nbsp;<br>
+$$
+\begin{align}
+    \boldsymbol{X}^{+} = \frac{{\boldsymbol{X}^T}{\boldsymbol{X}^T \boldsymbol{X}}.
+\tag{8}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+<p>
+Using singular value decomposition we can decompose the matrix  \( \boldsymbol{X} = \boldsymbol{U}\boldsymbol{\Sigma} \boldsymbol{V}^T \),
+where \( \boldsymbol{U} \) and \( \boldsymbol{V} \) are orthogonal(unitary) matrices and \( \boldsymbol{\Sigma} \) contains the singular values (more details below).
+where \( X^{+} = V\Sigma^{+} U^T \). This reduces the equation for
+\( \omega \) to
+<p>&nbsp;<br>
+$$
+\begin{align}
+    \boldsymbol{\beta} = \boldsymbol{V}\boldsymbol{\Sigma}^{+} \boldsymbol{U}^T \boldsymbol{y}.
+\tag{9}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+<p>
+Note that solving this equation by actually doing the pseudoinverse
+(which is what we will do) is not a good idea as this operation scales
+as \( \mathcal{O}(n^3) \), where \( n \) is the number of elements in a
+general matrix. Instead, doing \( QR \)-factorization and solving the
+linear system as an equation would reduce this down to
+\( \mathcal{O}(n^2) \) operations.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">get_ols_weights</span>(x: np.ndarray, y: np.ndarray) -&gt; np.ndarray:
+    u, s, v = scl.svd(x)
+    <span style="color: #8B008B; font-weight: bold">return</span> v.T <span style="color: #a61717; background-color: #e3d2d2">@</span> scl.pinv(scl.diagsvd(s, u.shape[<span style="color: #B452CD">0</span>], v.shape[<span style="color: #B452CD">0</span>])) <span style="color: #a61717; background-color: #e3d2d2">@</span> u.T <span style="color: #a61717; background-color: #e3d2d2">@</span> y
+</pre></div>
+<p>
+Before passing in the data to the function we append a column with ones to the training data.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>beta = get_ols_weights(X_train_own,y_train)
+</pre></div>
+<p>
+Extracting the \( J \)-matrix from both our own methods we need to make sure that we remove the intercept.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>J = beta[<span style="color: #B452CD">1</span>:].reshape(L, L)
+</pre></div>
+<p>
+A way of looking at the coefficients in \( J \) is to plot the matrices as images.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>fig = plt.figure(figsize=(<span style="color: #B452CD">20</span>, <span style="color: #B452CD">14</span>))
+im = plt.imshow(J, **cmap_args)
+plt.title(<span style="color: #CD5555">&quot;OLS&quot;</span>, fontsize=<span style="color: #B452CD">18</span>)
+plt.xticks(fontsize=<span style="color: #B452CD">18</span>)
+plt.yticks(fontsize=<span style="color: #B452CD">18</span>)
+cb = fig.colorbar(im)
+cb.ax.set_yticklabels(cb.ax.get_yticklabels(), fontsize=<span style="color: #B452CD">18</span>)
+plt.show()
+</pre></div>
+<p>
+It is interesting to note that OLS
+considers both \( J_{j, j + 1} = -0.5 \) and \( J_{j, j - 1} = -0.5 \) as
+valid matrix elements for \( J \).
+In our discussion below on hyperparameters and Ridge and Lasso regression we will see that
+this problem can be removed.
+
+<p>
+In this case our matrix inversion was actually possible. What is the mathematics behind the SVD?
+</section>
+
+
+<section>
+<h2 id="___sec30">Basic math of the SVD </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
 <p>
 A general
 \( m\times n \) matrix \( \boldsymbol{A} \) can be written in terms of a diagonal
@@ -1170,7 +1438,7 @@ $$
 
 
 <section>
-<h2 id="___sec26">From standard regression to Ridge regression </h2>
+<h2 id="___sec31">From standard regression to Ridge regression </h2>
 
 <p>
 One of the typical problems we encounter with linear regression, in particular 
@@ -1225,7 +1493,7 @@ This is equivalent to saying that the matrix \( \boldsymbol{X} \) has at least a
 
 
 <section>
-<h2 id="___sec27">Fixing the singularity </h2>
+<h2 id="___sec32">Fixing the singularity </h2>
 
 <p>
 If our design matrix \( \boldsymbol{X} \) which enters the linear regression problem
@@ -1233,7 +1501,7 @@ If our design matrix \( \boldsymbol{X} \) which enters the linear regression pro
 $$
 \begin{align}
 \boldsymbol{\beta} & =  (\boldsymbol{X}^{T} \boldsymbol{X})^{-1} \boldsymbol{X}^{T} \boldsymbol{y},
-\tag{1}
+\tag{10}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -1257,7 +1525,7 @@ where \( \boldsymbol{I} \) is the identity matrix.
 
 
 <section>
-<h2 id="___sec28">Where are we going? </h2>
+<h2 id="___sec33">Where are we going? </h2>
 
 <p>
 Before we proceed, we need to rethink what we have been doing. In our
@@ -1275,7 +1543,7 @@ our regression analysis. In what follows we will
 
 
 <section>
-<h2 id="___sec29">Training and test data </h2>
+<h2 id="___sec34">Training and test data </h2>
 
 <p>
 In order avoid issues like overfitting and also introduce some predictions into our modeling, it is common to split the data we have into training, validation and test data.
@@ -1283,12 +1551,12 @@ In order avoid issues like overfitting and also introduce some predictions into 
 
 
 <section>
-<h2 id="___sec30">Ridge and Lasso Regression </h2>
+<h2 id="___sec35">Ridge and Lasso Regression </h2>
 </section>
 
 
 <section>
-<h2 id="___sec31">Linking the regression analysis with a statistical interpretation </h2>
+<h2 id="___sec36">Linking the regression analysis with a statistical interpretation </h2>
 
 <p>
 Finally, we are going to discuss several statistical properties. The
@@ -1322,7 +1590,7 @@ non-random scalar. To specify the parameters of the distribution of
 
 
 <section>
-<h2 id="___sec32">Expectation value and variance </h2>
+<h2 id="___sec37">Expectation value and variance </h2>
 
 <p>
 Its expectation equals: 
@@ -1360,7 +1628,7 @@ Hence, \( Y_i \sim \mathcal{N}( \mathbf{X}_{i, \ast} \, \beta, \sigma^2) \).
 
 
 <section>
-<h2 id="___sec33">Resampling methods </h2>
+<h2 id="___sec38">Resampling methods </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1379,7 +1647,7 @@ once using the original training sample.
 
 
 <section>
-<h2 id="___sec34">Resampling approaches can be computationally expensive </h2>
+<h2 id="___sec39">Resampling approaches can be computationally expensive </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1403,7 +1671,7 @@ bootstrap is widely used.
 
 
 <section>
-<h2 id="___sec35">Why resampling methods ? </h2>
+<h2 id="___sec40">Why resampling methods ? </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b>Statistical analysis.</b>
 <ul>
@@ -1419,7 +1687,7 @@ bootstrap is widely used.
 
 
 <section>
-<h2 id="___sec36">Statistical analysis </h2>
+<h2 id="___sec41">Statistical analysis </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <ul>
@@ -1441,7 +1709,7 @@ bootstrap is widely used.
 
 
 <section>
-<h2 id="___sec37">Statistics  </h2>
+<h2 id="___sec42">Statistics  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1475,7 +1743,7 @@ selection of a large set of these numbers reproduces this PDF.
 
 
 <section>
-<h2 id="___sec38">Statistics, moments </h2>
+<h2 id="___sec43">Statistics, moments </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1501,7 +1769,7 @@ $$
 
 
 <section>
-<h2 id="___sec39">Statistics, central moments </h2>
+<h2 id="___sec44">Statistics, central moments </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1522,14 +1790,14 @@ $$
 \begin{align}
 \sigma^2_X\ \ =\ \ \mathrm{var}(X) & =  \langle (x-\langle x\rangle)^2\rangle =
 \int\! (x-\langle x\rangle)^2 p(x)\,dx
-\tag{2}\\
+\tag{11}\\
 & =  \int\! \left(x^2 - 2 x \langle x\rangle^{2} +
   \langle x\rangle^2\right)p(x)\,dx
-\tag{3}\\
+\tag{12}\\
 & =  \langle x^2\rangle - 2 \langle x\rangle\langle x\rangle + \langle x\rangle^2
-\tag{4}\\
+\tag{13}\\
 & =  \langle x^2\rangle - \langle x\rangle^2
-\tag{5}
+\tag{14}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -1542,7 +1810,7 @@ qualitatively as the <em>spread</em> of \( p \) around its mean.
 
 
 <section>
-<h2 id="___sec40">Statistics, covariance </h2>
+<h2 id="___sec45">Statistics, covariance </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1559,7 +1827,7 @@ $$
 &=
 \int\!\cdots\!\int\!(x_i-\langle x_i \rangle)(x_j-\langle x_j \rangle)\,
 P(x_1,\dots,x_n)\,dx_1\dots dx_n
-\tag{6}
+\tag{15}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -1576,7 +1844,7 @@ $$
 
 
 <section>
-<h2 id="___sec41">Statistics, more covariance  </h2>
+<h2 id="___sec46">Statistics, more covariance  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1590,17 +1858,17 @@ the expectation value. Consider the stochastic variables \( X_i \) and
 $$
 \begin{align}
 \mathrm{cov}(X_i,\,X_j) &= \langle(x_i-\langle x_i\rangle)(x_j-\langle x_j\rangle)\rangle
-\tag{7}\\
+\tag{16}\\
 &=\langle x_i x_j - x_i\langle x_j\rangle - \langle x_i\rangle x_j + \langle x_i\rangle\langle x_j\rangle\rangle 
-\tag{8}\\
+\tag{17}\\
 &=\langle x_i x_j\rangle - \langle x_i\langle x_j\rangle\rangle - \langle \langle x_i\rangle x_j\rangle +
 \langle \langle x_i\rangle\langle x_j\rangle\rangle
-\tag{9}\\
+\tag{18}\\
 &=\langle x_i x_j\rangle - \langle x_i\rangle\langle x_j\rangle - \langle x_i\rangle\langle x_j\rangle +
 \langle x_i\rangle\langle x_j\rangle
-\tag{10}\\
+\tag{19}\\
 &=\langle x_i x_j\rangle - \langle x_i\rangle\langle x_j\rangle
-\tag{11}
+\tag{20}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -1609,7 +1877,7 @@ $$
 
 
 <section>
-<h2 id="___sec42">Statistics, independent variables  </h2>
+<h2 id="___sec47">Statistics, independent variables  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1638,7 +1906,7 @@ $$
 
 
 <section>
-<h2 id="___sec43">Statistics, more variance  </h2>
+<h2 id="___sec48">Statistics, more variance  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1648,7 +1916,7 @@ the variance of the linear combination \( U = \sum_i a_i X_i \):
 $$
 \begin{equation}
 \mathrm{var}(U) = \sum_{i,j}a_i a_j \mathrm{cov}(X_i, X_j)
-\tag{12}
+\tag{21}
 \end{equation}
 $$
 <p>&nbsp;<br>
@@ -1675,7 +1943,7 @@ value of a set of measurements.
 
 
 <section>
-<h2 id="___sec44">Statistics and stochastic processes  </h2>
+<h2 id="___sec49">Statistics and stochastic processes  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1704,7 +1972,7 @@ interested in finding the few lowest moments, like the mean
 
 
 <section>
-<h2 id="___sec45">Statistics and sample variables  </h2>
+<h2 id="___sec50">Statistics and sample variables  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1735,12 +2003,12 @@ $$
 
 
 <section>
-<h2 id="___sec46">Statistics, sample variance and covariance </h2>
+<h2 id="___sec51">Statistics, sample variance and covariance </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
 Note that the sample variance is the sample covariance without the
-cross terms. In a similar manner as the covariance in Eq.&nbsp;<a href="#mjx-eqn-6">(6)</a> is a measure of the correlation between
+cross terms. In a similar manner as the covariance in Eq.&nbsp;<a href="#mjx-eqn-15">(15)</a> is a measure of the correlation between
 two stochastic variables, the above defined sample covariance is a
 measure of the sequential correlation between succeeding measurements
 of a sample.
@@ -1755,7 +2023,7 @@ and covariance \( \mathrm{cov}(X,Y) \).
 
 
 <section>
-<h2 id="___sec47">Statistics, law of large numbers </h2>
+<h2 id="___sec52">Statistics, law of large numbers </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1788,7 +2056,7 @@ true PDFs behind, which we usually do not have.
 
 
 <section>
-<h2 id="___sec48">Statistics, more on sample error </h2>
+<h2 id="___sec53">Statistics, more on sample error </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1811,7 +2079,7 @@ means.
 
 
 <section>
-<h2 id="___sec49">Statistics  </h2>
+<h2 id="___sec54">Statistics  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1833,7 +2101,7 @@ And in particular we are interested in its variance \( \mathrm{var}(\overline X_
 
 
 <section>
-<h2 id="___sec50">Statistics, central limit theorem </h2>
+<h2 id="___sec55">Statistics, central limit theorem </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1850,7 +2118,7 @@ $$
 \lim_{n\to\infty} p_{\overline X_n}(x) =
 \left(\frac{n}{2\pi\mathrm{var}(X)}\right)^{1/2}
 e^{-\frac{n(x-\bar x_n)^2}{2\mathrm{var}(X)}}
-\tag{13}
+\tag{22}
 \end{equation}
 $$
 <p>&nbsp;<br>
@@ -1859,7 +2127,7 @@ $$
 
 
 <section>
-<h2 id="___sec51">Statistics, more technicalities  </h2>
+<h2 id="___sec56">Statistics, more technicalities  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1871,7 +2139,7 @@ $$
 \begin{equation}
 \mathrm{err}_X^2 = \mathrm{var}(\overline X_n) = \frac{1}{n^2}
 \sum_{ij} \mathrm{cov}(X_i, X_j)
-\tag{14}
+\tag{23}
 \end{equation}
 $$
 <p>&nbsp;<br>
@@ -1889,7 +2157,7 @@ estimate of the PDF of each of the \( X_i \), estimating all properties of
 
 
 <section>
-<h2 id="___sec52">Statistics </h2>
+<h2 id="___sec57">Statistics </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1902,7 +2170,7 @@ $$
 <p>&nbsp;<br>
 
 Using \( \bar x \) in place of \( \mu_{X_i}^{\phantom X} \) we can give an
-<em>estimate</em> of the covariance in Eq.&nbsp;<a href="#mjx-eqn-14">(14)</a>
+<em>estimate</em> of the covariance in Eq.&nbsp;<a href="#mjx-eqn-23">(23)</a>
 <p>&nbsp;<br>
 $$
 \mathrm{cov}(X_i, X_j) = \langle (x_i-\langle x_i\rangle)(x_j-\langle x_j\rangle)\rangle
@@ -1921,7 +2189,7 @@ $$
 
 
 <section>
-<h2 id="___sec53">Statistics and sample variance  </h2>
+<h2 id="___sec58">Statistics and sample variance  </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1938,7 +2206,7 @@ which is approximated as
 $$
 \begin{equation}
 \mathrm{var}(X_i)\approx \frac{1}{n}\sum_{k=1}^n (x_k - \bar x_n)=\mathrm{var}(x)
-\tag{15}
+\tag{24}
 \end{equation}
 $$
 <p>&nbsp;<br>
@@ -1953,7 +2221,7 @@ $$
 &=\frac{1}{n^2}\sum_{ij} \mathrm{cov}(X_i, X_j) \nonumber \\
 &\approx&\frac{1}{n^2}\sum_{ij}\frac{1}{n}\mathrm{cov}(x) =\frac{1}{n^2}n^2\frac{1}{n}\mathrm{cov}(x)\nonumber\\
 &=\frac{1}{n}\mathrm{cov}(x)
-\tag{16}
+\tag{25}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -1965,7 +2233,7 @@ measurements in the sample.
 
 
 <section>
-<h2 id="___sec54">Statistics, uncorrelated results </h2>
+<h2 id="___sec59">Statistics, uncorrelated results </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -1985,12 +2253,12 @@ resulting in
 $$
 \begin{equation}
 \mathrm{err}_X^2\approx \frac{1}{n^2} \sum_i \mathrm{var}(x)= \frac{1}{n}\mathrm{var}(x)
-\tag{17}
+\tag{26}
 \end{equation}
 $$
 <p>&nbsp;<br>
 
-where in the second step we have used Eq.&nbsp;<a href="#mjx-eqn-15">(15)</a>.
+where in the second step we have used Eq.&nbsp;<a href="#mjx-eqn-24">(24)</a>.
 The error of the sample is then just its standard deviation divided by
 the square root of the number of measurements the sample contains.
 This is a very useful formula which is easy to compute. It acts as a
@@ -2001,12 +2269,12 @@ cannot overlook the always present correlations.
 
 
 <section>
-<h2 id="___sec55">Statistics, computations </h2>
+<h2 id="___sec60">Statistics, computations </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
 For computational purposes one usually splits up the estimate of
-\( \mathrm{err}_X^2 \), given by Eq.&nbsp;<a href="#mjx-eqn-16">(16)</a>, into two
+\( \mathrm{err}_X^2 \), given by Eq.&nbsp;<a href="#mjx-eqn-25">(25)</a>, into two
 parts
 <p>&nbsp;<br>
 $$
@@ -2019,13 +2287,13 @@ which equals
 $$
 \begin{equation}
 \frac{1}{n^2}\sum_{k=1}^n (x_k - \bar x_n)^2 +\frac{2}{n^2}\sum_{k < l} (x_k - \bar x_n)(x_l - \bar x_n)
-\tag{18}
+\tag{27}
 \end{equation}
 $$
 <p>&nbsp;<br>
 
 The first term is the same as the error in the uncorrelated case,
-Eq.&nbsp;<a href="#mjx-eqn-17">(17)</a>. This means that the second
+Eq.&nbsp;<a href="#mjx-eqn-26">(26)</a>. This means that the second
 term accounts for the error correction due to correlation between the
 measurements. For uncorrelated measurements this second term is zero.
 </div>
@@ -2033,7 +2301,7 @@ measurements. For uncorrelated measurements this second term is zero.
 
 
 <section>
-<h2 id="___sec56">Statistics, more on computations of errors </h2>
+<h2 id="___sec61">Statistics, more on computations of errors </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2056,7 +2324,7 @@ have to be stored throughout the experiment.
 
 
 <section>
-<h2 id="___sec57">Statistics, wrapping up 1 </h2>
+<h2 id="___sec62">Statistics, wrapping up 1 </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2094,11 +2362,11 @@ starting always at \( 1 \) for \( d=0 \).
 
 
 <section>
-<h2 id="___sec58">Statistics, final expression </h2>
+<h2 id="___sec63">Statistics, final expression </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
-The sample error (see eq.&nbsp;<a href="#mjx-eqn-18">(18)</a>) can now be
+The sample error (see eq.&nbsp;<a href="#mjx-eqn-27">(27)</a>) can now be
 written in terms of the autocorrelation function:
 <p>&nbsp;<br>
 $$
@@ -2108,7 +2376,7 @@ $$
 \frac{f_d}{\mathrm{var}(x)}\nonumber\\ &=&
 \left(1+2\sum_{d=1}^{n-1}\kappa_d\right)\frac{1}{n}\mathrm{var}(x)\nonumber\\
 &=\frac{\tau}{n}\cdot\mathrm{var}(x)
-\tag{19}
+\tag{28}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2121,7 +2389,7 @@ correction factor the <em>autocorrelation time</em>:
 $$
 \begin{equation}
 \tau = 1+2\sum_{d=1}^{n-1}\kappa_d
-\tag{20}
+\tag{29}
 \end{equation}
 $$
 <p>&nbsp;<br>
@@ -2130,13 +2398,13 @@ $$
 
 
 <section>
-<h2 id="___sec59">Statistics, effective number of correlations </h2>
+<h2 id="___sec64">Statistics, effective number of correlations </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
 For a correlation free experiment, \( \tau \)
 equals 1. From the point of view of
-eq.&nbsp;<a href="#mjx-eqn-19">(19)</a> we can interpret a sequential
+eq.&nbsp;<a href="#mjx-eqn-28">(28)</a> we can interpret a sequential
 correlation as an effective reduction of the number of measurements by
 a factor \( \tau \). The effective number of measurements becomes:
 <p>&nbsp;<br>
@@ -2156,7 +2424,7 @@ measurements is very large.
 
 
 <section>
-<h2 id="___sec60">Cross-validation </h2>
+<h2 id="___sec65">Cross-validation </h2>
 
 <p>
 Instead of choosing the penalty parameter to balance model fit with
@@ -2187,7 +2455,7 @@ some sense) is then selected.
 
 
 <section>
-<h2 id="___sec61">Computationally expensive </h2>
+<h2 id="___sec66">Computationally expensive </h2>
 
 <p>
 The validation set approach is conceptually simple and is easy to implement. But it has two potential drawbacks:
@@ -2200,7 +2468,7 @@ The validation set approach is conceptually simple and is easy to implement. But
 
 
 <section>
-<h2 id="___sec62">Various steps in cross-validation </h2>
+<h2 id="___sec67">Various steps in cross-validation </h2>
 
 <p>
 When the repetitive splitting of the data set is done randomly,
@@ -2221,7 +2489,7 @@ cross-validation (LOOCV).
 
 
 <section>
-<h2 id="___sec63">How to set up the cross-validation for Ridge and/or Lasso </h2>
+<h2 id="___sec68">How to set up the cross-validation for Ridge and/or Lasso </h2>
 
 <ul>
 <p><li> Define a range of interest for the penalty parameter.</li>
@@ -2260,7 +2528,7 @@ $$
 
 
 <section>
-<h2 id="___sec64">Resampling methods: Jackknife and Bootstrap </h2>
+<h2 id="___sec69">Resampling methods: Jackknife and Bootstrap </h2>
 
 <p>
 Two famous
@@ -2283,7 +2551,7 @@ need for bootstrapping.
 
 
 <section>
-<h2 id="___sec65">Resampling methods: Jackknife </h2>
+<h2 id="___sec70">Resampling methods: Jackknife </h2>
 
 <p>
 The Jackknife works by making many replicas of the estimator \( \widehat{\theta} \). 
@@ -2304,7 +2572,7 @@ number \( i \) is left out. Using this notation, define
 
 
 <section>
-<h2 id="___sec66">Resampling methods: Jackknife estimator </h2>
+<h2 id="___sec71">Resampling methods: Jackknife estimator </h2>
 
 <p>
 To get an estimate for the bias and
@@ -2320,7 +2588,7 @@ $$
 
 
 <section>
-<h2 id="___sec67">Jackknife code example </h2>
+<h2 id="___sec72">Jackknife code example </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -2357,7 +2625,7 @@ t = jackknife(x, stat)
 
 
 <section>
-<h2 id="___sec68">Resampling methods: Bootstrap </h2>
+<h2 id="___sec73">Resampling methods: Bootstrap </h2>
 <div class="alert alert-block alert-block alert-text-normal">
 <b></b>
 <p>
@@ -2379,7 +2647,7 @@ advantages:
 
 
 <section>
-<h2 id="___sec69">Resampling methods: Bootstrap background </h2>
+<h2 id="___sec74">Resampling methods: Bootstrap background </h2>
 
 <p>
 Since \( \widehat{\theta} = \widehat{\theta}(\boldsymbol{X}) \) is a function of random variables,
@@ -2395,7 +2663,7 @@ estimators.
 
 
 <section>
-<h2 id="___sec70">Resampling methods: More Bootstrap background </h2>
+<h2 id="___sec75">Resampling methods: More Bootstrap background </h2>
 
 <p>
 In the case that \( \widehat{\theta} \) has
@@ -2418,7 +2686,7 @@ idea is to use the relative frequency of \( \widehat{\theta}^* \)
 
 
 <section>
-<h2 id="___sec71">Resampling methods: Bootstrap approach </h2>
+<h2 id="___sec76">Resampling methods: Bootstrap approach </h2>
 
 <p>
 But
@@ -2439,7 +2707,7 @@ frequency of the observation \( X_i \), just draw the values
 
 
 <section>
-<h2 id="___sec72">Resampling methods: Bootstrap steps </h2>
+<h2 id="___sec77">Resampling methods: Bootstrap steps </h2>
 
 <p>
 The independent bootstrap works like this: 
@@ -2457,7 +2725,7 @@ When you are done, you can draw a histogram of the relative frequency of \( \wid
 
 
 <section>
-<h2 id="___sec73">Code example for the Bootstrap method </h2>
+<h2 id="___sec78">Code example for the Bootstrap method </h2>
 The following code starts with a Gaussian distribution with mean value \( \mu =100 \) and variance \( \sigma=15 \). We use this to generate the data used in the bootstrap analysis. The bootstrap analysis returns a data set after a given number of bootstrap operations (as many as we have data points). This data set consists of estimated mean values for each bootstrap operation. The histogram generated by the bootstrap method shows that the distribution for these mean values is also a Gaussian, centered around the mean value \( \mu=100 \) but with standard deviation \( \sigma/\sqrt{n} \), where \( n \) is the number of bootstrap samples (in this case the same as the number of original data points). The value of the standard deviation is what we expect from the central limit theorem. 
 <p>
 
@@ -2509,7 +2777,7 @@ plt.show()
 
 
 <section>
-<h2 id="___sec74">The bias-variance tradeoff </h2>
+<h2 id="___sec79">The bias-variance tradeoff </h2>
 
 <p>
 We begin  with an unknown function \( y=f(x) \) and fix a \emph{hypothesis set}
@@ -2532,7 +2800,7 @@ The
 
 
 <section>
-<h2 id="___sec75">Training and testing data </h2>
+<h2 id="___sec80">Training and testing data </h2>
 
 <p>
 We will discuss the bias-variance tradeoff in the context of continuous predictions such as regression. However, many of the intuitions and ideas discussed here also carry over to classification tasks. Consider a dataset \( \mathcal{L} \) consisting of the data \( \mathbf{X}_\mathcal{L}=\{(y_j, \boldsymbol{x}_j), j=1\ldots N\} \). Let us assume that the true data is generated from a noisy model
@@ -2547,7 +2815,7 @@ where \( \epsilon \) is normally distributed with mean zero and standard deviati
 
 
 <section>
-<h2 id="___sec76">Procedure to find a predictor </h2>
+<h2 id="___sec81">Procedure to find a predictor </h2>
 
 <p>
 We have a statistical procedure (e.g. least-squares regression) for
@@ -2565,7 +2833,7 @@ $$
 
 
 <section>
-<h2 id="___sec77">What we want </h2>
+<h2 id="___sec82">What we want </h2>
 
 <p>
 We are interested in the generalization error on all data drawn from
@@ -2582,7 +2850,7 @@ functional if we drew an infinite number of datasets \( \{\mathcal{L}_1,
 
 
 <section>
-<h2 id="___sec78">The bias </h2>
+<h2 id="___sec83">The bias </h2>
 
 <p>
 The first term is called the bias
@@ -2597,7 +2865,7 @@ and measures the deviation of the expectation value of our estimator (i.e. the a
 
 
 <section>
-<h2 id="___sec79">The variance </h2>
+<h2 id="___sec84">The variance </h2>
 The second term is called the variance
 <p>&nbsp;<br>
 $$
@@ -2626,7 +2894,7 @@ finite-sized training dataset (smaller variance).
 
 
 <section>
-<h2 id="___sec80">Example code for Bias-Variance tradeoff </h2>
+<h2 id="___sec85">Example code for Bias-Variance tradeoff </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -2689,7 +2957,7 @@ plt.show()
 
 
 <section>
-<h2 id="___sec81">Understanding what happens </h2>
+<h2 id="___sec86">Understanding what happens </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -2746,7 +3014,7 @@ plt.show()
 
 
 <section>
-<h2 id="___sec82">Summing up </h2>
+<h2 id="___sec87">Summing up </h2>
 
 <p>
 The above equations tell us that in
@@ -2770,7 +3038,7 @@ flexible statistical methods have higher variance.
 
 
 <section>
-<h2 id="___sec83">The one-dimensional Ising model </h2>
+<h2 id="___sec88">The one-dimensional Ising model </h2>
 
 <p>
 The one-dimensional Ising model with nearest neighbor interaction, no external field and a constant coupling constant \( J \) is given by
@@ -2779,7 +3047,7 @@ The one-dimensional Ising model with nearest neighbor interaction, no external f
 $$
 \begin{align}
     H = -J \sum_{k}^L s_k s_{k + 1},
-\tag{21}
+\tag{30}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2824,7 +3092,7 @@ the coupling constant to achieve this.
 
 
 <section>
-<h2 id="___sec84">Reformulating the problem to suit regression </h2>
+<h2 id="___sec89">Reformulating the problem to suit regression </h2>
 
 <p>
 A more general form for the one-dimensional Ising model is
@@ -2833,7 +3101,7 @@ A more general form for the one-dimensional Ising model is
 $$
 \begin{align}
     H = - \sum_j^L \sum_k^L s_j s_k J_{jk}.
-\tag{22}
+\tag{31}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2846,7 +3114,7 @@ a matrix-product on the form
 $$
 \begin{align}
     H = X J,
-\tag{23}
+\tag{32}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2859,7 +3127,7 @@ with the form utilized in linear regression, viz.
 $$
 \begin{align}
     y = X\omega + \epsilon,
-\tag{24}
+\tag{33}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2887,7 +3155,7 @@ X_test_own = np.concatenate(
 
 
 <section>
-<h2 id="___sec85">Linear regression </h2>
+<h2 id="___sec90">Linear regression </h2>
 
 <p>
 The problem at hand is to try to fit the equation
@@ -2895,7 +3163,7 @@ The problem at hand is to try to fit the equation
 $$
 \begin{align}
     y = f(x) + \epsilon,
-\tag{25}
+\tag{34}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2911,7 +3179,7 @@ can formulate the problem as
 $$
 \begin{align}
     y = X\omega + \epsilon,
-\tag{26}
+\tag{35}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2924,7 +3192,7 @@ the best estimate of \( \omega \).
 
 
 <section>
-<h2 id="___sec86">Ordinary least squares </h2>
+<h2 id="___sec91">Ordinary least squares </h2>
 
 <p>
 In the ordinary least squares method we choose the cost function
@@ -2933,7 +3201,7 @@ $$
 \begin{align}
     C(X, \omega) = ||X\omega - y||^2
     = (X\omega - y)^T(X\omega - y)
-\tag{27}
+\tag{36}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2945,7 +3213,7 @@ $$
 \begin{align}
     \dfrac{\mathrm{d}C}{\mathrm{d}\omega}
     = 0.
-\tag{28}
+\tag{37}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2955,7 +3223,7 @@ This yields the expression for \( \omega \) to be
 $$
 \begin{align}
     \omega = \frac{X^T y}{X^T X},
-\tag{29}
+\tag{38}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2977,7 +3245,7 @@ omega = get_ols_weights_naive(X_train_own, y_train)
 
 
 <section>
-<h2 id="___sec87">Singular Value decomposition </h2>
+<h2 id="___sec92">Singular Value decomposition </h2>
 Doing the inversion directly turns out to be a bad idea as the matrix
 \( X^TX \) is singular. An alternative approach is to use the <b>singular
 value decomposition</b>. Using the definition of the Moore-Penrose
@@ -2987,7 +3255,7 @@ pseudoinverse we can write the equation for \( \omega \) as
 $$
 \begin{align}
     \omega = X^{+}y,
-\tag{30}
+\tag{39}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -2997,7 +3265,7 @@ where the pseudoinverse of \( X \) is given by
 $$
 \begin{align}
     X^{+} = \frac{X^T}{X^T X}.
-\tag{31}
+\tag{40}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -3010,7 +3278,7 @@ where \( X^{+} = V\Sigma^{+} U^T \). This reduces the equation for
 $$
 \begin{align}
     \omega = V\Sigma^{+} U^T y.
-\tag{32}
+\tag{41}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -3042,7 +3310,7 @@ Before passing in the data to the function we append a column with ones to the t
 
 
 <section>
-<h2 id="___sec88">Fitting with Scikit-Learn </h2>
+<h2 id="___sec93">Fitting with Scikit-Learn </h2>
 
 <p>
 Next we fit a <code>LinearRegression</code>-model from <b>Scikit-Learn</b> for comparison.
@@ -3093,7 +3361,7 @@ valid matrix elements for \( J \).
 
 
 <section>
-<h2 id="___sec89">Ridge regression </h2>
+<h2 id="___sec94">Ridge regression </h2>
 
 <p>
 Having explored the ordinary least squares we move on to ridge
@@ -3107,7 +3375,7 @@ $$
 \begin{align}
     C(X, \omega; \lambda) = ||X\omega - y||^2 + \lambda ||\omega||^2
     = (X\omega - y)^T(X\omega - y) + \lambda \omega^T\omega.
-\tag{33}
+\tag{42}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -3118,7 +3386,7 @@ Finding the extremum of this function yields the weights
 $$
 \begin{align}
     \omega(\lambda) = \frac{X^Ty}{X^TX + \lambda} \to \frac{\omega_{\text{LS}}}{1 + \lambda},
-\tag{34}
+\tag{43}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -3163,7 +3431,7 @@ plt.show()
 
 
 <section>
-<h2 id="___sec90">LASSO regression </h2>
+<h2 id="___sec95">LASSO regression </h2>
 
 <p>
 In the <b>Least Absolute Shrinkage and Selection Operator</b> (LASSO)-method we get a third cost function.
@@ -3173,7 +3441,7 @@ $$
     C(X, \omega; \lambda) =
     ||X\omega - y||^2 + \lambda ||\omega||
     = (X\omega - y)^T(X\omega - y) + \lambda \sqrt{\omega^T\omega}.
-\tag{35}
+\tag{44}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -3203,7 +3471,7 @@ constant as opposed to ridge and OLS. We get a sparse solution with
 
 
 <section>
-<h2 id="___sec91">Performance of the different models </h2>
+<h2 id="___sec96">Performance of the different models </h2>
 
 <p>
 In order to judge which model performs best at varying values of \( \lambda \) (for ridge and LASSO) we compute \( R^2 \) which is given by
@@ -3212,7 +3480,7 @@ In order to judge which model performs best at varying values of \( \lambda \) (
 $$
 \begin{align}
     R^2 = 1 - \frac{(y - \boldsymbol{y})^2}{(y - \bar{y})^2},
-\tag{36}
+\tag{45}
 \end{align}
 $$
 <p>&nbsp;<br>
@@ -3240,7 +3508,7 @@ sk_r_test = clf.score(X_test, y_test)
 
 
 <section>
-<h2 id="___sec92">Performance as  function of the regularization parameter </h2>
+<h2 id="___sec97">Performance as  function of the regularization parameter </h2>
 
 <p>
 We see how the different models perform for a different set of values for \( \lambda \).
@@ -3322,7 +3590,7 @@ much. Ridge is more stable over a larger range of values for
 
 
 <section>
-<h2 id="___sec93">Finding the optimal value of \( \lambda \) </h2>
+<h2 id="___sec98">Finding the optimal value of \( \lambda \) </h2>
 
 <p>
 To determine which value of \( \lambda \) is best we plot the accuracy of
