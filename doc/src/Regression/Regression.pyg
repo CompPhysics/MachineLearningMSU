@@ -1,3 +1,0 @@
-def ols_inv(x: np.ndarray, y: np.ndarray) -> np.ndarray:
-    return scl.inv(x.T @ x) @ (x.T @ y)
-beta = ols_inv(X_train_own, y_train)

@@ -1102,7 +1102,7 @@ where the pseudoinverse of $\bm{X}$ is given by
 
 !bt
 \[
-    \bm{X}^{+} = \frac{{\bm{X}^T}{\bm{X}^T\bm{X}}.
+    \bm{X}^{+} = \frac{\bm{X}^T}{\bm{X}^T\bm{X}}.
 \]
 !et
 
@@ -1163,52 +1163,7 @@ In this case our matrix inversion was actually possible. The obvious question no
 
 
 !split
-===== Basic math of the SVD =====
-!bblock
-
-From standard linear algebra we know that a square matrix $\bm{A}$ can be diagonalized if and only it is 
-a so-called "normal matrix":"https://en.wikipedia.org/wiki/Normal_matrix", that is if $\bm{A}\in {\mathbb{R}}^{n\times n}$
-we have $\bm{A}\bm{A}^T=\bm{A}^T\bm{A}$ or if $\bm{A}\in {\mathbb{C}}^{n\times n}$ we have $\bm{A}\bm{A}^{\dagger}=\bm{A}^{\dagger}\bm{A}$.
-The matrix has then a set of eigenpairs 
-
-!bt
-\[
-(\lambda_1,\bm{u}_1),\dots, (\lambda_n,\bm{u}_n),
-!et
-and the eigenvalues are given by the diagonal matrix
-!bt
-\[
-\bm{\Sigma}=\mathrm{Diag}(\lambda_1, \dots,\lambda_n).
-\]
-!et
-The matrix $\bm{A}$ can be written in terms of an orthogonal/unitary transformation $\bm{U}$
-!bt
-\[
-\bm{A} = \bm{U}\bm{\Sigma}\bm{U}^T,
-\]
-!et
-with $\bm{U}\bm{U}^T=bm{1}$ or $\bm{U}\bm{U}^{\dagger}=bm{1}$.
-
-
-
-The "Singular Value Decompostion (SVD) theorem":"https://en.wikipedia.org/wiki/Singular_value_decomposition" states that 
-a general
-$m\times n$ matrix $\bm{A}$ can be written in terms of a diagonal
-matrix $\bm{\Sigma}$ of dimensionality $n\times n$ and two orthognal
-matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
-$m \times m$ and the last dimensionality $n\times n$. 
-We have then 
-!bt
-\[ 
-\bm{A} = \bm{U}\bm{\Sigma}\bm{V}^T 
-\] 
-!et 
-!eblock
-
-
-
-!split
-===== From standard regression to Ridge regression =====
+===== Linear Regression Problems =====
 
 One of the typical problems we encounter with linear regression, in particular 
 when the matrix $\bm{X}$ (our so-called design matrix) is high-dimensional, 
@@ -1251,6 +1206,88 @@ that the inverse of the matrix $\bm{X}^T\bm{x}$ (the matrix we need to invert to
 !et
 We see easily that  $\mbox{det}(\bm{X}) = x_{11} x_{22} - x_{12} x_{21} = 1 \times (-1) - 1 \times (-1) = 0$. Hence, $\mathbf{X}$ is singular and its inverse is undefined.
 This is equivalent to saying that the matrix $\bm{X}$ has at least an eigenvalue which is zero.
+
+
+!split
+===== Basic math of the SVD =====
+
+
+From standard linear algebra we know that a square matrix $\bm{A}$ can be diagonalized if and only it is 
+a so-called "normal matrix":"https://en.wikipedia.org/wiki/Normal_matrix", that is if $\bm{A}\in {\mathbb{R}}^{n\times n}$
+we have $\bm{A}\bm{A}^T=\bm{A}^T\bm{A}$ or if $\bm{A}\in {\mathbb{C}}^{n\times n}$ we have $\bm{A}\bm{A}^{\dagger}=\bm{A}^{\dagger}\bm{A}$.
+The matrix has then a set of eigenpairs 
+
+!bt
+\[
+(\lambda_1,\bm{u}_1),\dots, (\lambda_n,\bm{u}_n),
+!et
+and the eigenvalues are given by the diagonal matrix
+!bt
+\[
+\bm{\Sigma}=\mathrm{Diag}(\lambda_1, \dots,\lambda_n).
+\]
+!et
+The matrix $\bm{A}$ can be written in terms of an orthogonal/unitary transformation $\bm{U}$
+!bt
+\[
+\bm{A} = \bm{U}\bm{\Sigma}\bm{U}^T,
+\]
+!et
+with $\bm{U}\bm{U}^T=bm{1}$ or $\bm{U}\bm{U}^{\dagger}=bm{1}$.
+
+Not all square matrices are diagonalizable. A matrix like the one discussed above
+!bt
+\[
+\bm{A} = \begin{bmatrix} 
+1&  -1 \\
+1& -1\\
+\end{bmatrix} 
+\]
+!et
+is not diagonalizable, it is a so-called "defective matrix":"https://en.wikipedia.org/wiki/Defective_matrix". It is easy to see that the condition
+$\bm{A}\bm{A}^T=\bm{A}^T\bm{A}$ is not fulfilled. 
+
+
+!split
+===== The SVD, a Fantastic Algorithm =====
+However, and this is the strength of the SVD algorithm, any general matrix $\bm{A}$ can be decomposed in terms of a diagonal matrix and two orthogonal/unitary matrices.
+The "Singular Value Decompostion (SVD) theorem":"https://en.wikipedia.org/wiki/Singular_value_decomposition" states that 
+a general
+$m\times n$ matrix $\bm{A}$ can be written in terms of a diagonal
+matrix $\bm{\Sigma}$ of dimensionality $n\times n$ and two orthognal
+matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
+$m \times m$ and the last dimensionality $n\times n$. 
+We have then 
+!bt
+\[ 
+\bm{A} = \bm{U}\bm{\Sigma}\bm{V}^T 
+\] 
+!et 
+
+As an example, the above defective matrix can be decomposed as
+!bt
+\[
+\bm{A} = \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  1 \\ 1& -1\\ \end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 0\\ \end{bmatrix}    \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  -1 \\ 1& 1\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T, 
+\]
+!et
+with eigenvalues $\sigma_1=2$ and $\sigma_2=0$. 
+The SVD exits always! 
+
+
+!split
+===== Another Example =====
+
+Consider the following matrix which can be SVD decomposed as
+!bt
+\[
+\bm{A} = \frac{1}{15}\begin{bmatrix} 14 & 2\\ 4 & 22\\ 16 & 13]\end{matrix}=\frac{1}{3}\begin{bmatrix}  1&  2 & 2 \\ 2& -1 & 1\\ 2 & 1& -2\end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 1\\ 0 & 0\end{bmatrix}    \frac{1}{5}\begin{bmatrix}  3&  4 \\ 4& -3\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T. 
+\]
+!et
+This is a $3\times 2$ matrix which is decomposed in terms of a $3\times $ matrix $\bm{U}$, a $2\times 2$ matrix $
+It is easy to see that $\bm{U}$ and $\bm{V}$ are orthogonal (how?). And SVD decomposition gives eigenvalues $\sigma_i \le \sigma_{i+1)$ for all $i$ and 
+
+
+
 
 !split
 ===== Fixing the singularity =====
