@@ -172,7 +172,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>May 15, 2019</h4></center> <!-- date -->
+<center><h4>May 17, 2019</h4></center> <!-- date -->
 <br>
 <p>
 </div> <!-- end jumbotron -->
@@ -282,6 +282,10 @@ is a Python
 distribution for scientific and analytic computing distribution and
 analysis environment, available for free and under a commercial
 license.
+
+<p>
+Furthermore, <a href="https://colab.research.google.com/notebooks/welcome.ipynb" target="_self">Google's Colab</a> is a free Jupyter notebook environment that requires 
+no setup and runs entirely in the cloud. Try it out!
 
 <h2 id="___sec3" class="anchor">Useful Python libraries </h2>
 Here we list several useful Python libraries we strongly recommend (if you use anaconda many of these are already there)
@@ -712,7 +716,11 @@ The following simple example shows how we can, in an easy way make tables of our
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
 <div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
 <span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">IPython.display</span> <span style="color: #008000; font-weight: bold">import</span> display
-data <span style="color: #666666">=</span> {<span style="color: #BA2121">&#39;First Name&#39;</span>: [<span style="color: #BA2121">&quot;Frodo&quot;</span>, <span style="color: #BA2121">&quot;Bilbo&quot;</span>, <span style="color: #BA2121">&quot;Aragorn II&quot;</span>, <span style="color: #BA2121">&quot;Samwise&quot;</span>], <span style="color: #BA2121">&#39;Last Name&#39;</span>: [<span style="color: #BA2121">&quot;Baggins&quot;</span>, <span style="color: #BA2121">&quot;Baggins&quot;</span>,<span style="color: #BA2121">&quot;Elessar&quot;</span>,<span style="color: #BA2121">&quot;Gamgee&quot;</span>],<span style="color: #BA2121">&#39;Place of birth&#39;</span>: [<span style="color: #BA2121">&quot;Shire&quot;</span>, <span style="color: #BA2121">&quot;Shire&quot;</span>, <span style="color: #BA2121">&quot;Eriador&quot;</span>, <span style="color: #BA2121">&quot;Shire&quot;</span>], <span style="color: #BA2121">&#39;Date of Birth T.A.&#39;</span>:[<span style="color: #666666">2968</span>, <span style="color: #666666">2890</span>, <span style="color: #666666">2931</span>, <span style="color: #666666">2980</span>]}
+data <span style="color: #666666">=</span> {<span style="color: #BA2121">&#39;First Name&#39;</span>: [<span style="color: #BA2121">&quot;Frodo&quot;</span>, <span style="color: #BA2121">&quot;Bilbo&quot;</span>, <span style="color: #BA2121">&quot;Aragorn II&quot;</span>, <span style="color: #BA2121">&quot;Samwise&quot;</span>],
+        <span style="color: #BA2121">&#39;Last Name&#39;</span>: [<span style="color: #BA2121">&quot;Baggins&quot;</span>, <span style="color: #BA2121">&quot;Baggins&quot;</span>,<span style="color: #BA2121">&quot;Elessar&quot;</span>,<span style="color: #BA2121">&quot;Gamgee&quot;</span>],
+        <span style="color: #BA2121">&#39;Place of birth&#39;</span>: [<span style="color: #BA2121">&quot;Shire&quot;</span>, <span style="color: #BA2121">&quot;Shire&quot;</span>, <span style="color: #BA2121">&quot;Eriador&quot;</span>, <span style="color: #BA2121">&quot;Shire&quot;</span>],
+        <span style="color: #BA2121">&#39;Date of Birth T.A.&#39;</span>: [<span style="color: #666666">2968</span>, <span style="color: #666666">2890</span>, <span style="color: #666666">2931</span>, <span style="color: #666666">2980</span>]
+        }
 data_pandas <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>DataFrame(data)
 display(data_pandas)
 </pre></div>
@@ -739,8 +747,12 @@ We can easily append data to this, for example
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>data_pandas<span style="color: #666666">=</span>data_pandas<span style="color: #666666">.</span>append(pd<span style="color: #666666">.</span>DataFrame({<span style="color: #BA2121">&#39;First Name&#39;</span>: [<span style="color: #BA2121">&quot;Peregrin&quot;</span>], <span style="color: #BA2121">&#39;Last Name&#39;</span>: [<span style="color: #BA2121">&quot;Took&quot;</span>],<span style="color: #BA2121">&#39;Place of birth&#39;</span>: [<span style="color: #BA2121">&quot;Shire&quot;</span>], <span style="color: #BA2121">&#39;Data of Birth T.A</span><span style="color: #BB6622; font-weight: bold">\</span>
-<span style="color: #BA2121">.&#39;</span>:[<span style="color: #666666">2990</span>]},index<span style="color: #666666">=</span>[<span style="color: #BA2121">&#39;Pippin&#39;</span>]))
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>new_hobbit <span style="color: #666666">=</span> {<span style="color: #BA2121">&#39;First Name&#39;</span>: [<span style="color: #BA2121">&quot;Peregrin&quot;</span>],
+              <span style="color: #BA2121">&#39;Last Name&#39;</span>: [<span style="color: #BA2121">&quot;Took&quot;</span>],
+              <span style="color: #BA2121">&#39;Place of birth&#39;</span>: [<span style="color: #BA2121">&quot;Shire&quot;</span>],
+              <span style="color: #BA2121">&#39;Date of Birth T.A.&#39;</span>: [<span style="color: #666666">2990</span>]
+              }
+data_pandas<span style="color: #666666">=</span>data_pandas<span style="color: #666666">.</span>append(pd<span style="color: #666666">.</span>DataFrame(new_hobbit, index<span style="color: #666666">=</span>[<span style="color: #BA2121">&#39;Pippin&#39;</span>]))
 display(data_pandas)
 </pre></div>
 <p>

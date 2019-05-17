@@ -99,6 +99,9 @@ distribution for scientific and analytic computing distribution and
 analysis environment, available for free and under a commercial
 license.
 
+Furthermore, "Google's Colab":"https://colab.research.google.com/notebooks/welcome.ipynb" is a free Jupyter notebook environment that requires 
+no setup and runs entirely in the cloud. Try it out!
+
 ===== Useful Python libraries =====
 Here we list several useful Python libraries we strongly recommend (if you use anaconda many of these are already there)
 
@@ -457,7 +460,11 @@ The following simple example shows how we can, in an easy way make tables of our
 !bc pycod 
 import pandas as pd
 from IPython.display import display
-data = {'First Name': ["Frodo", "Bilbo", "Aragorn II", "Samwise"], 'Last Name': ["Baggins", "Baggins","Elessar","Gamgee"],'Place of birth': ["Shire", "Shire", "Eriador", "Shire"], 'Date of Birth T.A.':[2968, 2890, 2931, 2980]}
+data = {'First Name': ["Frodo", "Bilbo", "Aragorn II", "Samwise"],
+        'Last Name': ["Baggins", "Baggins","Elessar","Gamgee"],
+        'Place of birth': ["Shire", "Shire", "Eriador", "Shire"],
+        'Date of Birth T.A.': [2968, 2890, 2931, 2980]
+        }
 data_pandas = pd.DataFrame(data)
 display(data_pandas)
 !ec
@@ -477,8 +484,12 @@ display(data_pandas.loc['Aragorn'])
 
 We can easily append data to this, for example
 !bc pycod
-data_pandas=data_pandas.append(pd.DataFrame({'First Name': ["Peregrin"], 'Last Name': ["Took"],'Place of birth': ["Shire"], 'Data of Birth T.A\
-.':[2990]},index=['Pippin']))
+new_hobbit = {'First Name': ["Peregrin"],
+              'Last Name': ["Took"],
+              'Place of birth': ["Shire"],
+              'Date of Birth T.A.': [2990]
+              }
+data_pandas=data_pandas.append(pd.DataFrame(new_hobbit, index=['Pippin']))
 display(data_pandas)
 !ec
 
