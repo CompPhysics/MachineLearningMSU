@@ -1342,14 +1342,63 @@ and reduce storage requirements without compromising the accuracy of
 the decomposition.
 
 If $n > p$, we keep only the first $p$ columns of $\bm{U}$ and $\bm{\Sigma}$ has dimension $p\times p$. 
-svd(A,'econ') produces an economy-size decomposition of m-by-n matrix A:
+If $p > n$, then only the first $n$ columns of $\bm{V}$ are computed and $\bm{\Sigma}$ has dimension $n\times n$.
+The $n=p$ case is obvious, we retain the full SVD. 
+In general the economy-size SVD leads to less FLOPS conserving the desired accuracy.
 
-m > n — Only the first n columns of U are computed, and S is n-by-n.
+!split
+===== Mathematical Properties =====
 
-m = n — svd(A,'econ') is equivalent to svd(A).
+There are several interesting mathematical properties which will be relevant when we are going to discuss the differences between say ordinary least squares (OLS) and _ridge_ regression.
 
-m < n — Only the first m columns of V are computed, and S is m-by-m.
+We have from OLS that the parameters of the linear approximation are given by
+!bt
+\[
+\bm{\tilde{y}} = \bm{X}\bm{\beta} = \bm{X}\left(\bm{X}^T\bm{X}\right)^{-1}\bm{X}^T\bm{y}. 
+\]
+!et
 
+The matrix to invert can be rewritten in terms of our SVD decomposition as
+
+!bt
+\[
+\bm{X}^T\bm{X} = \bm{V}\bm{\Sigma}^T\bm{U}^T\bm{U}\bm{\Sigma}\bm{V}^T.
+\]
+!et
+Using the orthognality properties of $\bm{U}$ we have
+
+!bt
+\[
+\bm{X}^T\bm{X} = \bm{V}\bm{\Sigma}^T\bm{\Sigma}\bm{V}^T =  \bm{V}\bm{D}\bm{V}^T,
+\]
+!et
+with $\bm{D}$ being a diagonal matrix with values along the diagonal given by the singular values squared. 
+
+This means that
+!bt
+\[
+(\bm{X}^T\bm{X})\bm{V} = \bm{V}\bm{D},
+\]
+!et
+that is the eigenvectors of $(\bm{X}^T\bm{X})$ are given by the columns of the right singular matrix of $\bm{X}$ and the eigenvalues are the squared singular values.  It is easy to show that
+!bt
+\[
+(\bm{X}\bm{X}^T)\bm{U} = \bm{U}\bm{D},
+\]
+!et
+the eigenvectors of $(\bm{X}\bm{X})^T$ are the columns of the left singular matrix and the eigenvalues are the same. 
+
+Going back to our OLS equation we have
+!bt
+\[
+\bm{X}\bm{\beta} = \bm{X}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{X}^T\bm{y}=\bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{U\Sigma V^T}^T\bm{y}=\bm{U}\bm{U}T^\bm{y}.
+\]
+!et
+We will come back to this expression when we discuss Ridge regression. 
+
+
+!split
+===== Ridge and LASSO Regression =====
 
 
 
@@ -1361,7 +1410,6 @@ eager to fit the data, we have omitted several important elements in
 our regression analysis. In what follows we will
 o look at statistical properties, including a discussion of mean values, variance and the so-called bias-variance tradeoff
 o introduce resampling techniques like cross-validation, bootstrapping and jackknife
-o discuss Ridge and Lasso regression
 o and more.
 
 
