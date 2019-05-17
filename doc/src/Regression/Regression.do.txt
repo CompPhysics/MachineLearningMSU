@@ -1209,87 +1209,6 @@ This is equivalent to saying that the matrix $\bm{X}$ has at least an eigenvalue
 
 
 !split
-===== Basic math of the SVD =====
-
-
-From standard linear algebra we know that a square matrix $\bm{A}$ can be diagonalized if and only it is 
-a so-called "normal matrix":"https://en.wikipedia.org/wiki/Normal_matrix", that is if $\bm{A}\in {\mathbb{R}}^{n\times n}$
-we have $\bm{A}\bm{A}^T=\bm{A}^T\bm{A}$ or if $\bm{A}\in {\mathbb{C}}^{n\times n}$ we have $\bm{A}\bm{A}^{\dagger}=\bm{A}^{\dagger}\bm{A}$.
-The matrix has then a set of eigenpairs 
-
-!bt
-\[
-(\lambda_1,\bm{u}_1),\dots, (\lambda_n,\bm{u}_n),
-!et
-and the eigenvalues are given by the diagonal matrix
-!bt
-\[
-\bm{\Sigma}=\mathrm{Diag}(\lambda_1, \dots,\lambda_n).
-\]
-!et
-The matrix $\bm{A}$ can be written in terms of an orthogonal/unitary transformation $\bm{U}$
-!bt
-\[
-\bm{A} = \bm{U}\bm{\Sigma}\bm{U}^T,
-\]
-!et
-with $\bm{U}\bm{U}^T=bm{1}$ or $\bm{U}\bm{U}^{\dagger}=bm{1}$.
-
-Not all square matrices are diagonalizable. A matrix like the one discussed above
-!bt
-\[
-\bm{A} = \begin{bmatrix} 
-1&  -1 \\
-1& -1\\
-\end{bmatrix} 
-\]
-!et
-is not diagonalizable, it is a so-called "defective matrix":"https://en.wikipedia.org/wiki/Defective_matrix". It is easy to see that the condition
-$\bm{A}\bm{A}^T=\bm{A}^T\bm{A}$ is not fulfilled. 
-
-
-!split
-===== The SVD, a Fantastic Algorithm =====
-However, and this is the strength of the SVD algorithm, any general matrix $\bm{A}$ can be decomposed in terms of a diagonal matrix and two orthogonal/unitary matrices.
-The "Singular Value Decompostion (SVD) theorem":"https://en.wikipedia.org/wiki/Singular_value_decomposition" states that 
-a general
-$m\times n$ matrix $\bm{A}$ can be written in terms of a diagonal
-matrix $\bm{\Sigma}$ of dimensionality $n\times n$ and two orthognal
-matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
-$m \times m$ and the last dimensionality $n\times n$. 
-We have then 
-!bt
-\[ 
-\bm{A} = \bm{U}\bm{\Sigma}\bm{V}^T 
-\] 
-!et 
-
-As an example, the above defective matrix can be decomposed as
-!bt
-\[
-\bm{A} = \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  1 \\ 1& -1\\ \end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 0\\ \end{bmatrix}    \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  -1 \\ 1& 1\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T, 
-\]
-!et
-with eigenvalues $\sigma_1=2$ and $\sigma_2=0$. 
-The SVD exits always! 
-
-
-!split
-===== Another Example =====
-
-Consider the following matrix which can be SVD decomposed as
-!bt
-\[
-\bm{A} = \frac{1}{15}\begin{bmatrix} 14 & 2\\ 4 & 22\\ 16 & 13]\end{matrix}=\frac{1}{3}\begin{bmatrix}  1&  2 & 2 \\ 2& -1 & 1\\ 2 & 1& -2\end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 1\\ 0 & 0\end{bmatrix}    \frac{1}{5}\begin{bmatrix}  3&  4 \\ 4& -3\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T. 
-\]
-!et
-This is a $3\times 2$ matrix which is decomposed in terms of a $3\times $ matrix $\bm{U}$, a $2\times 2$ matrix $
-It is easy to see that $\bm{U}$ and $\bm{V}$ are orthogonal (how?). And SVD decomposition gives eigenvalues $\sigma_i \le \sigma_{i+1)$ for all $i$ and 
-
-
-
-
-!split
 ===== Fixing the singularity =====
 
 If our design matrix $\bm{X}$ which enters the linear regression problem
@@ -1304,13 +1223,133 @@ The estimators are only well-defined if $(\bm{X}^{T}\bm{X})^{-1}$ exits.
 This is more likely to happen when the matrix $\bm{X}$ is high-dimensional. In this case it is likely to encounter a situation where 
 the regression parameters $\beta_i$ cannot be estimated.
 
-The *ad hoc* approach which was introduced in the 70s was simply to add a diagonal component to the matrix to invert, that is we change
+A cheap  *ad hoc* approach is  simply to add a small diagonal component to the matrix to invert, that is we change
 !bt
 \[
 \bm{X}^{T} \bm{X} \rightarrow \bm{X}^{T} \bm{X}+\lambda \bm{I},
 \]
 !et 
-where $\bm{I}$ is the identity matrix.
+where $\bm{I}$ is the identity matrix.  When we discuss _Ridge_ regression this actually what we end up evaluating. The parameter $\lambda$ is called a hyperparameter. More about this later. 
+
+
+
+!split
+===== Basic math of the SVD =====
+
+
+From standard linear algebra we know that a square matrix $\bm{X}$ can be diagonalized if and only it is 
+a so-called "normal matrix":"https://en.wikipedia.org/wiki/Normal_matrix", that is if $\bm{X}\in {\mathbb{R}}^{n\times n}$
+we have $\bm{X}\bm{X}^T=\bm{X}^T\bm{X}$ or if $\bm{X}\in {\mathbb{C}}^{n\times n}$ we have $\bm{X}\bm{X}^{\dagger}=\bm{X}^{\dagger}\bm{X}$.
+The matrix has then a set of eigenpairs 
+
+!bt
+\[
+(\lambda_1,\bm{u}_1),\dots, (\lambda_n,\bm{u}_n),
+!et
+and the eigenvalues are given by the diagonal matrix
+!bt
+\[
+\bm{\Sigma}=\mathrm{Diag}(\lambda_1, \dots,\lambda_n).
+\]
+!et
+The matrix $\bm{X}$ can be written in terms of an orthogonal/unitary transformation $\bm{U}$
+!bt
+\[
+\bm{X} = \bm{U}\bm{\Sigma}\bm{V}^T,
+\]
+!et
+with $\bm{U}\bm{U}^T=\bm{I}$ or $\bm{U}\bm{U}^{\dagger}=\bm{I}$.
+
+Not all square matrices are diagonalizable. A matrix like the one discussed above
+!bt
+\[
+\bm{X} = \begin{bmatrix} 
+1&  -1 \\
+1& -1\\
+\end{bmatrix} 
+\]
+!et
+is not diagonalizable, it is a so-called "defective matrix":"https://en.wikipedia.org/wiki/Defective_matrix". It is easy to see that the condition
+$\bm{X}\bm{X}^T=\bm{X}^T\bm{X}$ is not fulfilled. 
+
+
+!split
+===== The SVD, a Fantastic Algorithm =====
+However, and this is the strength of the SVD algorithm, any general matrix $\bm{X}$ can be decomposed in terms of a diagonal matrix and two orthogonal/unitary matrices.
+The "Singular Value Decompostion (SVD) theorem":"https://en.wikipedia.org/wiki/Singular_value_decomposition" states that 
+a general
+$m\times n$ matrix $\bm{X}$ can be written in terms of a diagonal
+matrix $\bm{\Sigma}$ of dimensionality $n\times n$ and two orthognal
+matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
+$m \times m$ and the last dimensionality $n\times n$. 
+We have then 
+!bt
+\[ 
+\bm{X} = \bm{U}\bm{\Sigma}\bm{V}^T 
+\] 
+!et 
+
+As an example, the above defective matrix can be decomposed as
+!bt
+\[
+\bm{X} = \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  1 \\ 1& -1\\ \end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 0\\ \end{bmatrix}    \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  -1 \\ 1& 1\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T, 
+\]
+!et
+with eigenvalues $\sigma_1=2$ and $\sigma_2=0$. 
+The SVD exits always! 
+
+
+!split
+===== Another Example =====
+
+Consider the following matrix which can be SVD decomposed as
+!bt
+\[
+\bm{X} = \frac{1}{15}\begin{bmatrix} 14 & 2\\ 4 & 22\\ 16 & 13]\end{matrix}=\frac{1}{3}\begin{bmatrix}  1&  2 & 2 \\ 2& -1 & 1\\ 2 & 1& -2\end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 1\\ 0 & 0\end{bmatrix}    \frac{1}{5}\begin{bmatrix}  3&  4 \\ 4& -3\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T. 
+\]
+!et
+
+This is a $3\times 2$ matrix which is decomposed in terms of a
+$3\times $ matrix $\bm{U}$, a $2\times 2$ matrix $ It is easy to see
+that $\bm{U}$ and $\bm{V}$ are orthogonal (how?). And the SVD
+decomposition (singular values) gives eigenvalues $\sigma_i \le
+\sigma_{i+1)$ for all $i$ and for dimensions larger than $i=2$, the
+eigenvalues (singular values) are zero.
+
+If the general case, where our design matrix $\bm{X}$ has dimension
+$n\times p$, the matrix is thus decomposed into an $n\times n$
+orthogonal matrix $\bm{U}$, a $p\times p$ orthogonal matrix $\bm{V}$
+and a diagonal matrix $\bm{\Sigma}$ with $r=\mathrm{min}(n,p)$
+singular values $\sigma_i\lg 0$ on the main diagonal and zeros filling
+the rest of the matrix.  There are at most $p$ singular values
+assuming that $n > p$. In our regression examples for the nuclear
+masses and the equation of state this is indeed the case, while for
+the Ising model we have $p > n$. These are often cases that lead to
+near singular or singular matrices.
+
+The columns of $\bm{U}$ are called the left singular vectors while the columns of $\bm{V}$ are the right singular vectors.
+
+!split
+===== Economy-size SVD =====
+
+If we assume that $n > p$, then our  matrix $\bm{U}$ has dimension $n \times n$. The last $n-p$ columns of $\bm{U}$ become however irrelevant in our calculations since they are multiplied with the zeros in $\bm{\Sigma}$. 
+
+The economy-size decomposition removes extra rows or columns of zeros
+from the diagonal matrix of singular values, $\bm{\Sigma}$, along with the columns
+in either $\bm{U}$ or $\bm{V}$ that multiply those zeros in the expression. 
+Removing these zeros and columns can improve execution time
+and reduce storage requirements without compromising the accuracy of
+the decomposition.
+
+If $n > p$, we keep only the first $p$ columns of $\bm{U}$ and $\bm{\Sigma}$ has dimension $p\times p$. 
+svd(A,'econ') produces an economy-size decomposition of m-by-n matrix A:
+
+m > n — Only the first n columns of U are computed, and S is n-by-n.
+
+m = n — svd(A,'econ') is equivalent to svd(A).
+
+m < n — Only the first m columns of V are computed, and S is m-by-m.
+
 
 
 
