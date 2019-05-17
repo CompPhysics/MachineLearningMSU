@@ -1056,9 +1056,9 @@ We then find the extremal point of $C$ by taking the derivative with respect to 
 This yields the expression for $\bm{\beta}$ to be
 
 !bt
-\begin{align}
+\[
     \bm{\beta} = \frac{\bm{X}^T \bm{y}}{\bm{X}^T \bm{X}},
-\end{align}
+\]
 !et
 
 which immediately imposes some requirements on $\bm{X}$ as there must exist
@@ -1077,8 +1077,6 @@ X_test_own = np.concatenate(
 )
 !ec
 
-
-
 !bc pycod
 def ols_inv(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     return scl.inv(x.T @ x) @ (x.T @ y)
@@ -1095,15 +1093,17 @@ value decomposition_. Using the definition of the Moore-Penrose
 pseudoinverse we can write the equation for $\bm{\beta}$ as
 
 !bt
-\begin{align}
+\[
     \bm{\beta} = \bm{X}^{+}\bm{y},
-\end{align}
+\]
 !et
+
 where the pseudoinverse of $\bm{X}$ is given by
+
 !bt
-\begin{align}
-    \bm{X}^{+} = \frac{{\bm{X}^T}{\bm{X}^T \bm{X}}.
-\end{align}
+\[
+    \bm{X}^{+} = \frac{{\bm{X}^T}{\bm{X}^T\bm{X}}.
+\]
 !et
 
 Using singular value decomposition we can decompose the matrix  $\bm{X} = \bm{U}\bm{\Sigma} \bm{V}^T$,
@@ -1166,8 +1166,33 @@ In this case our matrix inversion was actually possible. The obvious question no
 ===== Basic math of the SVD =====
 !bblock
 
+From standard linear algebra we know that a square matrix $\bm{A}$ can be diagonalized if and only it is 
+a so-called "normal matrix":"https://en.wikipedia.org/wiki/Normal_matrix", that is if $\bm{A}\in {\mathbb{R}}^{n\times n}$
+we have $\bm{A}\bm{A}^T=\bm{A}^T\bm{A}$ or if $\bm{A}\in {\mathbb{C}}^{n\times n}$ we have $\bm{A}\bm{A}^{\dagger}=\bm{A}^{\dagger}\bm{A}$.
+The matrix has then a set of eigenpairs 
+
+!bt
+\[
+(\lambda_1,\bm{u}_1),\dots, (\lambda_n,\bm{u}_n),
+!et
+and the eigenvalues are given by the diagonal matrix
+!bt
+\[
+\bm{\Sigma}=\mathrm{Diag}(\lambda_1, \dots,\lambda_n).
+\]
+!et
+The matrix $\bm{A}$ can be written in terms of an orthogonal/unitary transformation $\bm{U}$
+!bt
+\[
+\bm{A} = \bm{U}\bm{\Sigma}\bm{U}^T,
+\]
+!et
+with $\bm{U}\bm{U}^T=bm{1}$ or $\bm{U}\bm{U}^{\dagger}=bm{1}$.
+
+
+
 The "Singular Value Decompostion (SVD) theorem":"https://en.wikipedia.org/wiki/Singular_value_decomposition" states that 
-A general
+a general
 $m\times n$ matrix $\bm{A}$ can be written in terms of a diagonal
 matrix $\bm{\Sigma}$ of dimensionality $n\times n$ and two orthognal
 matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
@@ -1965,10 +1990,10 @@ model complexity, cross-validation requires it (i.e. the penalty
 parameter) to yield a model with good prediction
 performance. Commonly, this performance is evaluated on novel
 data. Novel data need not be easy to come by and one has to make do
-with the data at hand. The setting of `original' and novel data is
+with the data at hand. The setting of *original* and novel data is
 then mimicked by sample splitting: the data set is divided into two
-(groups of samples). One of these two data sets, called the *training
-set*, plays the role of `original' data on which the model is
+(groups of samples). One of these two data sets, called the 
+*training set*, plays the role of `original' data on which the model is
 built. The second of these data sets, called the *test set*, plays the
 role of the `novel' data and is used to evaluate the prediction
 performance (often operationalized as the log-likelihood or the
@@ -2639,11 +2664,13 @@ plt.show()
 ===== LASSO regression =====
 
 In the _Least Absolute Shrinkage and Selection Operator_ (LASSO)-method we get a third cost function.
+
 !bt
 \begin{align}
     C(\bm{X}, \bm{\beta}; \lambda) = (\bm{X}\bm{\beta} - \bm{y})^T(\bm{X}\bm{\beta} - \bm{y}) + \lambda \sqrt{\bm{\beta}^T\bm{\beta}}.
 \end{align}
 !et
+
 Finding the extremal point of this cost function is not so straight-forward as in least squares and ridge. We will therefore rely solely on the function ``Lasso`` from _Scikit-Learn_.
 
 !bc pycod
@@ -2664,27 +2691,6 @@ It is quite striking how LASSO breaks the symmetry of the coupling
 constant as opposed to ridge and OLS. We get a sparse solution with
 $J_{j, j + 1} = -1$.
 
-
-!split
-===== Performance of the different models =====
-
-In order to judge which model performs best at varying values of $\lambda$ (for ridge and LASSO) we compute $R^2$ which is given by
-
-!bt
-\begin{align}
-    R^2 = 1 - \frac{(y - \bm{y})^2}{(y - \bar{y})^2},
-\end{align}
-!et
-where $y$ is a vector with the true values of the energy, $\bm{y}$ is the predicted values of $y$ from the models and $\bar{y}$ is the mean of $\bm{y}$.
-
-This is the same metric used by Scikit-learn for their regression models when scoring.
-!bc pycod
-y_hat = clf.predict(X_test)
-r_test = r_squared(y_test, y_hat)
-sk_r_test = clf.score(X_test, y_test)
-
-assert abs(r_test - sk_r_test) < 1e-2
-!ec
 
 
 !split
