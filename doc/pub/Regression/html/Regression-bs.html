@@ -769,15 +769,17 @@ $$
 \boldsymbol{\tilde{y}}= \boldsymbol{X}\boldsymbol{\beta},
 $$
 
-and in order to find the optimal parameters \( \beta_i \) instead of solving the above linear algebra problem, we define a function which gives a measure of the spread between the values \( y_i \) (which represent hopefully the exact values) and the parametrized values \( \tilde{y}_i \), namely
+and in order to find the optimal parameters \( \beta_i \) instead of solving the above linear algebra problem, we define a function which gives a measure of the spread between the values \( y_i \) (which represent hopefully the exact values) and the parameterized values \( \tilde{y}_i \), namely
 $$
-Q(\boldsymbol{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right),
+C(\boldsymbol{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right),
 $$
 
 or using the matrix \( \boldsymbol{X} \) and in a more compact matrix-vector notation as
 $$
-Q(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}^T\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}^T\boldsymbol{\beta}\right).
+C(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}^T\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}^T\boldsymbol{\beta}\right).
 $$
+
+This function is one possible way to define the so-called function.
 
 <p>
 <b>Note</b>: It is normal to have a term \( 1/n \) in front of this equation
@@ -787,7 +789,7 @@ of the so-called bias-variance trade-off.  It is also common to define
 the function \( Q \) as
 
 $$
-Q(\boldsymbol{\beta})=\frac{1}{2n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2,
+C(\boldsymbol{\beta})=\frac{1}{2n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2,
 $$
 
 since when taking the first derivative with respect to the unknown parameters \( \beta \), the factor of \( 2 \) cancels out.
@@ -806,7 +808,7 @@ since when taking the first derivative with respect to the unknown parameters \(
 <p>
 The function 
 $$
-Q(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right),
+C(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right),
 $$
 
 can be linked to the variance of the quantity \( y_i \) if we interpret the latter as the mean value. 
@@ -826,19 +828,19 @@ the standard deviation discussed earlier. In the discussion here we
 will treat \( y_i \) as our exact value for the response variable.
 
 <p>
-In order to find the parameters \( \beta_i \) we will then minimize the spread of \( Q(\boldsymbol{\beta}) \) by requiring
+In order to find the parameters \( \beta_i \) we will then minimize the spread of \( C(\boldsymbol{\beta}) \) by requiring
 $$
-\frac{\partial Q(\boldsymbol{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
+\frac{\partial C(\boldsymbol{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
 $$
 
 which results in
 $$
-\frac{\partial Q(\boldsymbol{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}x_{ij}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)\right]=0, 
+\frac{\partial C(\boldsymbol{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}x_{ij}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)\right]=0, 
 $$
 
 or in a matrix-vector form as
 $$
-\frac{\partial Q(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = \boldsymbol{X}^T\left( \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right).  
+\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = \boldsymbol{X}^T\left( \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right).  
 $$
 
 <p>
@@ -855,7 +857,7 @@ $$
 <p> <!-- subsequent paragraphs come in larger fonts, so start with a paragraph -->
 We can rewrite
 $$
-\frac{\partial Q(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = \boldsymbol{X}^T\left( \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right),  
+\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = \boldsymbol{X}^T\left( \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right),  
 $$
 
 as
@@ -1814,24 +1816,30 @@ is not diagonalizable, it is a so-called <a href="https://en.wikipedia.org/wiki/
 <!-- !split -->
 
 <h2 id="___sec34" class="anchor">The SVD, a Fantastic Algorithm </h2>
-However, and this is the strength of the SVD algorithm, any general matrix \( \boldsymbol{X} \) can be decomposed in terms of a diagonal matrix and two orthogonal/unitary matrices.
-The <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition" target="_self">Singular Value Decompostion (SVD) theorem</a> states that 
-a general
-\( m\times n \) matrix \( \boldsymbol{X} \) can be written in terms of a diagonal
-matrix \( \boldsymbol{\Sigma} \) of dimensionality \( n\times n \) and two orthognal
-matrices \( \boldsymbol{U} \) and \( \boldsymbol{V} \), where the first has dimensionality
-\( m \times m \) and the last dimensionality \( n\times n \). 
-We have then 
+
+<p>
+However, and this is the strength of the SVD algorithm, any general
+matrix \( \boldsymbol{X} \) can be decomposed in terms of a diagonal matrix and
+two orthogonal/unitary matrices.  The <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition" target="_self">Singular Value Decompostion
+(SVD) theorem</a>
+states that a general \( m\times n \) matrix \( \boldsymbol{X} \) can be written in
+terms of a diagonal matrix \( \boldsymbol{\Sigma} \) of dimensionality \( n\times n \)
+and two orthognal matrices \( \boldsymbol{U} \) and \( \boldsymbol{V} \), where the first has
+dimensionality \( m \times m \) and the last dimensionality \( n\times n \).
+We have then
+
 $$ 
 \boldsymbol{X} = \boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^T 
 $$
 
 <p>
 As an example, the above defective matrix can be decomposed as
+
 $$
 \boldsymbol{X} = \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  1 \\ 1& -1\\ \end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 0\\ \end{bmatrix}    \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  -1 \\ 1& 1\\ \end{bmatrix}=\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^T, 
 $$
 
+<p>
 with eigenvalues \( \sigma_1=2 \) and \( \sigma_2=0 \). 
 The SVD exits always!
 
@@ -1843,7 +1851,7 @@ The SVD exits always!
 <p>
 Consider the following matrix which can be SVD decomposed as
 $$
-\boldsymbol{X} = \frac{1}{15}\begin{bmatrix} 14 & 2\\ 4 & 22\\ 16 & 13]\end{matrix}=\frac{1}{3}\begin{bmatrix}  1&  2 & 2 \\ 2& -1 & 1\\ 2 & 1& -2\end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 1\\ 0 & 0\end{bmatrix}    \frac{1}{5}\begin{bmatrix}  3&  4 \\ 4& -3\\ \end{bmatrix}=\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^T. 
+\boldsymbol{X} = \frac{1}{15}\begin{bmatrix} 14 & 2\\ 4 & 22\\ 16 & 13\end{matrix}=\frac{1}{3}\begin{bmatrix}  1&  2 & 2 \\ 2& -1 & 1\\ 2 & 1& -2\end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 1\\ 0 & 0\end{bmatrix}    \frac{1}{5}\begin{bmatrix}  3&  4 \\ 4& -3\\ \end{bmatrix}=\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^T. 
 $$
 
 <p>
@@ -1936,7 +1944,7 @@ the eigenvectors of \( (\boldsymbol{X}\boldsymbol{X})^T \) are the columns of th
 <p>
 Going back to our OLS equation we have
 $$
-\boldsymbol{X}\boldsymbol{\beta} = \boldsymbol{X}\left(\boldsymbol{V}\boldsymbol{D}\boldsymbol{V}^T \right)^{-1}\boldsymbol{X}^T\boldsymbol{y}=\boldsymbol{U\Sigma V^T}\left(\boldsymbol{V}\boldsymbol{D}\boldsymbol{V}^T \right)^{-1}\boldsymbol{U\Sigma V^T}^T\boldsymbol{y}=\boldsymbol{U}\boldsymbol{U}T^\boldsymbol{y}.
+\boldsymbol{X}\boldsymbol{\beta} = \boldsymbol{X}\left(\boldsymbol{V}\boldsymbol{D}\boldsymbol{V}^T \right)^{-1}\boldsymbol{X}^T\boldsymbol{y}=\boldsymbol{U\Sigma V^T}\left(\boldsymbol{V}\boldsymbol{D}\boldsymbol{V}^T \right)^{-1}(\boldsymbol{U\Sigma V^T})^T\boldsymbol{y}=\boldsymbol{U}\boldsymbol{U}^T\boldsymbol{y}.
 $$
 
 We will come back to this expression when we discuss Ridge regression.
@@ -1945,6 +1953,31 @@ We will come back to this expression when we discuss Ridge regression.
 <!-- !split -->
 
 <h2 id="___sec38" class="anchor">Ridge and LASSO Regression </h2>
+
+<p>
+Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function, that is 
+$$
+C(\boldsymbol{X},\boldsymbol{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\vert\vert_2^2,
+$$
+
+where we have used the definition of  a norm-2 vector, that is
+
+$$
+\vert\vert \boldsymbol{x}\vert\vert_2 = \sqrt{\sum_i x_i^2}. 
+$$
+
+By minimizing the above equation with respect to the parameters \( \boldsymbol{\beta} \) we could then obtain an analytical expression for the parameters. 
+We can add a regularization parameter \( \lambda \) by defining a new cost function as
+$$
+C(\boldsymbol{X},\boldsymbol{\beta})=\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\beta}\vert\vert_2^2
+$$
+
+which leads to the Ridge regression minimization problem or by defining 
+$$
+C(\boldsymbol{X},\boldsymbol{\beta})=\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\beta}\vert\vert_1,
+$$
+
+which leads to Lasso regression.
 
 <p>
 <!-- !split -->

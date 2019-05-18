@@ -331,18 +331,20 @@ With the above we use the design matrix to define the approximation $\bm{\tilde{
 \bm{\tilde{y}}= \bm{X}\bm{\beta},
 \]
 !et
-and in order to find the optimal parameters $\beta_i$ instead of solving the above linear algebra problem, we define a function which gives a measure of the spread between the values $y_i$ (which represent hopefully the exact values) and the parametrized values $\tilde{y}_i$, namely
+and in order to find the optimal parameters $\beta_i$ instead of solving the above linear algebra problem, we define a function which gives a measure of the spread between the values $y_i$ (which represent hopefully the exact values) and the parameterized values $\tilde{y}_i$, namely
 !bt
 \[
-Q(\bm{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\bm{y}-\bm{\tilde{y}}\right)^T\left(\bm{y}-\bm{\tilde{y}}\right),
+C(\bm{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\bm{y}-\bm{\tilde{y}}\right)^T\left(\bm{y}-\bm{\tilde{y}}\right),
 \]
 !et
 or using the matrix $\bm{X}$ and in a more compact matrix-vector notation as
 !bt
 \[
-Q(\bm{\beta})=\left(\bm{y}-\bm{X}^T\bm{\beta}\right)^T\left(\bm{y}-\bm{X}^T\bm{\beta}\right).
+C(\bm{\beta})=\left(\bm{y}-\bm{X}^T\bm{\beta}\right)^T\left(\bm{y}-\bm{X}^T\bm{\beta}\right).
 \]
 !et
+This function is one possible way to define the so-called function.
+
 
 _Note_: It is normal to have a term $1/n$ in front of this equation
 since it can then be linked to statistical properties like the
@@ -352,7 +354,7 @@ the function $Q$ as
 
 !bt
 \[
-Q(\bm{\beta})=\frac{1}{2n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2,
+C(\bm{\beta})=\frac{1}{2n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2,
 \]
 !et
 since when taking the first derivative with respect to the unknown parameters $\beta$, the factor of $2$ cancels out. 
@@ -366,7 +368,7 @@ since when taking the first derivative with respect to the unknown parameters $\
 The function 
 !bt
 \[
-Q(\bm{\beta})=\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right),
+C(\bm{\beta})=\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right),
 \]
 !et
 can be linked to the variance of the quantity $y_i$ if we interpret the latter as the mean value. 
@@ -386,22 +388,22 @@ error estimate, often limited to a statistical error estimate given by
 the standard deviation discussed earlier. In the discussion here we
 will treat $y_i$ as our exact value for the response variable.
 
-In order to find the parameters $\beta_i$ we will then minimize the spread of $Q(\bm{\beta})$ by requiring
+In order to find the parameters $\beta_i$ we will then minimize the spread of $C(\bm{\beta})$ by requiring
 !bt
 \[
-\frac{\partial Q(\bm{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
+\frac{\partial C(\bm{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
 \]
 !et
 which results in
 !bt
 \[
-\frac{\partial Q(\bm{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}x_{ij}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)\right]=0, 
+\frac{\partial C(\bm{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}x_{ij}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)\right]=0, 
 \]
 !et
 or in a matrix-vector form as
 !bt
 \[
-\frac{\partial Q(\bm{\beta})}{\partial \bm{\beta}} = 0 = \bm{X}^T\left( \bm{y}-\bm{X}\bm{\beta}\right).  
+\frac{\partial C(\bm{\beta})}{\partial \bm{\beta}} = 0 = \bm{X}^T\left( \bm{y}-\bm{X}\bm{\beta}\right).  
 \]
 !et
 
@@ -415,7 +417,7 @@ or in a matrix-vector form as
 We can rewrite
 !bt
 \[
-\frac{\partial Q(\bm{\beta})}{\partial \bm{\beta}} = 0 = \bm{X}^T\left( \bm{y}-\bm{X}\bm{\beta}\right),  
+\frac{\partial C(\bm{\beta})}{\partial \bm{\beta}} = 0 = \bm{X}^T\left( \bm{y}-\bm{X}\bm{\beta}\right),  
 \]
 !et
 as
@@ -1275,14 +1277,18 @@ $\bm{X}\bm{X}^T=\bm{X}^T\bm{X}$ is not fulfilled.
 
 !split
 ===== The SVD, a Fantastic Algorithm =====
-However, and this is the strength of the SVD algorithm, any general matrix $\bm{X}$ can be decomposed in terms of a diagonal matrix and two orthogonal/unitary matrices.
-The "Singular Value Decompostion (SVD) theorem":"https://en.wikipedia.org/wiki/Singular_value_decomposition" states that 
-a general
-$m\times n$ matrix $\bm{X}$ can be written in terms of a diagonal
-matrix $\bm{\Sigma}$ of dimensionality $n\times n$ and two orthognal
-matrices $\bm{U}$ and $\bm{V}$, where the first has dimensionality
-$m \times m$ and the last dimensionality $n\times n$. 
-We have then 
+
+
+However, and this is the strength of the SVD algorithm, any general
+matrix $\bm{X}$ can be decomposed in terms of a diagonal matrix and
+two orthogonal/unitary matrices.  The "Singular Value Decompostion
+(SVD) theorem":"https://en.wikipedia.org/wiki/Singular_value_decomposition"
+states that a general $m\times n$ matrix $\bm{X}$ can be written in
+terms of a diagonal matrix $\bm{\Sigma}$ of dimensionality $n\times n$
+and two orthognal matrices $\bm{U}$ and $\bm{V}$, where the first has
+dimensionality $m \times m$ and the last dimensionality $n\times n$.
+We have then
+
 !bt
 \[ 
 \bm{X} = \bm{U}\bm{\Sigma}\bm{V}^T 
@@ -1290,11 +1296,13 @@ We have then
 !et 
 
 As an example, the above defective matrix can be decomposed as
+
 !bt
 \[
 \bm{X} = \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  1 \\ 1& -1\\ \end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 0\\ \end{bmatrix}    \frac{1}{\sqrt{2}}\begin{bmatrix}  1&  -1 \\ 1& 1\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T, 
 \]
 !et
+
 with eigenvalues $\sigma_1=2$ and $\sigma_2=0$. 
 The SVD exits always! 
 
@@ -1305,7 +1313,7 @@ The SVD exits always!
 Consider the following matrix which can be SVD decomposed as
 !bt
 \[
-\bm{X} = \frac{1}{15}\begin{bmatrix} 14 & 2\\ 4 & 22\\ 16 & 13]\end{matrix}=\frac{1}{3}\begin{bmatrix}  1&  2 & 2 \\ 2& -1 & 1\\ 2 & 1& -2\end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 1\\ 0 & 0\end{bmatrix}    \frac{1}{5}\begin{bmatrix}  3&  4 \\ 4& -3\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T. 
+\bm{X} = \frac{1}{15}\begin{bmatrix} 14 & 2\\ 4 & 22\\ 16 & 13\end{matrix}=\frac{1}{3}\begin{bmatrix}  1&  2 & 2 \\ 2& -1 & 1\\ 2 & 1& -2\end{bmatrix} \begin{bmatrix}  2&  0 \\ 0& 1\\ 0 & 0\end{bmatrix}    \frac{1}{5}\begin{bmatrix}  3&  4 \\ 4& -3\\ \end{bmatrix}=\bm{U}\bm{\Sigma}\bm{V}^T. 
 \]
 !et
 
@@ -1391,7 +1399,7 @@ the eigenvectors of $(\bm{X}\bm{X})^T$ are the columns of the left singular matr
 Going back to our OLS equation we have
 !bt
 \[
-\bm{X}\bm{\beta} = \bm{X}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{X}^T\bm{y}=\bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{U\Sigma V^T}^T\bm{y}=\bm{U}\bm{U}T^\bm{y}.
+\bm{X}\bm{\beta} = \bm{X}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{X}^T\bm{y}=\bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}(\bm{U\Sigma V^T})^T\bm{y}=\bm{U}\bm{U}^T\bm{y}.
 \]
 !et
 We will come back to this expression when we discuss Ridge regression. 
@@ -1400,6 +1408,33 @@ We will come back to this expression when we discuss Ridge regression.
 !split
 ===== Ridge and LASSO Regression =====
 
+Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function, that is 
+!bt
+\[
+C(\bm{X},\bm{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2,
+\]
+!et
+where we have used the definition of  a norm-2 vector, that is
+
+!bt
+\[
+\vert\vert \bm{x}\vert\vert_2 = \sqrt{\sum_i x_i^2}. 
+\]
+!et
+By minimizing the above equation with respect to the parameters $\bm{\beta}$ we could then obtain an analytical expression for the parameters. 
+We can add a regularization parameter $\lambda$ by defining a new cost function as
+!bt
+\[
+C(\bm{X},\bm{\beta})=\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_2^2
+\]
+!et
+which leads to the Ridge regression minimization problem or by defining 
+!bt
+\[
+C(\bm{X},\bm{\beta})=\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_1,
+\]
+!et
+which leads to Lasso regression.
 
 
 !split
