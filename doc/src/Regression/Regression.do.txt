@@ -2234,7 +2234,8 @@ measurements is very large.
 !split 
 ===== Linking the regression analysis with a statistical interpretation =====
 
-Finally, we are going to discuss several statistical properties. The
+Finally, we are going to discuss several statistical properties which can be obtained in terms of analytical expressions. 
+The
 advantage of doing linear regression is that we actually end up with
 analytical expressions for several statistical quantities.  
 Standard least squares and Ridge regression  allow us to
@@ -2253,42 +2254,69 @@ independent, i.e.:
 \end{align*} 
 !et
 The randomness of $\varepsilon_i$ implies that
-$\mathbf{Y}_i$ is also a random variable. In particular,
-$\mathbf{Y}_i$ is normally distributed, because $\varepsilon_i \sim
-\mathcal{N}(0, \sigma^2)$ and $\mathbf{X}_{i,\ast} \, \beta$ is a
+$\mathbf{y}_i$ is also a random variable. In particular,
+$\mathbf{y}_i$ is normally distributed, because $\varepsilon_i \sim
+\mathcal{N}(0, \sigma^2)$ and $\mathbf{X}_{i,\ast} \, \bm{\beta}$ is a
 non-random scalar. To specify the parameters of the distribution of
-$\mathbf{Y}_i$ we need to calculate its first two moments. 
+$\mathbf{y}_i$ we need to calculate its first two moments. 
+
+Recall that $\bm{X}$ is a matrix of dimensionality $n\times p$. The
+notation above $\mathbf{X}_{i,\ast}$ means that we are looking at the
+row number $i$ and perform a sum over all values $p$.
+
+
+!split
+===== Assumptions made =====
+
+The assumption we have made here can be summarized as (and this is going to useful when we discuss the bias-variance trade off)
+that there exists a function $f(\bm{x})$ and  a normal distributed error $\bm{\varepsilon}\sim \mathcal{N}(0, \sigma^2)$
+which describes our data
+!bt
+\[
+\bm{y} = f(\bm{x})+\bm{\varepsilon}
+\]
+!et
+
+We approximate this function with our model from the solution of the linear regression equations, that is our
+function $f$ is approximated by $\bm{\tilde{y}}$ where we want to minimize $(\bm{y}-\bm{\tilde{y}})^2$, our MSE, with
+!bt
+\[
+\bm{\tilde{y}} = \bm{X}\bm{\beta}.
+\]
+!et
 
 !split
 ===== Expectation value and variance =====
 
-Its expectation equals: 
+We can calculate the expectation value of $\bm{y}$ for a given element $i$ 
 !bt
 \begin{align*} 
-\mathbb{E}(Y_i) & =
-\mathbb{E}(\mathbf{X}_{i, \ast} \, \beta) + \mathbb{E}(\varepsilon_i)
+\mathbb{E}(y_i) & =
+\mathbb{E}(\mathbf{X}_{i, \ast} \, \bm{\beta}) + \mathbb{E}(\varepsilon_i)
 \, \, \, = \, \, \, \mathbf{X}_{i, \ast} \, \beta, 
 \end{align*} 
 !et
 while
 its variance is 
 !bt
-\begin{align*} \mbox{Var}(Y_i) & = \mathbb{E} \{ [Y_i
-- \mathbb{E}(Y_i)]^2 \} \, \, \, = \, \, \, \mathbb{E} ( Y_i^2 ) -
-[\mathbb{E}(Y_i)]^2  \\  & = \mathbb{E} [ ( \mathbf{X}_{i, \ast} \,
-\beta + \varepsilon_i )^2] - ( \mathbf{X}_{i, \ast} \, \beta)^2 \\ &
-= \mathbb{E} [ ( \mathbf{X}_{i, \ast} \, \beta)^2 + 2 \varepsilon_i
-\mathbf{X}_{i, \ast} \, \beta + \varepsilon_i^2 ] - ( \mathbf{X}_{i,
-\ast} \, \beta)^2 \\  & = ( \mathbf{X}_{i, \ast} \, \beta)^2 + 2
-\mathbb{E}(\varepsilon_i) \mathbf{X}_{i, \ast} \, \beta +
-\mathbb{E}(\varepsilon_i^2 ) - ( \mathbf{X}_{i, \ast} \, \beta)^2 
+\begin{align*} \mbox{Var}(y_i) & = \mathbb{E} \{ [y_i
+- \mathbb{E}(y_i)]^2 \} \, \, \, = \, \, \, \mathbb{E} ( y_i^2 ) -
+[\mathbb{E}(y_i)]^2  \\  & = \mathbb{E} [ ( \mathbf{X}_{i, \ast} \,
+\beta + \varepsilon_i )^2] - ( \mathbf{X}_{i, \ast} \, \bm{\beta})^2 \\ &
+= \mathbb{E} [ ( \mathbf{X}_{i, \ast} \, \bm{\beta})^2 + 2 \varepsilon_i
+\mathbf{X}_{i, \ast} \, \bm{\beta} + \varepsilon_i^2 ] - ( \mathbf{X}_{i,
+\ast} \, \beta)^2 \\  & = ( \mathbf{X}_{i, \ast} \, \bm{\beta})^2 + 2
+\mathbb{E}(\varepsilon_i) \mathbf{X}_{i, \ast} \, \bm{\beta} +
+\mathbb{E}(\varepsilon_i^2 ) - ( \mathbf{X}_{i, \ast} \, \bm{\beta})^2 
 \\ & = \mathbb{E}(\varepsilon_i^2 ) \, \, \, = \, \, \,
 \mbox{Var}(\varepsilon_i) \, \, \, = \, \, \, \sigma^2.  
 \end{align*}
 !et
-Hence, $Y_i \sim \mathcal{N}( \mathbf{X}_{i, \ast} \, \beta, \sigma^2)$. 
+Hence, $y_i \sim \mathcal{N}( \mathbf{X}_{i, \ast} \, \bm{\beta}, \sigma^2)$, that is $\bm{y}$ follows a normal distribution with 
+mean value $\bm{X}\bm{\beta}$ and variance $\sigma^2$ (not be confused with the singular values of the SVD). 
 
-
+!split
+===== Expectation value and variance for $\bm{\beta}$ =====
 
 
 
