@@ -2506,7 +2506,7 @@ need for bootstrapping.
 ===== Resampling methods: Jackknife =====
 
 The Jackknife works by making many replicas of the estimator $\widehat{\theta}$. 
-The jackknife is a resampling method, we explained that this happens by scrambling the data in some way. When using the jackknife, this is done by systematically leaving out one observation from the vector of observed values $\bm{x} = (x_1,x_2,\cdots,X_n)$. 
+The jackknife is a resampling method where we systematically leave out one observation from the vector of observed values $\bm{x} = (x_1,x_2,\cdots,X_n)$. 
 Let $\bm{x}_i$ denote the vector
 !bt
 \[
@@ -2518,19 +2518,6 @@ which equals the vector $\bm{x}$ with the exception that observation
 number $i$ is left out. Using this notation, define
 $\widehat{\theta}_i$ to be the estimator
 $\widehat{\theta}$ computed using $\vec{X}_i$. 
-
-!split
-===== Resampling methods: Jackknife estimator =====
-
-To get an estimate for the bias and
-standard error of $\widehat{\theta}$, use the following
-estimators for each component of $\widehat{\theta}$
-
-!bt
-\[
-\widehat{\mathrm{Bias}}(\widehat \theta,\theta) = (n-1)\left( - \widehat{\theta} + \frac{1}{n}\sum_{i=1}^{n} \widehat \theta_i \right) \qquad \text{and} \qquad \widehat{\sigma}^2_{\widehat{\theta} } = \frac{n-1}{n}\sum_{i=1}^{n}( \widehat{\theta}_i - \frac{1}{n}\sum_{j=1}^{n}\widehat \theta_j )^2.
-\]
-!et
 
 
 !split
@@ -2640,7 +2627,15 @@ o Define a vector $\bm{x}^*$ containing the values which were drawn from $\bm{x}
 o Using the vector $\bm{x}^*$ compute $\widehat{\theta}^*$ by evaluating $\widehat \theta$ under the observations $\bm{x}^*$. 
 o Repeat this process $k$ times. 
 
-When you are done, you can draw a histogram of the relative frequency of $\widehat \theta^*$. This is your estimate of the probability distribution $p(t)$. Using this probability distribution you can estimate any statistics thereof. In principle you never draw the histogram of the relative frequency of $\widehat{\theta}^*$. Instead you use the estimators corresponding to the statistic of interest. For example, if you are interested in estimating the variance of $\widehat \theta$, apply the etsimator $\widehat \sigma^2$ to the values $\widehat \theta ^*$.
+When you are done, you can draw a histogram of the relative frequency
+of $\widehat \theta^*$. This is your estimate of the probability
+distribution $p(t)$. Using this probability distribution you can
+estimate any statistics thereof. In principle you never draw the
+histogram of the relative frequency of $\widehat{\theta}^*$. Instead
+you use the estimators corresponding to the statistic of interest. For
+example, if you are interested in estimating the variance of $\widehat
+\theta$, apply the etsimator $\widehat \sigma^2$ to the values
+$\widehat \theta ^*$.
 
 
 !split
@@ -2657,30 +2652,29 @@ import matplotlib.pyplot as plt
 def stat(data):
     return mean(data)
 
-# Bootstrap algorithm                                                                                                                                                              
+# Bootstrap algorithm
 def bootstrap(data, statistic, R):
     t = zeros(R); n = len(data); inds = arange(n); t0 = time()
-
-    # non-parametric bootstrap                                                                                                                                                     
+    # non-parametric bootstrap         
     for i in range(R):
         t[i] = statistic(data[randint(0,n,n)])
 
-    # analysis                                                                                                                                                                     
+    # analysis    
     print("Runtime: %g sec" % (time()-t0)); print("Bootstrap Statistics :")
     print("original           bias      std. error")
-    print("%8g %8g %14g %15g" % (statistic(data), std(data),\
-                             mean(t), \
-                             std(t)))
+    print("%8g %8g %14g %15g" % (statistic(data), std(data),mean(t),std(t)))
     return t
 
 
 mu, sigma = 100, 15
 datapoints = 10000
 x = mu + sigma*random.randn(datapoints)
-# bootstrap returns the data sample                                                                                                          t = bootstrap(x, stat, datapoints)
-# the histogram of the bootstrapped  data                                                                                                    n, binsboot, patches = plt.hist(t, 50, normed=1, facecolor='red', alpha=0.75)
+# bootstrap returns the data sample                                    
+t = bootstrap(x, stat, datapoints)
+# the histogram of the bootstrapped  data                                                                                                    
+n, binsboot, patches = plt.hist(t, 50, normed=1, facecolor='red', alpha=0.75)
 
-# add a 'best fit' line                                                                                                                                                          
+# add a 'best fit' line  
 y = mlab.normpdf( binsboot, mean(t), std(t))
 lt = plt.plot(binsboot, y, 'r--', linewidth=1)
 plt.xlabel('Smarts')
@@ -2725,63 +2719,46 @@ y=f(\boldsymbol{x}) + \epsilon
 !et
 where $\epsilon$ is normally distributed with mean zero and standard deviation $\sigma_\epsilon$.
 
-!split
-===== Procedure to find a predictor =====
 
-We have a statistical procedure (e.g. least-squares regression) for
-forming a predictor $\bm{g}_{\mathcal{L}}(\boldsymbol{x})$ that gives the
-prediction of our model for a new data point $\boldsymbol{x}$.  This estimator
-is chosen by minimizing a cost function which we take to be the
-squared error
+Suppose that we have a training set consisting of a set of points {\displaystyle x_{1},\dots ,x_{n}}￼ and real values {\displaystyle y_{i}}￼ associated with each point {\displaystyle x_{i}}￼. We assume that there is a function with noise {\displaystyle y=f(x)+\varepsilon }￼, where the noise, {\displaystyle \varepsilon }￼, has zero mean and variance {\displaystyle \sigma ^{2}}￼.
 
-!bt
-\[
- \mathcal{C}( \boldsymbol{X}, \bm{g}(\boldsymbol{x})) =  \sum_i (y_i - \bm{g}_\mathcal{L}(\boldsymbol{x}_i))^2. 
-\]
-!et
+We want to find a function {\displaystyle {\hat {f}}(x)}￼, that approximates the true function {\displaystyle f(x)}￼ as well as possible, by means of some learning algorithm. We make "as well as possible" precise by measuring the mean squared error between {\displaystyle y}￼ and {\displaystyle {\hat {f}}(x)}￼: we want {\displaystyle (y-{\hat {f}}(x))^{2}}￼ to be minimal, both for {\displaystyle x_{1},\dots ,x_{n}}￼ and for points outside of our sample. Of course, we cannot hope to do so perfectly, since the {\displaystyle y_{i}}￼ contain noise {\displaystyle \varepsilon }￼; this means we must be prepared to accept an irreducible error in any function we come up with.
 
-!split
-=====  What we want =====
+Finding an {\displaystyle {\hat {f}}}￼ that generalizes to points outside of the training set can be done with any of the countless algorithms used for supervised learning. It turns out that whichever function {\displaystyle {\hat {f}}}￼ we select, we can decompose its expected error on an unseen sample {\displaystyle x}￼ as follows:[4]:34[5]:223
 
-We are interested in the generalization error on all data drawn from
-the true model, not just the error on the particular training dataset
-$\mathcal{L}$ that we have in hand. This is just the expectation of
-the cost function over many different data sets
-$\{\mathcal{L}_j\}$. Denote this expectation value by
-$E_{\mathcal{L}}$. In other words, we can view $\bm{g}_{\mathcal{L}}$
-as a stochastic functional that depends on the dataset $\mathcal{L}$
-and we can think of $E_{\mathcal{L}}$ as the expected value of the
-functional if we drew an infinite number of datasets $\{\mathcal{L}_1,
-\mathcal{L}_2, \ldots \}$.
+{\displaystyle {\begin{aligned}\operatorname {E} {\Big [}{\big (}y-{\hat {f}}(x){\big )}^{2}{\Big ]}&={\Big (}\operatorname {Bias} {\big [}{\hat {f}}(x){\big ]}{\Big )}^{2}+\operatorname {Var} {\big [}{\hat {f}}(x){\big ]}+\sigma ^{2}\\\end{aligned}}}￼
+where
 
+{\displaystyle {\begin{aligned}\operatorname {Bias} {\big [}{\hat {f}}(x){\big ]}=\operatorname {E} {\big [}{\hat {f}}(x){\big ]}-f(x)\end{aligned}}}￼
+and
 
+{\displaystyle {\begin{aligned}\operatorname {Var} {\big [}{\hat {f}}(x){\big ]}=\operatorname {E} [{\hat {f}}(x)^{2}]-\operatorname {E} [{\hat {f}}(x)]^{2}\end{aligned}}}￼
+The expectation ranges over different choices of the training set {\displaystyle x_{1},\dots ,x_{n},y_{1},\dots ,y_{n}}￼, all sampled from the same joint distribution {\displaystyle P(x,y)}￼. The three terms represent:
 
-!split
-===== The bias =====
+the square of the bias of the learning method, which can be thought of as the error caused by the simplifying assumptions built into the method. E.g., when approximating a non-linear function {\displaystyle f(x)}￼ using a learning method for linear models, there will be error in the estimates {\displaystyle {\hat {f}}(x)}￼ due to this assumption;
+the variance of the learning method, or, intuitively, how much the learning method {\displaystyle {\hat {f}}(x)}￼ will move around its mean;
+the irreducible error {\displaystyle \sigma ^{2}}￼. Since all three terms are non-negative, this forms a lower bound on the expected error on unseen samples.[4]:34
+The more complex the model {\displaystyle {\hat {f}}(x)}￼ is, the more data points it will capture, and the lower the bias will be. However, complexity will make the model "move" more to capture the data points, and hence its variance will be larger.
 
-The first term is called the bias
-!bt
-\[
-Bias^2= \sum_i (f(\boldsymbol{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)])^2
-\]
-!et
-and measures the deviation of the expectation value of our estimator (i.e. the asymptotic value of our estimator in the infinite data limit) from the true value. 
+Derivation[edit]
+The derivation of the bias–variance decomposition for squared error proceeds as follows.[6][7] For notational convenience, abbreviate {\displaystyle f=f(x)}￼ and {\displaystyle {\hat {f}}={\hat {f}}(x)}￼. First, recall that, by definition, for any random variable {\displaystyle X}￼, we have
 
-!split
-===== The variance =====
-The second term is called the variance
-!bt
-\[
-Var=\sum_i E_\mathcal{L}[( \bm{g}_\mathcal{L}(\boldsymbol{x}_i)-E_\mathcal{L}[\bm{g}_\mathcal{L}(\boldsymbol{x}_i)])^2],
-\]
-!et
+{\displaystyle {\begin{aligned}\operatorname {Var} [X]=\operatorname {E} [X^{2}]-{\Big (}\operatorname {E} [X]{\Big )}^{2}\end{aligned}}}￼
+Rearranging, we get:
 
-and measures how much our estimator fluctuates due to finite-sample effects. Combining these expressions, we see that the expected out-of-sample error of our model can be decomposed as
-!bt
-\[
-E_\mathrm{out}=E_\mathcal{L, \epsilon}[\mathcal{C}( \boldsymbol{X}, \bm{g}(\boldsymbol{x})) ] = Bias^2 + Var + Noise.
-\]
-!et
+{\displaystyle {\begin{aligned}\operatorname {E} [X^{2}]=\operatorname {Var} [X]+{\Big (}\operatorname {E} [X]{\Big )}^{2}\end{aligned}}}￼
+Since {\displaystyle f}￼ is deterministic
+
+{\displaystyle {\begin{aligned}\operatorname {E} [f]=f\end{aligned}}}￼.
+Thus, given {\displaystyle y=f+\varepsilon }￼ and {\displaystyle \operatorname {E} [\varepsilon ]=0}￼, implies {\displaystyle \operatorname {E} [y]=\operatorname {E} [f+\varepsilon ]=\operatorname {E} [f]=f}￼.
+
+Also, since {\displaystyle \operatorname {Var} [\varepsilon ]=\sigma ^{2},}￼
+
+{\displaystyle {\begin{aligned}\operatorname {Var} [y]=\operatorname {E} [(y-\operatorname {E} [y])^{2}]=\operatorname {E} [(y-f)^{2}]=\operatorname {E} [(f+\varepsilon -f)^{2}]=\operatorname {E} [\varepsilon ^{2}]=\operatorname {Var} [\varepsilon ]+{\Big (}\operatorname {E} [\varepsilon ]{\Big )}^{2}=\sigma ^{2}\end{aligned}}}￼
+Thus, since {\displaystyle \varepsilon }￼ and {\displaystyle {\hat {f}}}￼ are independent, we can write
+
+{\displaystyle {\begin{aligned}\operatorname {E} {\big [}(y-{\hat {f}})^{2}{\big ]}&=\operatorname {E} {\big [}(f+\varepsilon -{\hat {f}})^{2}{\big ]}\\&=\operatorname {E} {\big [}(f+\varepsilon -{\hat {f}}+\operatorname {E} [{\hat {f}}]-\operatorname {E} [{\hat {f}}])^{2}{\big ]}\\&=\operatorname {E} {\big [}(f-\operatorname {E} [{\hat {f}}])^{2}{\big ]}+\operatorname {E} [\varepsilon ^{2}]+\operatorname {E} {\big [}(\operatorname {E} [{\hat {f}}]-{\hat {f}})^{2}{\big ]}+2\operatorname {E} {\big [}(f-\operatorname {E} [{\hat {f}}])\varepsilon {\big ]}+2\operatorname {E} {\big [}\varepsilon (\operatorname {E} [{\hat {f}}]-{\hat {f}}){\big ]}+2\operatorname {E} {\big [}(\operatorname {E} [{\hat {f}}]-{\hat {f}})(f-\operatorname {E} [{\hat {f}}]){\big ]}\\&=(f-\operatorname {E} [{\hat {f}}])^{2}+\operatorname {E} [\varepsilon ^{2}]+\operatorname {E} {\big [}(\operatorname {E} [{\hat {f}}]-{\hat {f}})^{2}{\big ]}+2(f-\operatorname {E} [{\hat {f}}])\operatorname {E} [\varepsilon ]+2\operatorname {E} [\varepsilon ]\operatorname {E} {\big [}\operatorname {E} [{\hat {f}}]-{\hat {f}}{\big ]}+2\operatorname {E} {\big [}\operatorname {E} [{\hat {f}}]-{\hat {f}}{\big ]}(f-\operatorname {E} [{\hat {f}}])\\&=(f-\operatorname {E} [{\hat {f}}])^{2}+\operatorname {E} [\varepsilon ^{2}]+\operatorname {E} {\big [}(\operatorname {E} [{\hat {f}}]-{\hat {f}})^{2}{\big ]}\\&=(f-\operatorname {E} [{\hat {f}}])^{2}+\operatorname {Var} [y]+\operatorname {Var} {\big [}{\hat {f}}{\big ]}\\&=\operatorname {Bias} [{\hat {f}}]^{2}+\operatorname {Var} [y]+\operatorname {Var} {\big [}{\hat {f}}{\big ]}\\&=\operatorname {Bias} [{\hat {f}}]^{2}+\sigma ^{2}+\operatorname {Var} {\big [}{\hat {f}}{\big ]}\\\end{aligned}}}￼
+
 
 The bias-variance tradeoff summarizes the fundamental tension in
 machine learning, particularly supervised learning, between the
