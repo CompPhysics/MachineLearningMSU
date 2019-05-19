@@ -1833,7 +1833,8 @@ Let us remind ourselves about the expression for the standard Mean Squared Error
 our optimization problem is
 <p>&nbsp;<br>
 $$
-{\displaystyle \min_{\boldsymbol{\beta}}}\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)\right\}.
+{\displaystyle \min_{\boldsymbol{\beta}\in
+{\mathbb{R}}^{p}}}\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)\right\}.
 $$
 <p>&nbsp;<br>
 
@@ -1855,8 +1856,8 @@ By minimizing the above equation with respect to the parameters \( \boldsymbol{\
 We can add a regularization parameter \( \lambda \) by defining a new cost function to be optmized, that is
 <p>&nbsp;<br>
 $$
-{\displaystyle \min_{\boldsymbol{\beta}}\in
-{\mathbb{R}}^{p}}\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\beta}\vert\vert_2^2
+{\displaystyle \min_{\boldsymbol{\beta}\in
+{\mathbb{R}}^{p}}}\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\beta}\vert\vert_2^2
 $$
 <p>&nbsp;<br>
 
@@ -1874,8 +1875,8 @@ $$
 we have a new optimization equation
 <p>&nbsp;<br>
 $$
-{\displaystyle \min_{\boldsymbol{\beta}}\in
-{\mathbb{R}}^{p}}\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\beta}\vert\vert_1
+{\displaystyle \min_{\boldsymbol{\beta}\in
+{\mathbb{R}}^{p}}}\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\beta}\vert\vert_1
 $$
 <p>&nbsp;<br>
 

@@ -1416,7 +1416,8 @@ Let us remind ourselves about the expression for the standard Mean Squared Error
 our optimization problem is
 !bt
 \[
-{\displaystyle \min_{\bm{\beta}}}\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\}.
+{\displaystyle \min_{\bm{\beta}\in
+{\mathbb{R}}^{p}}}\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\}.
 \]
 !et
 or we can state it is
@@ -1435,8 +1436,8 @@ By minimizing the above equation with respect to the parameters $\bm{\beta}$ we 
 We can add a regularization parameter $\lambda$ by defining a new cost function to be optmized, that is
 !bt
 \[
-{\displaystyle \min_{\bm{\beta}}\in
-{\mathbb{R}}^{p}}\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_2^2
+{\displaystyle \min_{\bm{\beta}\in
+{\mathbb{R}}^{p}}}\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_2^2
 \]
 !et
 
@@ -1452,8 +1453,8 @@ C(\bm{X},\bm{\beta})=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2
 we have a new optimization equation
 !bt
 \[
-{\displaystyle \min_{\bm{\beta}}\in
-{\mathbb{R}}^{p}}\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_1
+{\displaystyle \min_{\bm{\beta}\in
+{\mathbb{R}}^{p}}}\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_1
 \]
 !et
 which leads to Lasso regression.
