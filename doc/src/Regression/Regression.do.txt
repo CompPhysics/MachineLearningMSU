@@ -389,19 +389,20 @@ will treat $y_i$ as our exact value for the response variable.
 In order to find the parameters $\beta_i$ we will then minimize the spread of $C(\bm{\beta})$, that is we are going to solve the problem
 !bt
 \[
-{\displaystyle \min_{\bm{\beta}}}\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\}.
+{\displaystyle \min_{\bm{\beta}\in
+{\mathbb{R}}^{p}}}\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\}.
 \]
 !et
 In practical terms it means we will require
 !bt
 \[
-\frac{\partial C(\bm{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
+\frac{\partial C(\bm{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
 \]
 !et
 which results in
 !bt
 \[
-\frac{\partial C(\bm{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}x_{ij}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)\right]=0, 
+\frac{\partial C(\bm{\beta})}{\partial \beta_j} = -\frac{2}{n}\left[ \sum_{i=0}^{n-1}x_{ij}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)\right]=0, 
 \]
 !et
 or in a matrix-vector form as
@@ -566,7 +567,7 @@ as
 
 !bt
 \[
-\chi^2(\bm{\beta})=\sum_{i=0}^{n-1}\frac{\left(y_i-\tilde{y}_i\right)^2}{\sigma_i^2}=\left(\bm{y}-\bm{\tilde{y}}\right)^T\frac{1}{\bm{\Sigma^2}}\left(\bm{y}-\bm{\tilde{y}}\right),
+\chi^2(\bm{\beta})=\frac{1}{n}\sum_{i=0}^{n-1}\frac{\left(y_i-\tilde{y}_i\right)^2}{\sigma_i^2}=\frac{1}{n}\left\{\left(\bm{y}-\bm{\tilde{y}}\right)^T\frac{1}{\bm{\Sigma^2}}\left(\bm{y}-\bm{\tilde{y}}\right)\right\},
 \]
 !et
 where the matrix $\bm{\Sigma}$ is a diagonal matrix with $\sigma_i$ as matrix elements. 
@@ -580,13 +581,13 @@ where the matrix $\bm{\Sigma}$ is a diagonal matrix with $\sigma_i$ as matrix el
 In order to find the parameters $\beta_i$ we will then minimize the spread of $\chi^2(\bm{\beta})$ by requiring
 !bt
 \[
-\frac{\partial \chi^2(\bm{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(\frac{y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}}{\sigma_i}\right)^2\right]=0, 
+\frac{\partial \chi^2(\bm{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \frac{1}{n}\sum_{i=0}^{n-1}\left(\frac{y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}}{\sigma_i}\right)^2\right]=0, 
 \]
 !et
 which results in
 !bt
 \[
-\frac{\partial \chi^2(\bm{\beta})}{\partial \beta_j} = -2\left[ \sum_{i=0}^{n-1}\frac{x_{ij}}{\sigma_i}\left(\frac{y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}}{\sigma_i}\right)\right]=0, 
+\frac{\partial \chi^2(\bm{\beta})}{\partial \beta_j} = -\frac{2}{n}\left[ \sum_{i=0}^{n-1}\frac{x_{ij}}{\sigma_i}\left(\frac{y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}}{\sigma_i}\right)\right]=0, 
 \]
 !et
 or in a matrix-vector form as
@@ -1054,7 +1055,7 @@ In the ordinary least squares method we choose the cost function
 
 !bt
 \begin{align}
-    C(\bm{X}, \bm{\beta})= (\bm{X}\bm{\beta} - \bm{y})^T(\bm{X}\bm{\beta} - \bm{y}).
+    C(\bm{X}, \bm{\beta})= \frac{1}{n}\left\{(\bm{X}\bm{\beta} - \bm{y})^T(\bm{X}\bm{\beta} - \bm{y})\right\}.
 \end{align}
 !et
 
@@ -1412,34 +1413,56 @@ We will come back to this expression when we discuss Ridge regression.
 ===== Ridge and LASSO Regression =====
 
 Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function, that is 
+our optimization problem is
 !bt
 \[
-C(\bm{X},\bm{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2,
+{\displaystyle \min_{\bm{\beta}}}\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\}.
+\]
+!et
+or we can state it is
+!bt
+\[
+{\displaystyle \min_{\bm{\beta}}}\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2,
 \]
 !et
 where we have used the definition of  a norm-2 vector, that is
-
 !bt
 \[
 \vert\vert \bm{x}\vert\vert_2 = \sqrt{\sum_i x_i^2}. 
 \]
 !et
 By minimizing the above equation with respect to the parameters $\bm{\beta}$ we could then obtain an analytical expression for the parameters. 
-We can add a regularization parameter $\lambda$ by defining a new cost function as
+We can add a regularization parameter $\lambda$ by defining a new cost function to be optmized, that is
 !bt
 \[
-C(\bm{X},\bm{\beta})=\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_2^2
+{\displaystyle \min_{\bm{\beta}}\in
+{\mathbb{R}}^{p}}\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_2^2
 \]
 !et
-which leads to the Ridge regression minimization problem or by defining 
+
+which leads to the Ridge regression minimization problem where we
+require that $\vert\vert \bm{\beta}\vert\vert_2^2\le t$, where $t$ is
+a finite number larger than zero. By defining
+
 !bt
 \[
-C(\bm{X},\bm{\beta})=\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_1,
+C(\bm{X},\bm{\beta})=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_1,
+\]
+!et
+we have a new optimization equation
+!bt
+\[
+{\displaystyle \min_{\bm{\beta}}\in
+{\mathbb{R}}^{p}}\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_1
 \]
 !et
 which leads to Lasso regression.
-
-
+Here we have define the norm-1 as 
+!bt
+\[
+\vert\vert \bm{x}\vert\vert_1 = \sum_i \vert x_i\vert. 
+\]
+!et
 !split
 ===== Where are we going? =====
 
