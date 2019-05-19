@@ -17,6 +17,10 @@ Fitting a continuous function with linear parameterization in terms of the param
 * Allows for _easy_ hands-on understanding of gradient descent methods
 * and many more features
 
+For more discussions of Ridge and Lasso regression, "Wessel van Wieringen's":"https://arxiv.org/abs/1509.09169" article is highly recommended.
+Similarly, "Mehta et al's article":"https://arxiv.org/abs/1803.08823" is also recommended.
+
+
 !split
 ===== Regression analysis, overarching aims  =====
 !bblock
@@ -1326,7 +1330,7 @@ Consider the following matrix which can be SVD decomposed as
 This is a $3\times 2$ matrix which is decomposed in terms of a
 $3\times 3$ matrix $\bm{U}$, and a $2\times 2$ matrix $\bm{V}$. It is easy to see
 that $\bm{U}$ and $\bm{V}$ are orthogonal (how?). And the SVD
-decomposition (singular values) gives eigenvalues $\sigma_i\le\sigma_{i+1)$ for all $i$ and for dimensions larger than $i=2$, the
+decomposition (singular values) gives eigenvalues $\sigma_i\geq\sigma_{i+1)$ for all $i$ and for dimensions larger than $i=2$, the
 eigenvalues (singular values) are zero.
 
 In the general case, where our design matrix $\bm{X}$ has dimension
@@ -1427,7 +1431,7 @@ or we can state it as
 !bt
 \[
 {\displaystyle \min_{\bm{\beta}\in
-{\mathbb{R}}^{p}}}}\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2,
+{\mathbb{R}}^{p}}}\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2,
 \]
 !et
 where we have used the definition of  a norm-2 vector, that is
@@ -1438,7 +1442,7 @@ where we have used the definition of  a norm-2 vector, that is
 !et
 
 By minimizing the above equation with respect to the parameters
-$\bm{\bmeta}$ we could then obtain an analytical expression for the
+$\bm{\beta}$ we could then obtain an analytical expression for the
 parameters $\bm{\beta}$.  We can add a regularization parameter $\lambda$ by
 defining a new cost function to be optimized, that is
 
@@ -1517,7 +1521,7 @@ Furthermore, if we use the result above in terms of the SVD decomposition (our a
 and then we could analysis the OLS solutions in terms of the eigenvectors (the columns) of the right singular value matrix $\bm{U}$ as
 !bt
 \[
-\bm{X}\bm{\beta} = \bm{X}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{X}^T\bm{y}=\bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}(\bm{U\Sigma V^T})^T\bm{y}=
+\bm{X}\bm{\beta} = \bm{X}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{X}^T\bm{y}=\bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}(\bm{U\Sigma V^T})^T\bm{y}=\bm{U}\bm{U}^T\bm{y}
 \]
 !et
 
@@ -1526,7 +1530,7 @@ For Ridge regression this becomes
 
 !bt
 \[
-\bm{X}\bm{\beta}^{\mathrm{Ridge}} = \bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T+\lambda\bm{I} \right)^{-1}(\bm{U\Sigma V^T})^T\bm{y}=\sum_{j=0}^{p-1}\bm{u}_j\bm{u}_j^T\frac{\sigma_j^2}{\sigma_j^2+1},
+\bm{X}\bm{\beta}^{\mathrm{Ridge}} = \bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T+\lambda\bm{I} \right)^{-1}(\bm{U\Sigma V^T})^T\bm{y}=\sum_{j=0}^{p-1}\bm{u}_j\bm{u}_j^T\frac{\sigma_j^2}{\sigma_j^2+1}\bm{y},
 \]
 !et
 
@@ -1543,7 +1547,46 @@ Since $\lambda \geq 0$, it means that compared to OLS, we have
 \]
 !et
 
- 
+Ridge regression finds the coordinates of $\bm{y}$ with respect to the orthonormal basis $\bm{U}$, it then shrinks the coordinates by 
+$\frac{\sigma_j^2}{\sigma_j^2+1}$. Recall that the SVD has eigenvalues ordered in a descending way, that is $\sigma_i \geq \sigma_{i+1}$.
+
+For small eigenvalues $\sigma_i$ it means that their contribution become less important, a fact which can be used to reduce the number of degrees of freedom.
+Actually, calculating the variance of $\bm{X}\bm{v}_j$ shows that this quantity is equal to (see exercise below) $\sigma_j^2/n$.
+With a parameter $\lambda$ we can thus shrink the role of specific parameters.  
+
+
+!split
+===== More interpretations =====
+
+For the sake of simplicity, let us assume that the design matrix is orthonormal, that is 
+
+!bt
+\[
+\bm{X}^T\bm{X}=(\bm{X}^T\bm{X})^{-1} =\bm{I}. 
+\]
+!et
+
+In this case the standard OLS results in 
+!bt
+\[
+\bm{\beta}^{\mathrm{OLS}} = \bm{X}^T\bm{y}=\sum_{i=0}^{p-1}\bm{u}_j\bm{u}_j^T\bm{y},
+\]
+!et
+and
+
+!bt
+\[
+\bm{\beta}^{\mathrm{Ridge}} = \left(\bm{I}+\lambda\bm{I}\right)^{-1}\bm{X}^T\bm{y}=\left(1+\lambda\right)^{-1}\bm{\beta}^{\mathrm{OLS}},
+\]
+!et
+
+that is the Ridge estimator scales the OLS estimator by a factor, and the Ridge estimator converges to zero when the hyperparameter goes to infinity.
+
+We will come back to more interpreations after we have gone through some of the statistical analysis part. 
+
+For more discussions of Ridge and Lasso regression, "Wessel van Wieringen's":"https://arxiv.org/abs/1509.09169" article is highly recommended.
+Similarly, "Mehta et al's article":"https://arxiv.org/abs/1803.08823" is also recommended.
+
 !split
 ===== Where are we going? =====
 
@@ -1556,63 +1599,6 @@ o introduce resampling techniques like cross-validation, bootstrapping and jackk
 This will allow us to link the standard linear algebra methods we have discussed above to a statistical interpretation of the methods. 
 
 
-
-!split 
-===== Linking the regression analysis with a statistical interpretation =====
-
-Finally, we are going to discuss several statistical properties. The
-advantage of doing linear regression is that we actually end up with
-analytical expressions for several statistical quantities.  
-Standard least squares and Ridge regression  allow us to
-derive quantities like the variance and other expectation values in a
-rather straightforward way.
-
-
-It is assumed that $\varepsilon_i
-\sim \mathcal{N}(0, \sigma^2)$ and the $\varepsilon_{i}$ are
-independent, i.e.: 
-!bt
-\begin{align*} 
-\mbox{Cov}(\varepsilon_{i_1},
-\varepsilon_{i_2}) & = \left\{ \begin{array}{lcc} \sigma^2 & \mbox{if}
-& i_1 = i_2, \\ 0 & \mbox{if} & i_1 \not= i_2.  \end{array} \right.
-\end{align*} 
-!et
-The randomness of $\varepsilon_i$ implies that
-$\mathbf{Y}_i$ is also a random variable. In particular,
-$\mathbf{Y}_i$ is normally distributed, because $\varepsilon_i \sim
-\mathcal{N}(0, \sigma^2)$ and $\mathbf{X}_{i,\ast} \, \beta$ is a
-non-random scalar. To specify the parameters of the distribution of
-$\mathbf{Y}_i$ we need to calculate its first two moments. 
-
-!split
-===== Expectation value and variance =====
-
-Its expectation equals: 
-!bt
-\begin{align*} 
-\mathbb{E}(Y_i) & =
-\mathbb{E}(\mathbf{X}_{i, \ast} \, \beta) + \mathbb{E}(\varepsilon_i)
-\, \, \, = \, \, \, \mathbf{X}_{i, \ast} \, \beta, 
-\end{align*} 
-!et
-while
-its variance is 
-!bt
-\begin{align*} \mbox{Var}(Y_i) & = \mathbb{E} \{ [Y_i
-- \mathbb{E}(Y_i)]^2 \} \, \, \, = \, \, \, \mathbb{E} ( Y_i^2 ) -
-[\mathbb{E}(Y_i)]^2  \\  & = \mathbb{E} [ ( \mathbf{X}_{i, \ast} \,
-\beta + \varepsilon_i )^2] - ( \mathbf{X}_{i, \ast} \, \beta)^2 \\ &
-= \mathbb{E} [ ( \mathbf{X}_{i, \ast} \, \beta)^2 + 2 \varepsilon_i
-\mathbf{X}_{i, \ast} \, \beta + \varepsilon_i^2 ] - ( \mathbf{X}_{i,
-\ast} \, \beta)^2 \\  & = ( \mathbf{X}_{i, \ast} \, \beta)^2 + 2
-\mathbb{E}(\varepsilon_i) \mathbf{X}_{i, \ast} \, \beta +
-\mathbb{E}(\varepsilon_i^2 ) - ( \mathbf{X}_{i, \ast} \, \beta)^2 
-\\ & = \mathbb{E}(\varepsilon_i^2 ) \, \, \, = \, \, \,
-\mbox{Var}(\varepsilon_i) \, \, \, = \, \, \, \sigma^2.  
-\end{align*}
-!et
-Hence, $Y_i \sim \mathcal{N}( \mathbf{X}_{i, \ast} \, \beta, \sigma^2)$. 
 
 
 
@@ -2242,6 +2228,67 @@ too *good*. On the other hand, the calculation of the full
 autocorrelation time poses an efficiency problem if the set of
 measurements is very large.
 !eblock
+
+
+
+!split 
+===== Linking the regression analysis with a statistical interpretation =====
+
+Finally, we are going to discuss several statistical properties. The
+advantage of doing linear regression is that we actually end up with
+analytical expressions for several statistical quantities.  
+Standard least squares and Ridge regression  allow us to
+derive quantities like the variance and other expectation values in a
+rather straightforward way.
+
+
+It is assumed that $\varepsilon_i
+\sim \mathcal{N}(0, \sigma^2)$ and the $\varepsilon_{i}$ are
+independent, i.e.: 
+!bt
+\begin{align*} 
+\mbox{Cov}(\varepsilon_{i_1},
+\varepsilon_{i_2}) & = \left\{ \begin{array}{lcc} \sigma^2 & \mbox{if}
+& i_1 = i_2, \\ 0 & \mbox{if} & i_1 \not= i_2.  \end{array} \right.
+\end{align*} 
+!et
+The randomness of $\varepsilon_i$ implies that
+$\mathbf{Y}_i$ is also a random variable. In particular,
+$\mathbf{Y}_i$ is normally distributed, because $\varepsilon_i \sim
+\mathcal{N}(0, \sigma^2)$ and $\mathbf{X}_{i,\ast} \, \beta$ is a
+non-random scalar. To specify the parameters of the distribution of
+$\mathbf{Y}_i$ we need to calculate its first two moments. 
+
+!split
+===== Expectation value and variance =====
+
+Its expectation equals: 
+!bt
+\begin{align*} 
+\mathbb{E}(Y_i) & =
+\mathbb{E}(\mathbf{X}_{i, \ast} \, \beta) + \mathbb{E}(\varepsilon_i)
+\, \, \, = \, \, \, \mathbf{X}_{i, \ast} \, \beta, 
+\end{align*} 
+!et
+while
+its variance is 
+!bt
+\begin{align*} \mbox{Var}(Y_i) & = \mathbb{E} \{ [Y_i
+- \mathbb{E}(Y_i)]^2 \} \, \, \, = \, \, \, \mathbb{E} ( Y_i^2 ) -
+[\mathbb{E}(Y_i)]^2  \\  & = \mathbb{E} [ ( \mathbf{X}_{i, \ast} \,
+\beta + \varepsilon_i )^2] - ( \mathbf{X}_{i, \ast} \, \beta)^2 \\ &
+= \mathbb{E} [ ( \mathbf{X}_{i, \ast} \, \beta)^2 + 2 \varepsilon_i
+\mathbf{X}_{i, \ast} \, \beta + \varepsilon_i^2 ] - ( \mathbf{X}_{i,
+\ast} \, \beta)^2 \\  & = ( \mathbf{X}_{i, \ast} \, \beta)^2 + 2
+\mathbb{E}(\varepsilon_i) \mathbf{X}_{i, \ast} \, \beta +
+\mathbb{E}(\varepsilon_i^2 ) - ( \mathbf{X}_{i, \ast} \, \beta)^2 
+\\ & = \mathbb{E}(\varepsilon_i^2 ) \, \, \, = \, \, \,
+\mbox{Var}(\varepsilon_i) \, \, \, = \, \, \, \sigma^2.  
+\end{align*}
+!et
+Hence, $Y_i \sim \mathcal{N}( \mathbf{X}_{i, \ast} \, \beta, \sigma^2)$. 
+
+
 
 
 
