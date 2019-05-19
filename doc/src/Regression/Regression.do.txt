@@ -1326,7 +1326,7 @@ Consider the following matrix which can be SVD decomposed as
 This is a $3\times 2$ matrix which is decomposed in terms of a
 $3\times 3$ matrix $\bm{U}$, and a $2\times 2$ matrix $\bm{V}$. It is easy to see
 that $\bm{U}$ and $\bm{V}$ are orthogonal (how?). And the SVD
-decomposition (singular values) gives eigenvalues $\sigma_i \le \sigma_{i+1)$ for all $i$ and for dimensions larger than $i=2$, the
+decomposition (singular values) gives eigenvalues $\sigma_i\le\sigma_{i+1)$ for all $i$ and for dimensions larger than $i=2$, the
 eigenvalues (singular values) are zero.
 
 In the general case, where our design matrix $\bm{X}$ has dimension
@@ -1420,14 +1420,14 @@ Let us remind ourselves about the expression for the standard Mean Squared Error
 our optimization problem is
 !bt
 \[
-{\displaystyle \min_{\bm{\beta}\in
-{\mathbb{R}}^{p}}}\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\}.
+{\displaystyle \min_{\bm{\beta}\in {\mathbb{R}}^{p}}}\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\}.
 \]
 !et
 or we can state it as
 !bt
 \[
-{\displaystyle \min_{\bm{\beta}}}\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2,
+{\displaystyle \min_{\bm{\beta}\in
+{\mathbb{R}}^{p}}}}\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2,
 \]
 !et
 where we have used the definition of  a norm-2 vector, that is
@@ -1455,7 +1455,7 @@ a finite number larger than zero. By defining
 
 !bt
 \[
-C(\bm{bX},\bm{\beta})=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_1,
+C(\bm{X},\bm{\beta})=\frac{1}{n}\vert\vert \bm{y}-\bm{X}\bm{\beta}\vert\vert_2^2+\lambda\vert\vert \bm{\beta}\vert\vert_1,
 \]
 !et
 
@@ -1499,18 +1499,49 @@ with $\bm{I}$ being the $p\times p$ identity matrix with the constraint that
 
 !bt
 \[
-\sum_{i=0}{p-1} \beta_i^2 \le t,
+\sum_{i=0}^{p-1} \beta_i^2 \leq t,
 \]
 !et
 
 with $t$ a finite positive number. 
 
-We see that Ridge regression in practive is nothing but the standard OLS with a modified diagonal added to $\bm{X}^T\bm{X}$. The consequences, in particular for 
+We see that Ridge regression in practice is nothing but the standard OLS with a modified diagonal added to $\bm{X}^T\bm{X}$. The consequences, in particular for 
 our discussion of the bias-variance are rather interesting. 
 
-Furthermore, if we use the result above in terms of the SVD decomposition 
+Furthermore, if we use the result above in terms of the SVD decomposition (our analysis was done for the OLS method), we had
+!bt
+\[
+(\bm{X}\bm{X}^T)\bm{U} = \bm{U}\bm{D},
+\]
+!et
+and then we could analysis the OLS solutions in terms of the eigenvectors (the columns) of the right singular value matrix $\bm{U}$ as
+!bt
+\[
+\bm{X}\bm{\beta} = \bm{X}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{X}^T\bm{y}=\bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}(\bm{U\Sigma V^T})^T\bm{y}=
+\]
+!et
 
 
+For Ridge regression this becomes
+
+!bt
+\[
+\bm{X}\bm{\beta}^{\mathrm{Ridge}} = \bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T+\lambda\bm{I} \right)^{-1}(\bm{U\Sigma V^T})^T\bm{y}=\sum_{j=0}^{p-1}\bm{u}_j\bm{u}_j^T\frac{\sigma_j^2}{\sigma_j^2+1},
+\]
+!et
+
+with the vectors $\bm{u}_j$ being the columns of $\bm{U}$. 
+
+!split
+===== Interpreting the Ridge results =====
+
+Since $\lambda \geq 0$, it means that compared to OLS, we have 
+
+!bt
+\[
+\frac{\sigma_j^2}{\sigma_j^2+1} \leq 1. 
+\]
+!et
 
  
 !split
