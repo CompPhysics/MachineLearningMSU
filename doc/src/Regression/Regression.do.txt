@@ -334,22 +334,20 @@ With the above we use the design matrix to define the approximation $\bm{\tilde{
 and in order to find the optimal parameters $\beta_i$ instead of solving the above linear algebra problem, we define a function which gives a measure of the spread between the values $y_i$ (which represent hopefully the exact values) and the parameterized values $\tilde{y}_i$, namely
 !bt
 \[
-C(\bm{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\bm{y}-\bm{\tilde{y}}\right)^T\left(\bm{y}-\bm{\tilde{y}}\right),
+C(\bm{\beta})=\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\frac{1}{n}\left\{\left(\bm{y}-\bm{\tilde{y}}\right)^T\left(\bm{y}-\bm{\tilde{y}}\right)\right\},
 \]
 !et
 or using the matrix $\bm{X}$ and in a more compact matrix-vector notation as
 !bt
 \[
-C(\bm{\beta})=\left(\bm{y}-\bm{X}^T\bm{\beta}\right)^T\left(\bm{y}-\bm{X}^T\bm{\beta}\right).
+C(\bm{\beta})=\frac{1}{n}\left\{\left(\bm{y}-\bm{X}^T\bm{\beta}\right)^T\left(\bm{y}-\bm{X}^T\bm{\beta}\right)\right\}.
 \]
 !et
 This function is one possible way to define the so-called function.
 
 
-_Note_: It is normal to have a term $1/n$ in front of this equation
-since it can then be linked to statistical properties like the
-variance of a given variable. We come back to this in our discussion
-of the so-called bias-variance trade-off.  It is also common to define
+
+It is also common to define
 the function $Q$ as
 
 !bt
@@ -368,7 +366,7 @@ since when taking the first derivative with respect to the unknown parameters $\
 The function 
 !bt
 \[
-C(\bm{\beta})=\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right),
+C(\bm{\beta})=\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\},
 \]
 !et
 can be linked to the variance of the quantity $y_i$ if we interpret the latter as the mean value. 
@@ -388,7 +386,13 @@ error estimate, often limited to a statistical error estimate given by
 the standard deviation discussed earlier. In the discussion here we
 will treat $y_i$ as our exact value for the response variable.
 
-In order to find the parameters $\beta_i$ we will then minimize the spread of $C(\bm{\beta})$ by requiring
+In order to find the parameters $\beta_i$ we will then minimize the spread of $C(\bm{\beta})$, that is we are going to solve the problem
+!bt
+\[
+{\displaystyle \min_{\bm{\beta}}}\frac{1}{n}\left\{\left(\bm{y}-\bm{X}\bm{\beta}\right)^T\left(\bm{y}-\bm{X}\bm{\beta}\right)\right\}.
+\]
+!et
+In practical terms it means we will require
 !bt
 \[
 \frac{\partial C(\bm{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
@@ -1320,8 +1324,7 @@ Consider the following matrix which can be SVD decomposed as
 This is a $3\times 2$ matrix which is decomposed in terms of a
 $3\times $ matrix $\bm{U}$, a $2\times 2$ matrix $ It is easy to see
 that $\bm{U}$ and $\bm{V}$ are orthogonal (how?). And the SVD
-decomposition (singular values) gives eigenvalues $\sigma_i \le
-\sigma_{i+1)$ for all $i$ and for dimensions larger than $i=2$, the
+decomposition (singular values) gives eigenvalues $\sigma_i \le \sigma_{i+1)$ for all $i$ and for dimensions larger than $i=2$, the
 eigenvalues (singular values) are zero.
 
 If the general case, where our design matrix $\bm{X}$ has dimension

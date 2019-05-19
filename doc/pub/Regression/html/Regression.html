@@ -272,7 +272,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>May 17, 2019</h4></center> <!-- date -->
+<center><h4>May 18, 2019</h4></center> <!-- date -->
 <br>
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -658,21 +658,18 @@ $$
 
 and in order to find the optimal parameters \( \beta_i \) instead of solving the above linear algebra problem, we define a function which gives a measure of the spread between the values \( y_i \) (which represent hopefully the exact values) and the parameterized values \( \tilde{y}_i \), namely
 $$
-C(\boldsymbol{\beta})=\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right),
+C(\boldsymbol{\beta})=\frac{1}{n}\sum_{i=0}^{n-1}\left(y_i-\tilde{y}_i\right)^2=\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)^T\left(\boldsymbol{y}-\boldsymbol{\tilde{y}}\right)\right\},
 $$
 
 or using the matrix \( \boldsymbol{X} \) and in a more compact matrix-vector notation as
 $$
-C(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}^T\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}^T\boldsymbol{\beta}\right).
+C(\boldsymbol{\beta})=\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}^T\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}^T\boldsymbol{\beta}\right)\right\}.
 $$
 
 This function is one possible way to define the so-called function.
 
 <p>
-<b>Note</b>: It is normal to have a term \( 1/n \) in front of this equation
-since it can then be linked to statistical properties like the
-variance of a given variable. We come back to this in our discussion
-of the so-called bias-variance trade-off.  It is also common to define
+It is also common to define
 the function \( Q \) as
 
 $$
@@ -694,7 +691,7 @@ since when taking the first derivative with respect to the unknown parameters \(
 <p>
 The function 
 $$
-C(\boldsymbol{\beta})=\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right),
+C(\boldsymbol{\beta})=\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)\right\},
 $$
 
 can be linked to the variance of the quantity \( y_i \) if we interpret the latter as the mean value. 
@@ -714,7 +711,12 @@ the standard deviation discussed earlier. In the discussion here we
 will treat \( y_i \) as our exact value for the response variable.
 
 <p>
-In order to find the parameters \( \beta_i \) we will then minimize the spread of \( C(\boldsymbol{\beta}) \) by requiring
+In order to find the parameters \( \beta_i \) we will then minimize the spread of \( C(\boldsymbol{\beta}) \), that is we are going to solve the problem
+$$
+{\displaystyle \min_{\boldsymbol{\beta}}}\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)\right\}.
+$$
+
+In practical terms it means we will require
 $$
 \frac{\partial C(\boldsymbol{\beta})}{\partial \beta_j} = \frac{\partial }{\partial \beta_j}\left[ \sum_{i=0}^{n-1}\left(y_i-\beta_0x_{i,0}-\beta_1x_{i,1}-\beta_2x_{i,2}-\dots-\beta_{n-1}x_{i,n-1}\right)^2\right]=0, 
 $$
@@ -1734,8 +1736,7 @@ $$
 This is a \( 3\times 2 \) matrix which is decomposed in terms of a
 \( 3\times  \) matrix \( \boldsymbol{U} \), a \( 2\times 2 \) matrix $ It is easy to see
 that \( \boldsymbol{U} \) and \( \boldsymbol{V} \) are orthogonal (how?). And the SVD
-decomposition (singular values) gives eigenvalues \( \sigma_i \le
-\sigma_{i+1) \) for all \( i \) and for dimensions larger than \( i=2 \), the
+decomposition (singular values) gives eigenvalues \( \sigma_i \le \sigma_{i+1) \) for all \( i \) and for dimensions larger than \( i=2 \), the
 eigenvalues (singular values) are zero.
 
 <p>
