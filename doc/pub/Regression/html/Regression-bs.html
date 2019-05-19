@@ -3032,6 +3032,86 @@ mean value \( \boldsymbol{X}\boldsymbol{\beta} \) and variance \( \sigma^2 \) (n
 <h2 id="___sec73" class="anchor">Expectation value and variance for \( \boldsymbol{\beta} \) </h2>
 
 <p>
+With the OLS expressions for the parameters \( \boldsymbol{\beta} \) we can evaluate the expectation value
+$$
+\mathbb{E}(\boldsymbol{\beta}) = \mathbb{E}[ (\mathbf{X}^{\top} \mathbf{X})^{-1}\mathbf{X}^{T} \mathbf{Y}]=(\mathbf{X}^{T} \mathbf{X})^{-1}\mathbf{X}^{T} \mathbb{E}[ \mathbf{Y}]=(\mathbf{X}^{T} \mathbf{X})^{-1} \mathbf{X}^{T}\mathbf{X}\boldsymbol{\beta}=\boldsymbol{\beta}.
+$$
+
+This means that the estimator of the regression parameters is unbiased.
+
+<p>
+We can also calculate the variance
+
+<p>
+The variance of \( \boldsymbol{\beta} \) is
+$$
+\begin{eqnarray*}
+\mbox{Var}(\boldsymbol{\beta}) & = & \mathbb{E} \{ [\boldsymbol{\beta} - \mathbb{E}(\boldsymbol{\beta})] [\boldsymbol{\beta} - \mathbb{E}(\boldsymbol{\beta})]^{T} \}
+\\
+& = & \mathbb{E} \{ [(\mathbf{X}^{T} \mathbf{X})^{-1} \, \mathbf{X}^{T} \mathbf{Y} - \boldsymbol{\beta}] \, [(\mathbf{X}^{T} \mathbf{X})^{-1} \, \mathbf{X}^{T} \mathbf{Y} - \boldsymbol{\beta}]^{T} \}
+\\
+% & = & \mathbb{E} \{ [(\mathbf{X}^{T} \mathbf{X})^{-1} \, \mathbf{X}^{T} \mathbf{Y}] \, [(\mathbf{X}^{T} \mathbf{X})^{-1} \, \mathbf{X}^{T} \mathbf{Y}]^{T} \} - \boldsymbol{\beta} \, \boldsymbol{\beta}^{T}
+% \\
+% & = & \mathbb{E} \{ (\mathbf{X}^{T} \mathbf{X})^{-1} \, \mathbf{X}^{T} \mathbf{Y} \, \mathbf{Y}^{T} \, \mathbf{X} \, (\mathbf{X}^{T} \mathbf{X})^{-1}  \} - \boldsymbol{\beta} \, \boldsymbol{\beta}^{T}
+% \\
+& = & (\mathbf{X}^{T} \mathbf{X})^{-1} \, \mathbf{X}^{T} \, \mathbb{E} \{ \mathbf{Y} \, \mathbf{Y}^{T} \} \, \mathbf{X} \, (\mathbf{X}^{T} \mathbf{X})^{-1} - \boldsymbol{\beta} \, \boldsymbol{\beta}^{T}
+\\
+& = & (\mathbf{X}^{T} \mathbf{X})^{-1} \, \mathbf{X}^{T} \, \{ \mathbf{X} \, \boldsymbol{\beta} \, \boldsymbol{\beta}^{T} \,  \mathbf{X}^{T} + \sigma^2 \} \, \mathbf{X} \, (\mathbf{X}^{T} \mathbf{X})^{-1} - \boldsymbol{\beta} \, \boldsymbol{\beta}^{T}
+% \\
+% & = & (\mathbf{X}^T \mathbf{X})^{-1} \, \mathbf{X}^T \, \mathbf{X} \, \boldsymbol{\beta} \, \boldsymbol{\beta}^T \,  \mathbf{X}^T \, \mathbf{X} \, (\mathbf{X}^T % \mathbf{X})^{-1}
+% \\
+% & & + \, \, \sigma^2 \, (\mathbf{X}^T \mathbf{X})^{-1} \, \mathbf{X}^T  \, \mathbf{X} \, (\mathbf{X}^T \mathbf{X})^{-1} - \boldsymbol{\beta} \boldsymbol{\beta}^T
+\\
+& = & \boldsymbol{\beta} \, \boldsymbol{\beta}^{T}  + \sigma^2 \, (\mathbf{X}^{T} \mathbf{X})^{-1} - \boldsymbol{\beta} \, \boldsymbol{\beta}^{T}
+\, \, \, = \, \, \, \sigma^2 \, (\mathbf{X}^{T} \mathbf{X})^{-1},
+\end{eqnarray*}
+$$
+
+<p>
+where we have used  that \( \mathbb{E} (\mathbf{Y} \mathbf{Y}^{T}) =
+\mathbf{X} \, \boldsymbol{\beta} \, \boldsymbol{\beta}^{T} \, \mathbf{X}^{T} +
+\sigma^2 \, \mathbf{I}_{nn} \). From \( \mbox{Var}(\boldsymbol{\beta}) = \sigma^2
+\, (\mathbf{X}^{T} \mathbf{X})^{-1} \), one obtains an estimate of the
+variance of the estimate of the \( j \)-th regression coefficient:
+\( \hat{\sigma}^2 (\hat{\beta}_j ) = \hat{\sigma}^2 \sqrt{
+[(\mathbf{X}^{T} \mathbf{X})^{-1}]_{jj} } \). This may be used to
+construct a confidence interval for the estimates.
+
+<p>
+In a similar way, we cna obtain analytical expressions for say the
+expectation values of the parameters \( \boldsymbol{\beta} \) and their variance
+when we employ Ridge regression, and thereby a confidence interval.
+
+<p>
+It is rather straightforward to show that
+$$
+\mathbb{E} \big[ \boldsymbol{\beta}^{\mathrm{Ridge}} \big]=(\mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I}_{pp})^{-1} (\mathbf{X}^{\top} \mathbf{X})\boldsymbol{\beta}^{\mathrm{OLS}}.
+$$
+
+We see clearly that 
+\( \mathbb{E} \big[ \boldsymbol{\beta}^{\mathrm{Ridge}} \big] \not= \boldsymbol{\beta}^{\mathrm{OLS}} \) for any \( \lambda > 0 \). We say then that the ridge estimator is biased.
+
+<p>
+We can also compute the variance as 
+
+$$
+\mbox{Var}[\boldsymbol{\beta}^{\mathrm{Ridge}}]=\sigma^2[  \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I} ]^{-1}  \mathbf{X}^{T} \mathbf{X} \{ [  \mathbf{X}^{\top} \mathbf{X} + \lambda \mathbf{I} ]^{-1}\}^{T},
+$$
+
+and it is easy to see that if the parameter \( \lambda \) goes to infinity then the variance of Ridge parameters \( \boldsymbol{\beta} \) goes to zero.
+
+<p>
+With this, we can compute the difference 
+
+$$
+\mbox{Var}[\boldsymbol{\beta}^{\mathrm{OLS}}]-\mbox{Var}(\boldsymbol{\beta}^{\mathrm{Ridge}})=\sigma^2 [  \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I} ]^{-1}[ 2\lambda\mathbf{I} + \lambda^2 (\mathbf{X}^{T} \mathbf{X})^{-1} ] \{ [  \mathbf{X}^{T} \mathbf{X} + \lambda \mathbf{I} ]^{-1}\}^{T}.
+$$
+
+The difference is non-negative definite since each component of the
+matrix product is non-negative definite. 
+This means the variance we obtain with the standard OLS will always for \( \lambda > 0 \) be larger than the variance of \( \boldsymbol{\beta} \) obtained with the Ridge estimator. This has interesting consequences when we discuss the so-called bias-variance trade-off below.
+
+<p>
 <!-- !split  -->
 
 <h2 id="___sec74" class="anchor">Cross-validation </h2>
@@ -3108,9 +3188,9 @@ cross-validation (LOOCV).
 
 $$
 \begin{align*}
-\boldsymbol{\beta}_{-i}(\lambda) & =  ( \boldsymbol{X}_{-i, \ast}^{\top}
+\boldsymbol{\beta}_{-i}(\lambda) & =  ( \boldsymbol{X}_{-i, \ast}^{T}
 \boldsymbol{X}_{-i, \ast} + \lambda \boldsymbol{I}_{pp})^{-1}
-\boldsymbol{X}_{-i, \ast}^{\top} \boldsymbol{y}_{-i}
+\boldsymbol{X}_{-i, \ast}^{T} \boldsymbol{y}_{-i}
 \end{align*}
 $$
 
