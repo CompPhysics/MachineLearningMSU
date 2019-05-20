@@ -51,7 +51,7 @@ Masses['Ebinding'] /= 1000
 # Group the DataFrame by nucleon number, A.
 Masses = Masses.groupby('A')
 # Find the rows of the grouped DataFrame with the maximum binding energy.
-Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding])
+Masses = Masses.apply(lambda t: t[t.Ebinding==t.Ebinding.max()])
 A = Masses['A']
 Z = Masses['Z']
 N = Masses['N']
@@ -70,7 +70,7 @@ X[0,:] = A
 from sklearn.tree import DecisionTreeRegressor
 regr_1=DecisionTreeRegressor(max_depth=5)
 regr_2=DecisionTreeRegressor(max_depth=7)
-regr_3=DecisionTreeRegressor(max_depth=15)
+regr_3=DecisionTreeRegressor(max_depth=9)
 regr_1.fit(X.T, Energies)
 regr_2.fit(X.T, Energies)
 regr_3.fit(X.T, Energies)

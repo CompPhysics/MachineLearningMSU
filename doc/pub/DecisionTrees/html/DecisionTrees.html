@@ -68,40 +68,34 @@ div { text-align: justify; text-justify: inter-word; }
 {'highest level': 2,
  'sections': [('Decision trees, overarching aims', 2, None, '___sec0'),
               ('How do we set it up?', 2, None, '___sec1'),
-              ('Decision trees and Regression', 2, None, '___sec2'),
-              ('Maxwell-Boltzmann velocity distribution', 2, None, '___sec3'),
-              ('Building a tree, regression', 2, None, '___sec4'),
+              ('Decision trees and Regression, our Nuclear data model',
+               2,
+               None,
+               '___sec2'),
+              ('Building a tree, regression', 2, None, '___sec3'),
               ('A top-down approach, recursive binary splitting',
                2,
                None,
-               '___sec5'),
-              ('Making a tree', 2, None, '___sec6'),
-              ('Pruning the tree', 2, None, '___sec7'),
-              ('Cost complexity pruning', 2, None, '___sec8'),
-              ('A schematic procedure', 2, None, '___sec9'),
-              ('A classification tree', 2, None, '___sec10'),
-              ('Growing a classification tree', 2, None, '___sec11'),
-              ('Classification tree, how to split nodes', 2, None, '___sec12'),
-              ('Entropy and the ID3 algorithm', 2, None, '___sec13'),
-              ('Writing your own code for a classification tree',
-               2,
-               None,
-               '___sec14'),
-              ('Back to moons again', 2, None, '___sec15'),
-              ('Playing around with regions', 2, None, '___sec16'),
-              ('Regression trees', 2, None, '___sec17'),
-              ('Final regressor code', 2, None, '___sec18'),
-              ('Classification again: The zoo data', 2, None, '___sec19'),
-              ('Pros and cons of trees, pros', 2, None, '___sec20'),
-              ('Disadvantages', 2, None, '___sec21'),
-              ('Bagging', 2, None, '___sec22'),
-              ('Simple example, head or tail', 2, None, '___sec23'),
-              ('Random forests', 2, None, '___sec24'),
-              ('A simple scikit-learn example', 2, None, '___sec25'),
-              ('Please, not the moons again!', 2, None, '___sec26'),
-              ('Bagging examples', 2, None, '___sec27'),
-              ('Then random forests', 2, None, '___sec28'),
-              ('Boosting and more', 2, None, '___sec29')]}
+               '___sec4'),
+              ('Making a tree', 2, None, '___sec5'),
+              ('Pruning the tree', 2, None, '___sec6'),
+              ('Cost complexity pruning', 2, None, '___sec7'),
+              ('A schematic procedure', 2, None, '___sec8'),
+              ('A classification tree', 2, None, '___sec9'),
+              ('Growing a classification tree', 2, None, '___sec10'),
+              ('Classification tree, how to split nodes', 2, None, '___sec11'),
+              ('Back to moons again', 2, None, '___sec12'),
+              ('Playing around with regions', 2, None, '___sec13'),
+              ('Regression trees', 2, None, '___sec14'),
+              ('Final regressor code', 2, None, '___sec15'),
+              ('Pros and cons of trees, pros', 2, None, '___sec16'),
+              ('Disadvantages', 2, None, '___sec17'),
+              ('Bagging', 2, None, '___sec18'),
+              ('Random forests', 2, None, '___sec19'),
+              ('A simple scikit-learn example', 2, None, '___sec20'),
+              ('Please, not the moons again!', 2, None, '___sec21'),
+              ('Bagging examples', 2, None, '___sec22'),
+              ('Then random forests', 2, None, '___sec23')]}
 end of tocinfo -->
 
 <body>
@@ -143,7 +137,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>Mar 11, 2019</h4></center> <!-- date -->
+<center><h4>May 19, 2019</h4></center> <!-- date -->
 <br>
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -200,204 +194,112 @@ Then we are essentially done!
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec2">Decision trees and Regression  </h2>
+<h2 id="___sec2">Decision trees and Regression, our Nuclear data model  </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic"># Regression analysis using scikit-learn functions</span>
+<span style="color: #408080; font-style: italic"># Common imports</span>
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
 <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">matplotlib.pyplot</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">plt</span>
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.preprocessing</span> <span style="color: #008000; font-weight: bold">import</span> PolynomialFeatures
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.linear_model</span> <span style="color: #008000; font-weight: bold">import</span> LinearRegression
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">sklearn.linear_model</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">skl</span>
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.model_selection</span> <span style="color: #008000; font-weight: bold">import</span> train_test_split
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.metrics</span> <span style="color: #008000; font-weight: bold">import</span> mean_squared_error, r2_score, mean_absolute_error
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">os</span>
 
-steps<span style="color: #666666">=250</span>
+<span style="color: #408080; font-style: italic"># Where to save the figures and data files</span>
+PROJECT_ROOT_DIR <span style="color: #666666">=</span> <span style="color: #BA2121">&quot;Results&quot;</span>
+FIGURE_ID <span style="color: #666666">=</span> <span style="color: #BA2121">&quot;Results/FigureFiles&quot;</span>
+DATA_ID <span style="color: #666666">=</span> <span style="color: #BA2121">&quot;DataFiles/&quot;</span>
 
-distance<span style="color: #666666">=0</span>
-x<span style="color: #666666">=0</span>
-distance_list<span style="color: #666666">=</span>[]
-steps_list<span style="color: #666666">=</span>[]
-<span style="color: #008000; font-weight: bold">while</span> x<span style="color: #666666">&lt;</span>steps:
-    distance<span style="color: #666666">+=</span>np<span style="color: #666666">.</span>random<span style="color: #666666">.</span>randint(<span style="color: #666666">-1</span>,<span style="color: #666666">2</span>)
-    distance_list<span style="color: #666666">.</span>append(distance)
-    x<span style="color: #666666">+=1</span>
-    steps_list<span style="color: #666666">.</span>append(x)
-plt<span style="color: #666666">.</span>plot(steps_list,distance_list, color<span style="color: #666666">=</span><span style="color: #BA2121">&#39;green&#39;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;Random Walk Data&quot;</span>)
+<span style="color: #008000; font-weight: bold">if</span> <span style="color: #AA22FF; font-weight: bold">not</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>exists(PROJECT_ROOT_DIR):
+    os<span style="color: #666666">.</span>mkdir(PROJECT_ROOT_DIR)
 
-steps_list<span style="color: #666666">=</span>np<span style="color: #666666">.</span>asarray(steps_list)
-distance_list<span style="color: #666666">=</span>np<span style="color: #666666">.</span>asarray(distance_list)
+<span style="color: #008000; font-weight: bold">if</span> <span style="color: #AA22FF; font-weight: bold">not</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>exists(FIGURE_ID):
+    os<span style="color: #666666">.</span>makedirs(FIGURE_ID)
 
-X<span style="color: #666666">=</span>steps_list[:,np<span style="color: #666666">.</span>newaxis]
+<span style="color: #008000; font-weight: bold">if</span> <span style="color: #AA22FF; font-weight: bold">not</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>exists(DATA_ID):
+    os<span style="color: #666666">.</span>makedirs(DATA_ID)
 
-<span style="color: #408080; font-style: italic">#Polynomial fits</span>
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">image_path</span>(fig_id):
+    <span style="color: #008000; font-weight: bold">return</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>join(FIGURE_ID, fig_id)
 
-<span style="color: #408080; font-style: italic">#Degree 2</span>
-poly_features<span style="color: #666666">=</span>PolynomialFeatures(degree<span style="color: #666666">=2</span>, include_bias<span style="color: #666666">=</span><span style="color: #008000">False</span>)
-X_poly<span style="color: #666666">=</span>poly_features<span style="color: #666666">.</span>fit_transform(X)
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">data_path</span>(dat_id):
+    <span style="color: #008000; font-weight: bold">return</span> os<span style="color: #666666">.</span>path<span style="color: #666666">.</span>join(DATA_ID, dat_id)
 
-lin_reg<span style="color: #666666">=</span>LinearRegression()
-poly_fit<span style="color: #666666">=</span>lin_reg<span style="color: #666666">.</span>fit(X_poly,distance_list)
-b<span style="color: #666666">=</span>lin_reg<span style="color: #666666">.</span>coef_
-c<span style="color: #666666">=</span>lin_reg<span style="color: #666666">.</span>intercept_
-<span style="color: #008000; font-weight: bold">print</span> (<span style="color: #BA2121">&quot;2nd degree coefficients:&quot;</span>)
-<span style="color: #008000; font-weight: bold">print</span> (<span style="color: #BA2121">&quot;zero power: &quot;</span>,c)
-<span style="color: #008000; font-weight: bold">print</span> (<span style="color: #BA2121">&quot;first power: &quot;</span>, b[<span style="color: #666666">0</span>])
-<span style="color: #008000; font-weight: bold">print</span> (<span style="color: #BA2121">&quot;second power: &quot;</span>,b[<span style="color: #666666">1</span>])
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">save_fig</span>(fig_id):
+    plt<span style="color: #666666">.</span>savefig(image_path(fig_id) <span style="color: #666666">+</span> <span style="color: #BA2121">&quot;.png&quot;</span>, format<span style="color: #666666">=</span><span style="color: #BA2121">&#39;png&#39;</span>)
 
-z <span style="color: #666666">=</span> np<span style="color: #666666">.</span>arange(<span style="color: #666666">0</span>, steps, <span style="color: #666666">.01</span>)
-z_mod<span style="color: #666666">=</span>b[<span style="color: #666666">1</span>]<span style="color: #666666">*</span>z<span style="color: #666666">**2+</span>b[<span style="color: #666666">0</span>]<span style="color: #666666">*</span>z<span style="color: #666666">+</span>c
+infile <span style="color: #666666">=</span> <span style="color: #008000">open</span>(data_path(<span style="color: #BA2121">&quot;MassEval2016.dat&quot;</span>),<span style="color: #BA2121">&#39;r&#39;</span>)
 
-fit_mod<span style="color: #666666">=</span>b[<span style="color: #666666">1</span>]<span style="color: #666666">*</span>X<span style="color: #666666">**2+</span>b[<span style="color: #666666">0</span>]<span style="color: #666666">*</span>X<span style="color: #666666">+</span>c
-plt<span style="color: #666666">.</span>plot(z, z_mod, color<span style="color: #666666">=</span><span style="color: #BA2121">&#39;r&#39;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;2nd Degree Fit&quot;</span>)
-plt<span style="color: #666666">.</span>title(<span style="color: #BA2121">&quot;Polynomial Regression&quot;</span>)
 
-plt<span style="color: #666666">.</span>xlabel(<span style="color: #BA2121">&quot;Steps&quot;</span>)
-plt<span style="color: #666666">.</span>ylabel(<span style="color: #BA2121">&quot;Distance&quot;</span>)
+<span style="color: #408080; font-style: italic"># Read the experimental data with Pandas</span>
+Masses <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>read_fwf(infile, usecols<span style="color: #666666">=</span>(<span style="color: #666666">2</span>,<span style="color: #666666">3</span>,<span style="color: #666666">4</span>,<span style="color: #666666">6</span>,<span style="color: #666666">11</span>),
+              names<span style="color: #666666">=</span>(<span style="color: #BA2121">&#39;N&#39;</span>, <span style="color: #BA2121">&#39;Z&#39;</span>, <span style="color: #BA2121">&#39;A&#39;</span>, <span style="color: #BA2121">&#39;Element&#39;</span>, <span style="color: #BA2121">&#39;Ebinding&#39;</span>),
+              widths<span style="color: #666666">=</span>(<span style="color: #666666">1</span>,<span style="color: #666666">3</span>,<span style="color: #666666">5</span>,<span style="color: #666666">5</span>,<span style="color: #666666">5</span>,<span style="color: #666666">1</span>,<span style="color: #666666">3</span>,<span style="color: #666666">4</span>,<span style="color: #666666">1</span>,<span style="color: #666666">13</span>,<span style="color: #666666">11</span>,<span style="color: #666666">11</span>,<span style="color: #666666">9</span>,<span style="color: #666666">1</span>,<span style="color: #666666">2</span>,<span style="color: #666666">11</span>,<span style="color: #666666">9</span>,<span style="color: #666666">1</span>,<span style="color: #666666">3</span>,<span style="color: #666666">1</span>,<span style="color: #666666">12</span>,<span style="color: #666666">11</span>,<span style="color: #666666">1</span>),
+              header<span style="color: #666666">=39</span>,
+              index_col<span style="color: #666666">=</span><span style="color: #008000">False</span>)
 
-<span style="color: #408080; font-style: italic">#Degree 10</span>
-poly_features10<span style="color: #666666">=</span>PolynomialFeatures(degree<span style="color: #666666">=10</span>, include_bias<span style="color: #666666">=</span><span style="color: #008000">False</span>)
-X_poly10<span style="color: #666666">=</span>poly_features10<span style="color: #666666">.</span>fit_transform(X)
+<span style="color: #408080; font-style: italic"># Extrapolated values are indicated by &#39;#&#39; in place of the decimal place, so</span>
+<span style="color: #408080; font-style: italic"># the Ebinding column won&#39;t be numeric. Coerce to float and drop these entries.</span>
+Masses[<span style="color: #BA2121">&#39;Ebinding&#39;</span>] <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>to_numeric(Masses[<span style="color: #BA2121">&#39;Ebinding&#39;</span>], errors<span style="color: #666666">=</span><span style="color: #BA2121">&#39;coerce&#39;</span>)
+Masses <span style="color: #666666">=</span> Masses<span style="color: #666666">.</span>dropna()
+<span style="color: #408080; font-style: italic"># Convert from keV to MeV.</span>
+Masses[<span style="color: #BA2121">&#39;Ebinding&#39;</span>] <span style="color: #666666">/=</span> <span style="color: #666666">1000</span>
 
-poly_fit10<span style="color: #666666">=</span>lin_reg<span style="color: #666666">.</span>fit(X_poly10,distance_list)
-
-y_plot<span style="color: #666666">=</span>poly_fit10<span style="color: #666666">.</span>predict(X_poly10)
-plt<span style="color: #666666">.</span>plot(X, y_plot, color<span style="color: #666666">=</span><span style="color: #BA2121">&#39;black&#39;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;10th Degree Fit&quot;</span>)
-
-plt<span style="color: #666666">.</span>legend()
-plt<span style="color: #666666">.</span>show()
+<span style="color: #408080; font-style: italic"># Group the DataFrame by nucleon number, A.</span>
+Masses <span style="color: #666666">=</span> Masses<span style="color: #666666">.</span>groupby(<span style="color: #BA2121">&#39;A&#39;</span>)
+<span style="color: #408080; font-style: italic"># Find the rows of the grouped DataFrame with the maximum binding energy.</span>
+Masses <span style="color: #666666">=</span> Masses<span style="color: #666666">.</span>apply(<span style="color: #008000; font-weight: bold">lambda</span> t: t[t<span style="color: #666666">.</span>Ebinding<span style="color: #666666">==</span>t<span style="color: #666666">.</span>Ebinding<span style="color: #666666">.</span>max()])
+A <span style="color: #666666">=</span> Masses[<span style="color: #BA2121">&#39;A&#39;</span>]
+Z <span style="color: #666666">=</span> Masses[<span style="color: #BA2121">&#39;Z&#39;</span>]
+N <span style="color: #666666">=</span> Masses[<span style="color: #BA2121">&#39;N&#39;</span>]
+Element <span style="color: #666666">=</span> Masses[<span style="color: #BA2121">&#39;Element&#39;</span>]
+Energies <span style="color: #666666">=</span> Masses[<span style="color: #BA2121">&#39;Ebinding&#39;</span>]
+<span style="color: #408080; font-style: italic"># Now we set up the design matrix X</span>
+X <span style="color: #666666">=</span> np<span style="color: #666666">.</span>zeros((<span style="color: #666666">1</span>,<span style="color: #008000">len</span>(A)))
+<span style="color: #408080; font-style: italic">#X[4,:] = A**(-1.0)</span>
+<span style="color: #408080; font-style: italic">#X[3,:] = A**(-1.0/3.0)</span>
+<span style="color: #408080; font-style: italic">#X[2,:] = A**(2.0/3.0)</span>
+X[<span style="color: #666666">0</span>,:] <span style="color: #666666">=</span> A
+<span style="color: #408080; font-style: italic">#X[0,:] = 1</span>
 
 
 <span style="color: #408080; font-style: italic">#Decision Tree Regression</span>
 <span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.tree</span> <span style="color: #008000; font-weight: bold">import</span> DecisionTreeRegressor
-regr_1<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=2</span>)
-regr_2<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=5</span>)
-regr_3<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=7</span>)
-regr_1<span style="color: #666666">.</span>fit(X, distance_list)
-regr_2<span style="color: #666666">.</span>fit(X, distance_list)
-regr_3<span style="color: #666666">.</span>fit(X, distance_list)
+regr_1<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=5</span>)
+regr_2<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=7</span>)
+regr_3<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=9</span>)
+regr_1<span style="color: #666666">.</span>fit(X<span style="color: #666666">.</span>T, Energies)
+regr_2<span style="color: #666666">.</span>fit(X<span style="color: #666666">.</span>T, Energies)
+regr_3<span style="color: #666666">.</span>fit(X<span style="color: #666666">.</span>T, Energies)
 
-X_test <span style="color: #666666">=</span> np<span style="color: #666666">.</span>arange(<span style="color: #666666">0.0</span>, steps, <span style="color: #666666">0.01</span>)[:, np<span style="color: #666666">.</span>newaxis]
-y_1 <span style="color: #666666">=</span> regr_1<span style="color: #666666">.</span>predict(X_test)
-y_2 <span style="color: #666666">=</span> regr_2<span style="color: #666666">.</span>predict(X_test)
-y_3<span style="color: #666666">=</span>regr_3<span style="color: #666666">.</span>predict(X_test)
 
+y_1 <span style="color: #666666">=</span> regr_1<span style="color: #666666">.</span>predict(X<span style="color: #666666">.</span>T)
+y_2 <span style="color: #666666">=</span> regr_2<span style="color: #666666">.</span>predict(X<span style="color: #666666">.</span>T)
+y_3<span style="color: #666666">=</span>regr_3<span style="color: #666666">.</span>predict(X<span style="color: #666666">.</span>T)
+Masses[<span style="color: #BA2121">&#39;Eapprox&#39;</span>] <span style="color: #666666">=</span> y_3
 <span style="color: #408080; font-style: italic"># Plot the results</span>
 plt<span style="color: #666666">.</span>figure()
-plt<span style="color: #666666">.</span>scatter(X, distance_list, s<span style="color: #666666">=2.5</span>, c<span style="color: #666666">=</span><span style="color: #BA2121">&quot;black&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;data&quot;</span>)
-plt<span style="color: #666666">.</span>plot(X_test, y_1, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;red&quot;</span>,
-         label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=2&quot;</span>, linewidth<span style="color: #666666">=2</span>)
-plt<span style="color: #666666">.</span>plot(X_test, y_2, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;green&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=5&quot;</span>, linewidth<span style="color: #666666">=2</span>)
-plt<span style="color: #666666">.</span>plot(X_test, y_3, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;m&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=7&quot;</span>, linewidth<span style="color: #666666">=2</span>)
+plt<span style="color: #666666">.</span>plot(A, Energies, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;blue&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;Data&quot;</span>, linewidth<span style="color: #666666">=2</span>)
+plt<span style="color: #666666">.</span>plot(A, y_1, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;red&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=5&quot;</span>, linewidth<span style="color: #666666">=2</span>)
+plt<span style="color: #666666">.</span>plot(A, y_2, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;green&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=7&quot;</span>, linewidth<span style="color: #666666">=2</span>)
+plt<span style="color: #666666">.</span>plot(A, y_3, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;m&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=9&quot;</span>, linewidth<span style="color: #666666">=2</span>)
 
-plt<span style="color: #666666">.</span>xlabel(<span style="color: #BA2121">&quot;Data&quot;</span>)
-plt<span style="color: #666666">.</span>ylabel(<span style="color: #BA2121">&quot;Darget&quot;</span>)
+plt<span style="color: #666666">.</span>xlabel(<span style="color: #BA2121">&quot;$A$&quot;</span>)
+plt<span style="color: #666666">.</span>ylabel(<span style="color: #BA2121">&quot;$E$[MeV]&quot;</span>)
 plt<span style="color: #666666">.</span>title(<span style="color: #BA2121">&quot;Decision Tree Regression&quot;</span>)
 plt<span style="color: #666666">.</span>legend()
+save_fig(<span style="color: #BA2121">&quot;Masses2016Trees&quot;</span>)
 plt<span style="color: #666666">.</span>show()
+<span style="color: #008000; font-weight: bold">print</span>(Masses)
+<span style="color: #008000; font-weight: bold">print</span>(np<span style="color: #666666">.</span>mean( (Energies<span style="color: #666666">-</span>y_3)<span style="color: #666666">**2</span>))
 </pre></div>
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec3">Maxwell-Boltzmann velocity distribution </h2>
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "default" -->
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #408080; font-style: italic"># Program to test the Metropolis algorithm with one particle at given temp in</span>
-<span style="color: #408080; font-style: italic"># one dimension</span>
-<span style="color: #408080; font-style: italic">#!/usr/bin/env python</span>
-<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
-<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">matplotlib.mlab</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">mlab</span>
-<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">matplotlib.pyplot</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">plt</span>
-<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">random</span>
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">math</span> <span style="color: #008000; font-weight: bold">import</span> sqrt, exp, log
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.preprocessing</span> <span style="color: #008000; font-weight: bold">import</span> PolynomialFeatures
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.linear_model</span> <span style="color: #008000; font-weight: bold">import</span> LinearRegression
-<span style="color: #408080; font-style: italic"># initialize the rng with a seed</span>
-random<span style="color: #666666">.</span>seed()
-<span style="color: #408080; font-style: italic"># Hard coding of input parameters</span>
-MCcycles <span style="color: #666666">=</span> <span style="color: #666666">100000</span>
-Temperature <span style="color: #666666">=</span> <span style="color: #666666">2.0</span>
-beta <span style="color: #666666">=</span> <span style="color: #666666">1./</span>Temperature
-InitialVelocity <span style="color: #666666">=</span> <span style="color: #666666">-2.0</span>
-CurrentVelocity <span style="color: #666666">=</span> InitialVelocity
-Energy <span style="color: #666666">=</span> <span style="color: #666666">0.5*</span>InitialVelocity<span style="color: #666666">*</span>InitialVelocity
-VelocityRange <span style="color: #666666">=</span> <span style="color: #666666">10*</span>sqrt(Temperature)
-VelocityStep <span style="color: #666666">=</span> <span style="color: #666666">2*</span>VelocityRange<span style="color: #666666">/10.</span>
-AverageEnergy <span style="color: #666666">=</span> Energy
-AverageEnergy2 <span style="color: #666666">=</span> Energy<span style="color: #666666">*</span>Energy
-VelocityValues <span style="color: #666666">=</span> np<span style="color: #666666">.</span>zeros(MCcycles)
-<span style="color: #408080; font-style: italic"># The Monte Carlo sampling with Metropolis starts here</span>
-<span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> <span style="color: #008000">range</span> (<span style="color: #666666">1</span>, MCcycles, <span style="color: #666666">1</span>):
-    TrialVelocity <span style="color: #666666">=</span> CurrentVelocity <span style="color: #666666">+</span> (<span style="color: #666666">2.0*</span>random<span style="color: #666666">.</span>random() <span style="color: #666666">-</span> <span style="color: #666666">1.0</span>)<span style="color: #666666">*</span>VelocityStep
-    EnergyChange <span style="color: #666666">=</span> <span style="color: #666666">0.5*</span>(TrialVelocity<span style="color: #666666">*</span>TrialVelocity <span style="color: #666666">-</span>CurrentVelocity<span style="color: #666666">*</span>CurrentVelocity);
-    <span style="color: #008000; font-weight: bold">if</span> random<span style="color: #666666">.</span>random() <span style="color: #666666">&lt;=</span> exp(<span style="color: #666666">-</span>beta<span style="color: #666666">*</span>EnergyChange):
-        CurrentVelocity <span style="color: #666666">=</span> TrialVelocity
-        Energy <span style="color: #666666">+=</span> EnergyChange
-        VelocityValues[i] <span style="color: #666666">=</span> CurrentVelocity
-    AverageEnergy <span style="color: #666666">+=</span> Energy
-    AverageEnergy2 <span style="color: #666666">+=</span> Energy<span style="color: #666666">*</span>Energy
-<span style="color: #408080; font-style: italic">#Final averages</span>
-AverageEnergy <span style="color: #666666">=</span> AverageEnergy<span style="color: #666666">/</span>MCcycles
-AverageEnergy2 <span style="color: #666666">=</span> AverageEnergy2<span style="color: #666666">/</span>MCcycles
-Variance <span style="color: #666666">=</span> AverageEnergy2 <span style="color: #666666">-</span> AverageEnergy<span style="color: #666666">*</span>AverageEnergy
-<span style="color: #008000; font-weight: bold">print</span>(AverageEnergy, Variance)
-n, bins, patches <span style="color: #666666">=</span> plt<span style="color: #666666">.</span>hist(VelocityValues, <span style="color: #666666">400</span>, facecolor<span style="color: #666666">=</span><span style="color: #BA2121">&#39;green&#39;</span>)
-
-plt<span style="color: #666666">.</span>xlabel(<span style="color: #BA2121">&#39;$v$&#39;</span>)
-plt<span style="color: #666666">.</span>ylabel(<span style="color: #BA2121">&#39;Velocity distribution P(v)&#39;</span>)
-plt<span style="color: #666666">.</span>title(<span style="color: #BA2121">r&#39;Velocity histogram at $k_BT=2$&#39;</span>)
-plt<span style="color: #666666">.</span>axis([<span style="color: #666666">-5</span>, <span style="color: #666666">5</span>, <span style="color: #666666">0</span>, <span style="color: #666666">600</span>])
-plt<span style="color: #666666">.</span>grid(<span style="color: #008000">True</span>)
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">collections</span> <span style="color: #008000; font-weight: bold">import</span> Counter
-
-<span style="color: #408080; font-style: italic">#print (Counter(VelocityValues))</span>
-
-<span style="color: #008000; font-weight: bold">print</span> (VelocityValues[:<span style="color: #666666">20</span>])
-VelocityValues<span style="color: #666666">=</span><span style="color: #008000">list</span>(Counter(VelocityValues)<span style="color: #666666">.</span>keys())
-d<span style="color: #666666">=</span><span style="color: #008000">list</span>(Counter(VelocityValues)<span style="color: #666666">.</span>values())
-
-VelocityValues<span style="color: #666666">=</span>np<span style="color: #666666">.</span>asarray(VelocityValues)[:, np<span style="color: #666666">.</span>newaxis]
-d<span style="color: #666666">=</span>np<span style="color: #666666">.</span>asarray(d)
-<span style="color: #008000; font-weight: bold">print</span> (VelocityValues<span style="color: #666666">.</span>shape, d<span style="color: #666666">.</span>shape)
-
-plt<span style="color: #666666">.</span>scatter(VelocityValues, d)
-plt<span style="color: #666666">.</span>show()
-
-<span style="color: #408080; font-style: italic">#2nd Degree Polynomial</span>
-poly_feat<span style="color: #666666">=</span>PolynomialFeatures(degree<span style="color: #666666">=20</span>, include_bias<span style="color: #666666">=</span><span style="color: #008000">False</span>)
-X_poly<span style="color: #666666">=</span>poly_feat<span style="color: #666666">.</span>fit_transform(VelocityValues)
-lin_reg<span style="color: #666666">=</span>LinearRegression()
-poly_fit<span style="color: #666666">=</span>lin_reg<span style="color: #666666">.</span>fit(X_poly,d)
-
-y_plot<span style="color: #666666">=</span>poly_fit<span style="color: #666666">.</span>predict(X_poly)
-plt<span style="color: #666666">.</span>title(<span style="color: #BA2121">&quot;Polynomial Fit&quot;</span>)
-plt<span style="color: #666666">.</span>plot(VelocityValues, y_plot, color<span style="color: #666666">=</span><span style="color: #BA2121">&#39;black&#39;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;Fit&quot;</span>)
-plt<span style="color: #666666">.</span>show()
-
-<span style="color: #408080; font-style: italic">#Decision Trees</span>
-
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.tree</span> <span style="color: #008000; font-weight: bold">import</span> DecisionTreeRegressor
-regr_1<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=2</span>)
-regr_2<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=5</span>)
-regr_3<span style="color: #666666">=</span>DecisionTreeRegressor(max_depth<span style="color: #666666">=7</span>)
-regr_1<span style="color: #666666">.</span>fit(VelocityValues, d)
-regr_2<span style="color: #666666">.</span>fit(VelocityValues, d)
-regr_3<span style="color: #666666">.</span>fit(VelocityValues, d)
-
-X_test <span style="color: #666666">=</span> np<span style="color: #666666">.</span>arange(<span style="color: #666666">0.0</span>, MCcycles, <span style="color: #666666">0.01</span>)[:, np<span style="color: #666666">.</span>newaxis]
-y_1<span style="color: #666666">=</span>regr_1<span style="color: #666666">.</span>predict(X_test)
-y_2<span style="color: #666666">=</span>regr_2<span style="color: #666666">.</span>predict(X_test)
-y_3<span style="color: #666666">=</span>regr_3<span style="color: #666666">.</span>predict(X_test)
-
-plt<span style="color: #666666">.</span>title(<span style="color: #BA2121">&quot;Decision Tree&quot;</span>)
-plt<span style="color: #666666">.</span>plot(X_test, y_1, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;red&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=2&quot;</span>, linewidth<span style="color: #666666">=2</span>)
-plt<span style="color: #666666">.</span>plot(X_test, y_2, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;green&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=5&quot;</span>, linewidth<span style="color: #666666">=2</span>)
-plt<span style="color: #666666">.</span>plot(X_test, y_3, color<span style="color: #666666">=</span><span style="color: #BA2121">&quot;m&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;max_depth=7&quot;</span>, linewidth<span style="color: #666666">=2</span>)
-plt<span style="color: #666666">.</span>show()
-</pre></div>
-<p>
-<!-- !split --><br><br><br><br><br><br><br><br><br><br>
-
-<h2 id="___sec4">Building a tree, regression </h2>
+<h2 id="___sec3">Building a tree, regression </h2>
 
 <p>
 There are mainly two steps
@@ -429,7 +331,7 @@ box.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec5">A top-down approach, recursive binary splitting </h2>
+<h2 id="___sec4">A top-down approach, recursive binary splitting </h2>
 
 <p>
 Unfortunately, it is computationally infeasible to consider every
@@ -448,7 +350,7 @@ better tree in some future step.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec6">Making a tree </h2>
+<h2 id="___sec5">Making a tree </h2>
 
 <p>
 In order to implement the recursive binary splitting we start by selecting
@@ -495,7 +397,7 @@ region contains more than five observations.
 <p>
 <!-- !split  -->
 
-<h2 id="___sec7">Pruning the tree </h2>
+<h2 id="___sec6">Pruning the tree </h2>
 
 <p>
 The above procedure is rather straightforward, but leads often to
@@ -514,7 +416,7 @@ parameter \( \alpha \).
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec8">Cost complexity pruning </h2>
+<h2 id="___sec7">Cost complexity pruning </h2>
 For each value of \( \alpha \)  there corresponds a subtree \( T \in T_0 \) such that
 $$
 \sum_{m=1}^{\overline{T}}\sum_{i:x_i\in R_m}(y_i-\overline{y}_{R_m})^2+\alpha\overline{T},
@@ -545,7 +447,7 @@ subtree corresponding to \( \alpha \).
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec9">A schematic procedure </h2>
+<h2 id="___sec8">A schematic procedure </h2>
 
 <p>
 <div class="alert alert-block alert-block alert-text-normal">
@@ -571,7 +473,7 @@ subtree corresponding to \( \alpha \).
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec10">A classification tree </h2>
+<h2 id="___sec9">A classification tree </h2>
 
 <p>
 A classification tree is very similar to a regression tree, except
@@ -590,7 +492,7 @@ fall into that region.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec11">Growing a classification tree </h2>
+<h2 id="___sec10">Growing a classification tree </h2>
 
 <p>
 The task of growing a
@@ -614,7 +516,7 @@ than is the classification error rate.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec12">Classification tree, how to split nodes </h2>
+<h2 id="___sec11">Classification tree, how to split nodes </h2>
 If our targets are the outcome of a classification process that takes for example 
 \( k=1,2,\dots,K \) values, the only thing we need to think of is to set up the splitting criteria for each node.
 
@@ -656,104 +558,7 @@ $$
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec13">Entropy and the ID3 algorithm </h2>
-
-<p>
-<!-- !split --><br><br><br><br><br><br><br><br><br><br>
-
-<h2 id="___sec14">Writing your own code for a classification tree </h2>
-
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "default" -->
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">entropy</span>(target_col):
-    <span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;</span>
-<span style="color: #BA2121; font-style: italic">    Calculate the entropy of a dataset.</span>
-<span style="color: #BA2121; font-style: italic">    The only parameter of this function is the target_col parameter which specifies the target column</span>
-<span style="color: #BA2121; font-style: italic">    &quot;&quot;&quot;</span>
-    elements,counts <span style="color: #666666">=</span> np<span style="color: #666666">.</span>unique(target_col,return_counts <span style="color: #666666">=</span> <span style="color: #008000">True</span>)
-    entropy <span style="color: #666666">=</span> np<span style="color: #666666">.</span>sum([(<span style="color: #666666">-</span>counts[i]<span style="color: #666666">/</span>np<span style="color: #666666">.</span>sum(counts))<span style="color: #666666">*</span>np<span style="color: #666666">.</span>log2(counts[i]<span style="color: #666666">/</span>np<span style="color: #666666">.</span>sum(counts)) <span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> <span style="color: #008000">range</span>(<span style="color: #008000">len</span>(elements))])
-    <span style="color: #008000; font-weight: bold">return</span> entropy
-
-<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">InfoGain</span>(data,split_attribute_name,target_name<span style="color: #666666">=</span><span style="color: #BA2121">&quot;class&quot;</span>):
-    <span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;</span>
-<span style="color: #BA2121; font-style: italic">    Calculate the information gain of a dataset. This function takes three parameters:</span>
-<span style="color: #BA2121; font-style: italic">    1. data = The dataset for whose feature the IG should be calculated</span>
-<span style="color: #BA2121; font-style: italic">    2. split_attribute_name = the name of the feature for which the information gain should be calculated</span>
-<span style="color: #BA2121; font-style: italic">    3. target_name = the name of the target feature. The default for this example is &quot;class&quot;</span>
-<span style="color: #BA2121; font-style: italic">    &quot;&quot;&quot;</span>    
-    <span style="color: #408080; font-style: italic">#Calculate the entropy of the total dataset</span>
-    total_entropy <span style="color: #666666">=</span> entropy(data[target_name])
-    
-    <span style="color: #408080; font-style: italic">##Calculate the entropy of the dataset</span>
-    
-    <span style="color: #408080; font-style: italic">#Calculate the values and the corresponding counts for the split attribute </span>
-    vals,counts<span style="color: #666666">=</span> np<span style="color: #666666">.</span>unique(data[split_attribute_name],return_counts<span style="color: #666666">=</span><span style="color: #008000">True</span>)
-    
-    <span style="color: #408080; font-style: italic">#Calculate the weighted entropy</span>
-    Weighted_Entropy <span style="color: #666666">=</span> np<span style="color: #666666">.</span>sum([(counts[i]<span style="color: #666666">/</span>np<span style="color: #666666">.</span>sum(counts))<span style="color: #666666">*</span>entropy(data<span style="color: #666666">.</span>where(data[split_attribute_name]<span style="color: #666666">==</span>vals[i])<span style="color: #666666">.</span>dropna()[target_name]) <span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> <span style="color: #008000">range</span>(<span style="color: #008000">len</span>(vals))])
-    
-    <span style="color: #408080; font-style: italic">#Calculate the information gain</span>
-    Information_Gain <span style="color: #666666">=</span> total_entropy <span style="color: #666666">-</span> Weighted_Entropy
-    <span style="color: #008000; font-weight: bold">return</span> Information_Gain
-       
-
-<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">ID3</span>(data,originaldata,features,target_attribute_name<span style="color: #666666">=</span><span style="color: #BA2121">&quot;class&quot;</span>,parent_node_class <span style="color: #666666">=</span> <span style="color: #008000">None</span>):
-    <span style="color: #408080; font-style: italic">#Define the stopping criteria --&gt; If one of this is satisfied, we want to return a leaf node#</span>
-    
-    <span style="color: #408080; font-style: italic">#If all target_values have the same value, return this value</span>
-    <span style="color: #008000; font-weight: bold">if</span> <span style="color: #008000">len</span>(np<span style="color: #666666">.</span>unique(data[target_attribute_name])) <span style="color: #666666">&lt;=</span> <span style="color: #666666">1</span>:
-        <span style="color: #008000; font-weight: bold">return</span> np<span style="color: #666666">.</span>unique(data[target_attribute_name])[<span style="color: #666666">0</span>]
-    
-    <span style="color: #408080; font-style: italic">#If the dataset is empty, return the mode target feature value in the original dataset</span>
-    <span style="color: #008000; font-weight: bold">elif</span> <span style="color: #008000">len</span>(data)<span style="color: #666666">==0</span>:
-        <span style="color: #008000; font-weight: bold">return</span> np<span style="color: #666666">.</span>unique(originaldata[target_attribute_name])[np<span style="color: #666666">.</span>argmax(np<span style="color: #666666">.</span>unique(originaldata[target_attribute_name],return_counts<span style="color: #666666">=</span><span style="color: #008000">True</span>)[<span style="color: #666666">1</span>])]
-    
-    <span style="color: #408080; font-style: italic">#If the feature space is empty, return the mode target feature value of the direct parent node --&gt; Note that</span>
-    <span style="color: #408080; font-style: italic">#the direct parent node is that node which has called the current run of the ID3 algorithm and hence</span>
-    <span style="color: #408080; font-style: italic">#the mode target feature value is stored in the parent_node_class variable.</span>
-    
-    <span style="color: #008000; font-weight: bold">elif</span> <span style="color: #008000">len</span>(features) <span style="color: #666666">==0</span>:
-        <span style="color: #008000; font-weight: bold">return</span> parent_node_class
-    
-    <span style="color: #408080; font-style: italic">#If none of the above holds true, grow the tree!</span>
-    
-    <span style="color: #008000; font-weight: bold">else</span>:
-        <span style="color: #408080; font-style: italic">#Set the default value for this node --&gt; The mode target feature value of the current node</span>
-        parent_node_class <span style="color: #666666">=</span> np<span style="color: #666666">.</span>unique(data[target_attribute_name])[np<span style="color: #666666">.</span>argmax(np<span style="color: #666666">.</span>unique(data[target_attribute_name],return_counts<span style="color: #666666">=</span><span style="color: #008000">True</span>)[<span style="color: #666666">1</span>])]
-        
-        <span style="color: #408080; font-style: italic">#Select the feature which best splits the dataset</span>
-        item_values <span style="color: #666666">=</span> [InfoGain(data,feature,target_attribute_name) <span style="color: #008000; font-weight: bold">for</span> feature <span style="color: #AA22FF; font-weight: bold">in</span> features] <span style="color: #408080; font-style: italic">#Return the information gain values for the features in the dataset</span>
-        best_feature_index <span style="color: #666666">=</span> np<span style="color: #666666">.</span>argmax(item_values)
-        best_feature <span style="color: #666666">=</span> features[best_feature_index]
-        
-        <span style="color: #408080; font-style: italic">#Create the tree structure. The root gets the name of the feature (best_feature) with the maximum information</span>
-        <span style="color: #408080; font-style: italic">#gain in the first run</span>
-        tree <span style="color: #666666">=</span> {best_feature:{}}
-        
-        
-        <span style="color: #408080; font-style: italic">#Remove the feature with the best inforamtion gain from the feature space</span>
-        features <span style="color: #666666">=</span> [i <span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> features <span style="color: #008000; font-weight: bold">if</span> i <span style="color: #666666">!=</span> best_feature]
-        
-        <span style="color: #408080; font-style: italic">#Grow a branch under the root node for each possible value of the root node feature</span>
-        
-        <span style="color: #008000; font-weight: bold">for</span> value <span style="color: #AA22FF; font-weight: bold">in</span> np<span style="color: #666666">.</span>unique(data[best_feature]):
-            value <span style="color: #666666">=</span> value
-            <span style="color: #408080; font-style: italic">#Split the dataset along the value of the feature with the largest information gain and therwith create sub_datasets</span>
-            sub_data <span style="color: #666666">=</span> data<span style="color: #666666">.</span>where(data[best_feature] <span style="color: #666666">==</span> value)<span style="color: #666666">.</span>dropna()
-            
-            <span style="color: #408080; font-style: italic">#Call the ID3 algorithm for each of those sub_datasets with the new parameters --&gt; Here the recursion comes in!</span>
-            subtree <span style="color: #666666">=</span> ID3(sub_data,dataset,features,target_attribute_name,parent_node_class)
-            
-            <span style="color: #408080; font-style: italic">#Add the sub tree, grown from the sub_dataset to the tree under the root node</span>
-            tree[best_feature][value] <span style="color: #666666">=</span> subtree
-            
-        <span style="color: #008000; font-weight: bold">return</span>(tree)    
-</pre></div>
-<p>
-<!-- !split --><br><br><br><br><br><br><br><br><br><br>
-
-<h2 id="___sec15">Back to moons again </h2>
+<h2 id="___sec12">Back to moons again </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
@@ -825,7 +630,7 @@ plt<span style="color: #666666">.</span>show()
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec16">Playing around with regions </h2>
+<h2 id="___sec13">Playing around with regions </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
@@ -853,7 +658,7 @@ plt<span style="color: #666666">.</span>show()
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec17">Regression trees </h2>
+<h2 id="___sec14">Regression trees </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
@@ -875,7 +680,7 @@ tree_reg<span style="color: #666666">.</span>fit(X, y)
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec18">Final regressor code </h2>
+<h2 id="___sec15">Final regressor code </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
@@ -953,35 +758,7 @@ plt<span style="color: #666666">.</span>show()
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec19">Classification again: The zoo data </h2>
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "default" -->
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">pandas</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">pd</span>
-<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">pprint</span> <span style="color: #008000; font-weight: bold">import</span> pprint
-<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.tree</span> <span style="color: #008000; font-weight: bold">import</span> DecisionTreeClassifier
-
-<span style="color: #408080; font-style: italic">#Import the dataset </span>
-dataset <span style="color: #666666">=</span> pd<span style="color: #666666">.</span>read_csv(<span style="color: #BA2121">&#39;data/zoo.csv&#39;</span>)
-<span style="color: #408080; font-style: italic">#We drop the animal names since this is not a good feature to split the data on</span>
-<span style="color: #408080; font-style: italic">#dataset=dataset.drop(&#39;animal_name&#39;,axis=1)</span>
-<span style="color: #408080; font-style: italic">#Split the data into a training and a testing set</span>
-train_features <span style="color: #666666">=</span> dataset<span style="color: #666666">.</span>iloc[:<span style="color: #666666">80</span>,:<span style="color: #666666">-1</span>]
-test_features <span style="color: #666666">=</span> dataset<span style="color: #666666">.</span>iloc[<span style="color: #666666">80</span>:,:<span style="color: #666666">-1</span>]
-train_targets <span style="color: #666666">=</span> dataset<span style="color: #666666">.</span>iloc[:<span style="color: #666666">80</span>,<span style="color: #666666">-1</span>]
-test_targets <span style="color: #666666">=</span> dataset<span style="color: #666666">.</span>iloc[<span style="color: #666666">80</span>:,<span style="color: #666666">-1</span>]
-<span style="color: #408080; font-style: italic">#Train the model</span>
-tree <span style="color: #666666">=</span> DecisionTreeClassifier(criterion <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;entropy&#39;</span>)<span style="color: #666666">.</span>fit(train_features,train_targets)
-<span style="color: #408080; font-style: italic">#Predict the classes of new, unseen data</span>
-prediction <span style="color: #666666">=</span> tree<span style="color: #666666">.</span>predict(test_features)
-<span style="color: #408080; font-style: italic">#Check the accuracy</span>
-<span style="color: #008000; font-weight: bold">print</span>(<span style="color: #BA2121">&quot;The prediction accuracy is: &quot;</span>,tree<span style="color: #666666">.</span>score(test_features,test_targets)<span style="color: #666666">*100</span>,<span style="color: #BA2121">&quot;%&quot;</span>)
-</pre></div>
-<p>
-<!-- !split --><br><br><br><br><br><br><br><br><br><br>
-
-<h2 id="___sec20">Pros and cons of trees, pros </h2>
+<h2 id="___sec16">Pros and cons of trees, pros </h2>
 
 <ul>
 <li> White box, easy to interpret model. Some people believe that decision trees more closely mirror human decision-making than do the regression and classification approaches discussed earlier (think of support vector machines)</li>
@@ -995,7 +772,7 @@ prediction <span style="color: #666666">=</span> tree<span style="color: #666666
 
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec21">Disadvantages </h2>
+<h2 id="___sec17">Disadvantages </h2>
 
 <ul>
 <li> Unfortunately, trees generally do not have the same level of predictive accuracy as some of the other regression and classification approaches</li>
@@ -1012,7 +789,7 @@ However, by aggregating many decision trees, using methods like bagging, random 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec22">Bagging </h2>
+<h2 id="___sec18">Bagging </h2>
 
 <p>
 The <b>plain</b> decision trees suffer from high
@@ -1055,27 +832,7 @@ predictor, averaged over all \( B \) trees.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec23">Simple example, head or tail </h2>
-<p>
-
-<!-- code=python (!bc pycod) typeset with pygments style "default" -->
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span>heads_proba <span style="color: #666666">=</span> <span style="color: #666666">0.51</span>
-coin_tosses <span style="color: #666666">=</span> (np<span style="color: #666666">.</span>random<span style="color: #666666">.</span>rand(<span style="color: #666666">10000</span>, <span style="color: #666666">10</span>) <span style="color: #666666">&lt;</span> heads_proba)<span style="color: #666666">.</span>astype(np<span style="color: #666666">.</span>int32)
-cumulative_heads_ratio <span style="color: #666666">=</span> np<span style="color: #666666">.</span>cumsum(coin_tosses, axis<span style="color: #666666">=0</span>) <span style="color: #666666">/</span> np<span style="color: #666666">.</span>arange(<span style="color: #666666">1</span>, <span style="color: #666666">10001</span>)<span style="color: #666666">.</span>reshape(<span style="color: #666666">-1</span>, <span style="color: #666666">1</span>)
-plt<span style="color: #666666">.</span>figure(figsize<span style="color: #666666">=</span>(<span style="color: #666666">8</span>,<span style="color: #666666">3.5</span>))
-plt<span style="color: #666666">.</span>plot(cumulative_heads_ratio)
-plt<span style="color: #666666">.</span>plot([<span style="color: #666666">0</span>, <span style="color: #666666">10000</span>], [<span style="color: #666666">0.51</span>, <span style="color: #666666">0.51</span>], <span style="color: #BA2121">&quot;k--&quot;</span>, linewidth<span style="color: #666666">=2</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;51%&quot;</span>)
-plt<span style="color: #666666">.</span>plot([<span style="color: #666666">0</span>, <span style="color: #666666">10000</span>], [<span style="color: #666666">0.5</span>, <span style="color: #666666">0.5</span>], <span style="color: #BA2121">&quot;k-&quot;</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;50%&quot;</span>)
-plt<span style="color: #666666">.</span>xlabel(<span style="color: #BA2121">&quot;Number of coin tosses&quot;</span>)
-plt<span style="color: #666666">.</span>ylabel(<span style="color: #BA2121">&quot;Heads ratio&quot;</span>)
-plt<span style="color: #666666">.</span>legend(loc<span style="color: #666666">=</span><span style="color: #BA2121">&quot;lower right&quot;</span>)
-plt<span style="color: #666666">.</span>axis([<span style="color: #666666">0</span>, <span style="color: #666666">10000</span>, <span style="color: #666666">0.42</span>, <span style="color: #666666">0.58</span>])
-plt<span style="color: #666666">.</span>show()
-</pre></div>
-<p>
-<!-- !split --><br><br><br><br><br><br><br><br><br><br>
-
-<h2 id="___sec24">Random forests </h2>
+<h2 id="___sec19">Random forests </h2>
 
 <p>
 Random forests provide an improvement over bagged trees by way of a
@@ -1117,7 +874,7 @@ setting.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec25">A simple scikit-learn example </h2>
+<h2 id="___sec20">A simple scikit-learn example </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
@@ -1135,7 +892,7 @@ accuracy <span style="color: #666666">=</span> cross_validate(Random_Forest_mode
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec26">Please, not the moons again! </h2>
+<h2 id="___sec21">Please, not the moons again! </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
@@ -1193,7 +950,7 @@ voting_clf<span style="color: #666666">.</span>fit(X_train, y_train)
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec27">Bagging examples </h2>
+<h2 id="___sec22">Bagging examples </h2>
 
 <p>
 
@@ -1254,7 +1011,7 @@ plt<span style="color: #666666">.</span>show()
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec28">Then random forests </h2>
+<h2 id="___sec23">Then random forests </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "default" -->
@@ -1273,12 +1030,6 @@ rnd_clf<span style="color: #666666">.</span>fit(X_train, y_train)
 y_pred_rf <span style="color: #666666">=</span> rnd_clf<span style="color: #666666">.</span>predict(X_test)
 np<span style="color: #666666">.</span>sum(y_pred <span style="color: #666666">==</span> y_pred_rf) <span style="color: #666666">/</span> <span style="color: #008000">len</span>(y_pred) 
 </pre></div>
-<p>
-<!-- !split  -->
-
-<h2 id="___sec29">Boosting and more </h2>
-More material to come here.
-
 <p>
 
 <!-- ------------------- end of main content --------------- -->
