@@ -216,18 +216,32 @@ div { text-align: justify; text-justify: inter-word; }
               ('Resampling methods: Bootstrap approach', 2, None, '___sec84'),
               ('Resampling methods: Bootstrap steps', 2, None, '___sec85'),
               ('Code example for the Bootstrap method', 2, None, '___sec86'),
-              ('The bias-variance tradeoff', 2, None, '___sec87'),
-              ('Example code for Bias-Variance tradeoff', 2, None, '___sec88'),
-              ('Understanding what happens', 2, None, '___sec89'),
-              ('Summing up', 2, None, '___sec90'),
-              ('The one-dimensional Ising model', 2, None, '___sec91'),
-              ('Ridge regression', 2, None, '___sec92'),
-              ('LASSO regression', 2, None, '___sec93'),
+              ('Code Example for Cross-validation and $k$-fold '
+               'Cross-validation',
+               2,
+               None,
+               '___sec87'),
+              ('The bias-variance tradeoff', 2, None, '___sec88'),
+              ('Example code for Bias-Variance tradeoff', 2, None, '___sec89'),
+              ('Understanding what happens', 2, None, '___sec90'),
+              ('Summing up', 2, None, '___sec91'),
+              ('The one-dimensional Ising model', 2, None, '___sec92'),
+              ('Ridge regression', 2, None, '___sec93'),
+              ('LASSO regression', 2, None, '___sec94'),
               ('Performance as  function of the regularization parameter',
                2,
                None,
-               '___sec94'),
-              ('Finding the optimal value of $\\lambda$', 2, None, '___sec95')]}
+               '___sec95'),
+              ('Finding the optimal value of $\\lambda$', 2, None, '___sec96'),
+              ('Further Exercises', 2, None, '___sec97'),
+              ('Exercise 1', 3, None, '___sec98'),
+              ('Exercise 2, variance of the parameters $\\beta$ in linear '
+               'regression',
+               3,
+               None,
+               '___sec99'),
+              ('Exercise 3', 3, None, '___sec100'),
+              ('Exercise 4', 3, None, '___sec101')]}
 end of tocinfo -->
 
 <body>
@@ -1738,8 +1752,12 @@ $$
 <p>
 This is a \( 3\times 2 \) matrix which is decomposed in terms of a
 \( 3\times 3 \) matrix \( \boldsymbol{U} \), and a \( 2\times 2 \) matrix \( \boldsymbol{V} \). It is easy to see
-that \( \boldsymbol{U} \) and \( \boldsymbol{V} \) are orthogonal (how?). And the SVD
-decomposition (singular values) gives eigenvalues \( \sigma_i\geq\sigma_{i+1) \) for all \( i \) and for dimensions larger than \( i=2 \), the
+that \( \boldsymbol{U} \) and \( \boldsymbol{V} \) are orthogonal (how?).
+
+<p>
+And the SVD
+decomposition (singular values) gives eigenvalues 
+\( \sigma_i\geq\sigma_{i+1} \) for all \( i \) and for dimensions larger than \( i=2 \), the
 eigenvalues (singular values) are zero.
 
 <p>
@@ -2952,12 +2970,15 @@ model complexity, cross-validation requires it (i.e. the penalty
 parameter) to yield a model with good prediction
 performance. Commonly, this performance is evaluated on novel
 data. Novel data need not be easy to come by and one has to make do
-with the data at hand. The setting of <em>original</em> and novel data is
+with the data at hand.
+
+<p>
+The setting of <b>original</b> and novel data is
 then mimicked by sample splitting: the data set is divided into two
 (groups of samples). One of these two data sets, called the 
-<em>training set</em>, plays the role of `original' data on which the model is
+<em>training set</em>, plays the role of <b>original</b> data on which the model is
 built. The second of these data sets, called the <em>test set</em>, plays the
-role of the `novel' data and is used to evaluate the prediction
+role of the <b>novel</b> data and is used to evaluate the prediction
 performance (often operationalized as the log-likelihood or the
 prediction error or its square or the R2 score) of the model built on the training data set. This
 procedure (model building and prediction evaluation on training and
@@ -3291,7 +3312,107 @@ plt.show()
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec87">The bias-variance tradeoff </h2>
+<h2 id="___sec87">Code Example for Cross-validation and \( k \)-fold Cross-validation </h2>
+
+<p>
+The code here uses Ridge regression with cross-validation (CV)  resampling and \( k \)-fold CV in order to fit a specific polynomial. 
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.model_selection</span> <span style="color: #8B008B; font-weight: bold">import</span> KFold
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.linear_model</span> <span style="color: #8B008B; font-weight: bold">import</span> Ridge
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.model_selection</span> <span style="color: #8B008B; font-weight: bold">import</span> cross_val_score
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">sklearn.preprocessing</span> <span style="color: #8B008B; font-weight: bold">import</span> PolynomialFeatures
+
+<span style="color: #228B22"># A seed just to ensure that the random numbers are the same for every run.</span>
+<span style="color: #228B22"># Useful for eventual debugging.</span>
+np.random.seed(<span style="color: #B452CD">3155</span>)
+
+<span style="color: #228B22"># Generate the data.</span>
+nsamples = <span style="color: #B452CD">100</span>
+x = np.random.randn(nsamples)
+y = <span style="color: #B452CD">3</span>*x**<span style="color: #B452CD">2</span> + np.random.randn(nsamples)
+
+<span style="color: #228B22">## Cross-validation on Ridge regression using KFold only</span>
+
+<span style="color: #228B22"># Decide degree on polynomial to fit</span>
+poly = PolynomialFeatures(degree = <span style="color: #B452CD">6</span>)
+
+<span style="color: #228B22"># Decide which values of lambda to use</span>
+nlambdas = <span style="color: #B452CD">500</span>
+lambdas = np.logspace(-<span style="color: #B452CD">3</span>, <span style="color: #B452CD">5</span>, nlambdas)
+
+<span style="color: #228B22"># Initialize a KFold instance</span>
+k = <span style="color: #B452CD">5</span>
+kfold = KFold(n_splits = k)
+
+<span style="color: #228B22"># Perform the cross-validation to estimate MSE</span>
+scores_KFold = np.zeros((nlambdas, k))
+
+i = <span style="color: #B452CD">0</span>
+<span style="color: #8B008B; font-weight: bold">for</span> lmb <span style="color: #8B008B">in</span> lambdas:
+    ridge = Ridge(alpha = lmb)
+    j = <span style="color: #B452CD">0</span>
+    <span style="color: #8B008B; font-weight: bold">for</span> train_inds, test_inds <span style="color: #8B008B">in</span> kfold.split(x):
+        xtrain = x[train_inds]
+        ytrain = y[train_inds]
+
+        xtest = x[test_inds]
+        ytest = y[test_inds]
+
+        Xtrain = poly.fit_transform(xtrain[:, np.newaxis])
+        ridge.fit(Xtrain, ytrain[:, np.newaxis])
+
+        Xtest = poly.fit_transform(xtest[:, np.newaxis])
+        ypred = ridge.predict(Xtest)
+
+        scores_KFold[i,j] = np.sum((ypred - ytest[:, np.newaxis])**<span style="color: #B452CD">2</span>)/np.size(ypred)
+
+        j += <span style="color: #B452CD">1</span>
+    i += <span style="color: #B452CD">1</span>
+
+
+estimated_mse_KFold = np.mean(scores_KFold, axis = <span style="color: #B452CD">1</span>)
+
+<span style="color: #228B22">## Cross-validation using cross_val_score from sklearn along with KFold</span>
+
+<span style="color: #228B22"># kfold is an instance initialized above as:</span>
+<span style="color: #228B22"># kfold = KFold(n_splits = k)</span>
+
+estimated_mse_sklearn = np.zeros(nlambdas)
+i = <span style="color: #B452CD">0</span>
+<span style="color: #8B008B; font-weight: bold">for</span> lmb <span style="color: #8B008B">in</span> lambdas:
+    ridge = Ridge(alpha = lmb)
+
+    X = poly.fit_transform(x[:, np.newaxis])
+    estimated_mse_folds = cross_val_score(ridge, X, y[:, np.newaxis], scoring=<span style="color: #CD5555">&#39;neg_mean_squared_error&#39;</span>, cv=kfold)
+
+    <span style="color: #228B22"># cross_val_score return an array containing the estimated negative mse for every fold.</span>
+    <span style="color: #228B22"># we have to the the mean of every array in order to get an estimate of the mse of the model</span>
+    estimated_mse_sklearn[i] = np.mean(-estimated_mse_folds)
+
+    i += <span style="color: #B452CD">1</span>
+
+<span style="color: #228B22">## Plot and compare the slightly different ways to perform cross-validation</span>
+
+plt.figure()
+
+plt.plot(np.log10(lambdas), estimated_mse_sklearn, label = <span style="color: #CD5555">&#39;cross_val_score&#39;</span>)
+plt.plot(np.log10(lambdas), estimated_mse_KFold, <span style="color: #CD5555">&#39;r--&#39;</span>, label = <span style="color: #CD5555">&#39;KFold&#39;</span>)
+
+plt.xlabel(<span style="color: #CD5555">&#39;log10(lambda)&#39;</span>)
+plt.ylabel(<span style="color: #CD5555">&#39;mse&#39;</span>)
+
+plt.legend()
+
+plt.show()
+</pre></div>
+<p>
+<!-- !split --><br><br><br><br><br><br><br><br><br><br>
+
+<h2 id="___sec88">The bias-variance tradeoff </h2>
 
 <p>
 We will discuss the bias-variance tradeoff in the context of
@@ -3355,19 +3476,9 @@ $$
 that is the rewriting in terms of the so-called bias, the variance of the model \( \boldsymbol{\tilde{y}} \) and the variance of \( \boldsymbol{\epsilon} \).
 
 <p>
-The bias-variance tradeoff summarizes the fundamental tension in
-machine learning, particularly supervised learning, between the
-complexity of a model and the amount of training data needed to train
-it.  Since data is often limited, in practice it is often useful to
-use a less-complex model with higher bias &ndash; a model whose asymptotic
-performance is worse than another model &ndash; because it is easier to
-train and less sensitive to sampling noise arising from having a
-finite-sized training dataset (smaller variance).
-
-<p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec88">Example code for Bias-Variance tradeoff </h2>
+<h2 id="___sec89">Example code for Bias-Variance tradeoff </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -3429,7 +3540,7 @@ plt.show()
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec89">Understanding what happens </h2>
+<h2 id="___sec90">Understanding what happens </h2>
 <p>
 
 <!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
@@ -3474,19 +3585,26 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=<span style=
     <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;Var:&#39;</span>, variance[degree])
     <span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&#39;{} &gt;= {} + {} = {}&#39;</span>.format(error[degree], bias[degree], variance[degree], bias[degree]+variance[degree]))
 
-<span style="color: #228B22">#plt.plot(polydegree, np.log10(error), label=&#39;Error&#39;)</span>
+plt.plot(polydegree, np.log10(error), label=<span style="color: #CD5555">&#39;Error&#39;</span>)
 plt.plot(polydegree, bias, label=<span style="color: #CD5555">&#39;bias&#39;</span>)
 plt.plot(polydegree, variance, label=<span style="color: #CD5555">&#39;Variance&#39;</span>)
 plt.legend()
 plt.show()
 </pre></div>
 <p>
-<!-- improve quality of model, better plots to organize -->
-
-<p>
 <!-- !split  -->
 
-<h2 id="___sec90">Summing up </h2>
+<h2 id="___sec91">Summing up </h2>
+
+<p>
+The bias-variance tradeoff summarizes the fundamental tension in
+machine learning, particularly supervised learning, between the
+complexity of a model and the amount of training data needed to train
+it.  Since data is often limited, in practice it is often useful to
+use a less-complex model with higher bias, that is  a model whose asymptotic
+performance is worse than another model because it is easier to
+train and less sensitive to sampling noise arising from having a
+finite-sized training dataset (smaller variance).
 
 <p>
 The above equations tell us that in
@@ -3510,7 +3628,7 @@ flexible statistical methods have higher variance.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec91">The one-dimensional Ising model </h2>
+<h2 id="___sec92">The one-dimensional Ising model </h2>
 
 <p>
 Let us bring back the Ising model again, but now with an additional
@@ -3644,7 +3762,7 @@ The results perfectly with our previous discussion where we used our own code.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec92">Ridge regression </h2>
+<h2 id="___sec93">Ridge regression </h2>
 
 <p>
 Having explored the ordinary least squares we move on to ridge
@@ -3679,7 +3797,7 @@ plt.show()
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec93">LASSO regression </h2>
+<h2 id="___sec94">LASSO regression </h2>
 
 <p>
 In the <b>Least Absolute Shrinkage and Selection Operator</b> (LASSO)-method we get a third cost function.
@@ -3717,7 +3835,7 @@ constant as opposed to ridge and OLS. We get a sparse solution with
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec94">Performance as  function of the regularization parameter </h2>
+<h2 id="___sec95">Performance as  function of the regularization parameter </h2>
 
 <p>
 We see how the different models perform for a different set of values for \( \lambda \).
@@ -3771,7 +3889,7 @@ much. Ridge is more stable over a larger range of values for
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec95">Finding the optimal value of \( \lambda \) </h2>
+<h2 id="___sec96">Finding the optimal value of \( \lambda \) </h2>
 
 <p>
 To determine which value of \( \lambda \) is best we plot the accuracy of
@@ -3817,10 +3935,239 @@ plt.show()
 </pre></div>
 <p>
 From the above figure we can see that LASSO with \( \lambda = 10^{-2} \)
-achieves a very good accuracy on the test set. This by far surpases the
+achieves a very good accuracy on the test set. This by far surpasses the
 other models for all values of \( \lambda \).
 
 <p>
+<!-- !split --><br><br><br><br><br><br><br><br><br><br>
+
+<h2 id="___sec97">Further Exercises </h2>
+
+<h3 id="___sec98">Exercise 1  </h3>
+
+<p>
+We will generate our own dataset for a function \( y(x) \) where \( x \in [0,1] \) and defined by random numbers computed with the uniform distribution. The function \( y \) is a quadratic polynomial in \( x \) with added stochastic noise according to the normal distribution \( \cal {N}(0,1) \).
+The following simple Python instructions define our \( x \) and \( y \) values (with 100 data points).
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span>x = np.random.rand(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
+y = <span style="color: #B452CD">5</span>*x*x+<span style="color: #B452CD">0.1</span>*np.random.randn(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
+</pre></div>
+<ol>
+<li> Write your own code (following the examples above)  for computing the parametrization of the data set fitting a second-order polynomial.</li> 
+<li> Use thereafter <b>scikit-learn</b> (see again the examples in the regression slides) and compare with your own code.</li>   
+<li> Using scikit-learn, compute also the mean square error, a risk metric corresponding to the expected value of the squared (quadratic) error defined as</li>
+</ol>
+
+$$ MSE(\hat{y},\hat{\tilde{y}}) = \frac{1}{n}
+\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2, 
+$$
+
+and the \( R^2 \) score function.
+If \( \tilde{\hat{y}}_i \) is the predicted value of the \( i-th \) sample and \( y_i \) is the corresponding true value, then the score \( R^2 \) is defined as
+$$
+R^2(\hat{y}, \tilde{\hat{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
+$$
+
+where we have defined the mean value  of \( \hat{y} \) as
+$$
+\bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
+$$
+
+<p>
+You can use the functionality included in scikit-learn. If you feel
+for it, you can use your own program and define functions which
+compute the above two functions.  Discuss the meaning of these
+results. Try also to vary the coefficient in front of the added
+stochastic noise term and discuss the quality of the fits.
+
+<h3 id="___sec99">Exercise 2, variance of the parameters \( \beta \) in linear regression  </h3>
+
+<p>
+Show that the variance of the parameters \( \beta \) in the linear regression method (chapter 3, equation (3.8) of <a href="https://www.springer.com/gp/book/9780387848570" target="_blank">Trevor Hastie, Robert Tibshirani, Jerome H. Friedman, The Elements of Statistical Learning, Springer</a>) is given as 
+
+$$
+\mathrm{Var}(\hat{\beta}) = \left(\hat{X}^T\hat{X}\right)^{-1}\sigma^2,
+$$
+
+with 
+$$
+\sigma^2 = \frac{1}{N-p-1}\sum_{i=1}^{N} (y_i-\tilde{y}_i)^2,
+$$
+
+where we have assumed that we fit a function of degree \( p-1 \) (for example a polynomial in \( x \)).
+
+<h3 id="___sec100">Exercise 3  </h3>
+
+<p>
+This exercise is a continuation of exercise 1. We will
+use the same function to generate our data set, still staying with a
+simple function \( y(x) \) which we want to fit using linear regression,
+but now extending the analysis to include the Ridge and the Lasso
+regression methods. You can use the code under the Regression as an example on how to use the Ridge and the Lasso methods.
+
+<p>
+We will thus again generate our own dataset for a function \( y(x) \) where 
+\( x \in [0,1] \) and defined by random numbers computed with the uniform
+distribution. The function \( y \) is a quadratic polynomial in \( x \) with
+added stochastic noise according to the normal distribution \( \cal{N}(0,1) \).
+
+<p>
+The following simple Python instructions define our \( x \) and \( y \) values (with 100 data points).
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span>x = np.random.rand(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
+y = <span style="color: #B452CD">5</span>*x*x+<span style="color: #B452CD">0.1</span>*np.random.randn(<span style="color: #B452CD">100</span>,<span style="color: #B452CD">1</span>)
+</pre></div>
+<ol>
+<li> Write your own code for the Ridge method and compute the parametrization for different values of \( \lambda \). Compare and analyze your results with those from exercise 1. Study the dependence on \( \lambda \) while also varying the strength of the noise in your expression for \( y(x) \).</li> 
+<li> Repeat the above but using the functionality of <b>scikit-learn</b>. Compare your code with the results from <b>scikit-learn</b>. Remember to run with the same random numbers for generating \( x \) and \( y \).</li> 
+<li> Our next step is to study the variance of the parameters \( \beta_1 \) and \( \beta_2 \) (assuming that we are parametrizing our function with a second-order polynomial. We will use standard linear regression and the Ridge regression.  You can now opt for either writing your own function that calculates the variance of these paramaters (recall that this is equal to the diagonal elements of the matrix \( (\hat{X}^T\hat{X})+\lambda\hat{I})^{-1} \)) or use the functionality of <b>scikit-learn</b> and compute their variances. Discuss the results of these variances as functions</li> 
+<li> Repeat the previous step but add now the Lasso method. Discuss your results and compare with standard regression and the Ridge regression results.</li>
+<li> Try to implement the cross-validation as well.</li> 
+<li> Finally, using <b>scikit-learn</b> or your own code, compute also the mean square error, a risk metric corresponding to the expected value of the squared (quadratic) error defined as</li>
+</ol>
+
+$$ MSE(\hat{y},\hat{\tilde{y}}) = \frac{1}{n}
+\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2, 
+$$
+
+and the \( R^2 \) score function.
+If \( \tilde{\hat{y}}_i \) is the predicted value of the \( i-th \) sample and \( y_i \) is the corresponding true value, then the score \( R^2 \) is defined as
+$$
+R^2(\hat{y}, \tilde{\hat{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
+$$
+
+where we have defined the mean value  of \( \hat{y} \) as
+$$
+\bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
+$$
+
+Discuss these quantities as functions of the variable \( \lambda \) in the Ridge and Lasso regression methods.
+
+<h3 id="___sec101">Exercise 4  </h3>
+
+<p>
+We will study how
+to fit polynomials to a specific two-dimensional function called
+<a href="http://www.dtic.mil/dtic/tr/fulltext/u2/a081688.pdf" target="_blank">Franke's
+function</a>.  This
+is a function which has been widely used when testing various  interpolation and fitting
+algorithms. Furthermore, after having established the model and the
+method, we will employ resamling techniques such as the  cross-validation and/or
+the bootstrap methods, in order to perform a proper assessment of our models.
+
+<p>
+The Franke function, which is a weighted sum of four exponentials  reads as follows
+$$
+\begin{align*}
+f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}+\frac{3}{4}\exp{\left(-\frac{(9x+1)^2}{49}- \frac{(9y+1)}{10}\right)} \\
+&+\frac{1}{2}\exp{\left(-\frac{(9x-7)^2}{4} - \frac{(9y-3)^2}{4}\right)} -\frac{1}{5}\exp{\left(-(9x-4)^2 - (9y-7)^2\right) }.
+\end{align*}
+$$
+
+<p>
+The function will be defined for \( x,y\in [0,1] \).  Our first step will
+be to perform an OLS regression analysis of this function, trying out
+a polynomial fit with an \( x \) and \( y \) dependence of the form \( [x, y,
+x^2, y^2, xy, \dots] \). We will also include cross-validation and
+bootstrap as resampling techniques.  As in homeworks 1 and 2, we
+can use a uniform distribution to set up the arrays of values for \( x \)
+and \( y \), or as in the example below just a fix values for \( x \) and \( y \) with a given step size.
+In this case we will have two predictors and need to fit a
+function (for example a polynomial) of \( x \) and \( y \).  Thereafter we will
+repeat much of the same procedure using the the Ridge and
+Lasso regression methods, introducing thus a dependence on the bias
+(penalty) \( \lambda \).
+
+<p>
+The Python fucntion for the Franke function is included here (it performs also a three-dimensional plot of it)
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">mpl_toolkits.mplot3d</span> <span style="color: #8B008B; font-weight: bold">import</span> Axes3D
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">matplotlib</span> <span style="color: #8B008B; font-weight: bold">import</span> cm
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">matplotlib.ticker</span> <span style="color: #8B008B; font-weight: bold">import</span> LinearLocator, FormatStrFormatter
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">from</span> <span style="color: #008b45; text-decoration: underline">random</span> <span style="color: #8B008B; font-weight: bold">import</span> random, seed
+
+fig = plt.figure()
+ax = fig.gca(projection=<span style="color: #CD5555">&#39;3d&#39;</span>)
+
+<span style="color: #228B22"># Make data.</span>
+x = np.arange(<span style="color: #B452CD">0</span>, <span style="color: #B452CD">1</span>, <span style="color: #B452CD">0.05</span>)
+y = np.arange(<span style="color: #B452CD">0</span>, <span style="color: #B452CD">1</span>, <span style="color: #B452CD">0.05</span>)
+x, y = np.meshgrid(x,y)
+
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">FrankeFunction</span>(x,y):
+    term1 = <span style="color: #B452CD">0.75</span>*np.exp(-(<span style="color: #B452CD">0.25</span>*(<span style="color: #B452CD">9</span>*x-<span style="color: #B452CD">2</span>)**<span style="color: #B452CD">2</span>) - <span style="color: #B452CD">0.25</span>*((<span style="color: #B452CD">9</span>*y-<span style="color: #B452CD">2</span>)**<span style="color: #B452CD">2</span>))
+    term2 = <span style="color: #B452CD">0.75</span>*np.exp(-((<span style="color: #B452CD">9</span>*x+<span style="color: #B452CD">1</span>)**<span style="color: #B452CD">2</span>)/<span style="color: #B452CD">49.0</span> - <span style="color: #B452CD">0.1</span>*(<span style="color: #B452CD">9</span>*y+<span style="color: #B452CD">1</span>))
+    term3 = <span style="color: #B452CD">0.5</span>*np.exp(-(<span style="color: #B452CD">9</span>*x-<span style="color: #B452CD">7</span>)**<span style="color: #B452CD">2</span>/<span style="color: #B452CD">4.0</span> - <span style="color: #B452CD">0.25</span>*((<span style="color: #B452CD">9</span>*y-<span style="color: #B452CD">3</span>)**<span style="color: #B452CD">2</span>))
+    term4 = -<span style="color: #B452CD">0.2</span>*np.exp(-(<span style="color: #B452CD">9</span>*x-<span style="color: #B452CD">4</span>)**<span style="color: #B452CD">2</span> - (<span style="color: #B452CD">9</span>*y-<span style="color: #B452CD">7</span>)**<span style="color: #B452CD">2</span>)
+    <span style="color: #8B008B; font-weight: bold">return</span> term1 + term2 + term3 + term4
+
+
+z = FrankeFunction(x, y)
+
+<span style="color: #228B22"># Plot the surface.</span>
+surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
+                       linewidth=<span style="color: #B452CD">0</span>, antialiased=<span style="color: #658b00">False</span>)
+
+<span style="color: #228B22"># Customize the z axis.</span>
+ax.set_zlim(-<span style="color: #B452CD">0.10</span>, <span style="color: #B452CD">1.40</span>)
+ax.zaxis.set_major_locator(LinearLocator(<span style="color: #B452CD">10</span>))
+ax.zaxis.set_major_formatter(FormatStrFormatter(<span style="color: #CD5555">&#39;%.02f&#39;</span>))
+
+<span style="color: #228B22"># Add a color bar which maps values to colors.</span>
+fig.colorbar(surf, shrink=<span style="color: #B452CD">0.5</span>, aspect=<span style="color: #B452CD">5</span>)
+
+plt.show()
+</pre></div>
+<p>
+We will thus again generate our own dataset for a function \( \mathrm{FrankeFunction}(x,y) \) where 
+\( x,y \in [0,1] \) could be defined by random numbers computed with the uniform
+distribution. The function \( f(x,y) \) is the Franke function. You should explore also the addition
+an added stochastic noise to this function using  the normal distribution \( \cal{N}(0,1) \).
+
+<p>
+Write your own code (using either a matrix inversion or a singular value decomposition from e.g., <b>numpy</b> )  or use your code from exercises 1 and 3
+and perform a standard least square regression analysis using polynomials in \( x \) and \( y \) up to fifth order. Find the confidence intervals of the parameters \( \beta \) by computing their variances, evaluate the Mean Squared error (MSE)
+$$ MSE(\hat{y},\hat{\tilde{y}}) = \frac{1}{n}
+\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2, 
+$$
+
+and the \( R^2 \) score function.
+If \( \tilde{\hat{y}}_i \) is the predicted value of the \( i-th \) sample and \( y_i \) is the corresponding true value, then the score \( R^2 \) is defined as
+$$
+R^2(\hat{y}, \tilde{\hat{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
+$$
+
+where we have defined the mean value  of \( \hat{y} \) as
+$$
+\bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
+$$
+
+<p>
+Perform a resampling of the data where you split the data in training data and test data. Implement the \( k \)-fold cross-validation algorithm and/or the bootstrap algorithm
+and evaluate again the MSE and the \( R^2 \) functions resulting from the test data. Evaluate also the bias and variance of the final models.
+
+<p>
+Write then your own code for the Ridge method, either using matrix
+inversion or the singular value decomposition as done for standard OLS. Perform the same analysis as in the
+previous exercise (for the same polynomials and include resampling
+techniques) but now for different values of \( \lambda \). Compare and
+analyze your results with those obtained with standard OLS. Study the
+dependence on \( \lambda \) while also varying eventually the strength of
+the noise in your expression for \( \mathrm{FrankeFunction}(x,y) \).
+
+<p>
+Then perform the same studies but now with Lasso regression. Use the functionalities of
+<b>scikit-learn</b>. Give a critical discussion of the three methods and a
+judgement of which model fits the data best.
 
 <!-- ------------------- end of main content --------------- -->
 

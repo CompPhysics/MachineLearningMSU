@@ -1329,8 +1329,11 @@ Consider the following matrix which can be SVD decomposed as
 
 This is a $3\times 2$ matrix which is decomposed in terms of a
 $3\times 3$ matrix $\bm{U}$, and a $2\times 2$ matrix $\bm{V}$. It is easy to see
-that $\bm{U}$ and $\bm{V}$ are orthogonal (how?). And the SVD
-decomposition (singular values) gives eigenvalues $\sigma_i\geq\sigma_{i+1)$ for all $i$ and for dimensions larger than $i=2$, the
+that $\bm{U}$ and $\bm{V}$ are orthogonal (how?). 
+
+And the SVD
+decomposition (singular values) gives eigenvalues 
+$\sigma_i\geq\sigma_{i+1}$ for all $i$ and for dimensions larger than $i=2$, the
 eigenvalues (singular values) are zero.
 
 In the general case, where our design matrix $\bm{X}$ has dimension
@@ -2403,12 +2406,14 @@ model complexity, cross-validation requires it (i.e. the penalty
 parameter) to yield a model with good prediction
 performance. Commonly, this performance is evaluated on novel
 data. Novel data need not be easy to come by and one has to make do
-with the data at hand. The setting of *original* and novel data is
+with the data at hand.
+
+The setting of _original_ and novel data is
 then mimicked by sample splitting: the data set is divided into two
 (groups of samples). One of these two data sets, called the 
-*training set*, plays the role of `original' data on which the model is
+*training set*, plays the role of _original_ data on which the model is
 built. The second of these data sets, called the *test set*, plays the
-role of the `novel' data and is used to evaluate the prediction
+role of the _novel_ data and is used to evaluate the prediction
 performance (often operationalized as the log-likelihood or the
 prediction error or its square or the R2 score) of the model built on the training data set. This
 procedure (model building and prediction evaluation on training and
@@ -2701,6 +2706,103 @@ plt.show()
 !ec
 
 
+!split
+===== Code Example for Cross-validation and $k$-fold Cross-validation =====
+
+The code here uses Ridge regression with cross-validation (CV)  resampling and $k$-fold CV in order to fit a specific polynomial. 
+!bc pycod
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import KFold
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import cross_val_score
+from sklearn.preprocessing import PolynomialFeatures
+
+# A seed just to ensure that the random numbers are the same for every run.
+# Useful for eventual debugging.
+np.random.seed(3155)
+
+# Generate the data.
+nsamples = 100
+x = np.random.randn(nsamples)
+y = 3*x**2 + np.random.randn(nsamples)
+
+## Cross-validation on Ridge regression using KFold only
+
+# Decide degree on polynomial to fit
+poly = PolynomialFeatures(degree = 6)
+
+# Decide which values of lambda to use
+nlambdas = 500
+lambdas = np.logspace(-3, 5, nlambdas)
+
+# Initialize a KFold instance
+k = 5
+kfold = KFold(n_splits = k)
+
+# Perform the cross-validation to estimate MSE
+scores_KFold = np.zeros((nlambdas, k))
+
+i = 0
+for lmb in lambdas:
+    ridge = Ridge(alpha = lmb)
+    j = 0
+    for train_inds, test_inds in kfold.split(x):
+        xtrain = x[train_inds]
+        ytrain = y[train_inds]
+
+        xtest = x[test_inds]
+        ytest = y[test_inds]
+
+        Xtrain = poly.fit_transform(xtrain[:, np.newaxis])
+        ridge.fit(Xtrain, ytrain[:, np.newaxis])
+
+        Xtest = poly.fit_transform(xtest[:, np.newaxis])
+        ypred = ridge.predict(Xtest)
+
+        scores_KFold[i,j] = np.sum((ypred - ytest[:, np.newaxis])**2)/np.size(ypred)
+
+        j += 1
+    i += 1
+
+
+estimated_mse_KFold = np.mean(scores_KFold, axis = 1)
+
+## Cross-validation using cross_val_score from sklearn along with KFold
+
+# kfold is an instance initialized above as:
+# kfold = KFold(n_splits = k)
+
+estimated_mse_sklearn = np.zeros(nlambdas)
+i = 0
+for lmb in lambdas:
+    ridge = Ridge(alpha = lmb)
+
+    X = poly.fit_transform(x[:, np.newaxis])
+    estimated_mse_folds = cross_val_score(ridge, X, y[:, np.newaxis], scoring='neg_mean_squared_error', cv=kfold)
+
+    # cross_val_score return an array containing the estimated negative mse for every fold.
+    # we have to the the mean of every array in order to get an estimate of the mse of the model
+    estimated_mse_sklearn[i] = np.mean(-estimated_mse_folds)
+
+    i += 1
+
+## Plot and compare the slightly different ways to perform cross-validation
+
+plt.figure()
+
+plt.plot(np.log10(lambdas), estimated_mse_sklearn, label = 'cross_val_score')
+plt.plot(np.log10(lambdas), estimated_mse_KFold, 'r--', label = 'KFold')
+
+plt.xlabel('log10(lambda)')
+plt.ylabel('mse')
+
+plt.legend()
+
+plt.show()
+
+!ec
+
 
 !split
 ===== The bias-variance tradeoff =====
@@ -2770,17 +2872,6 @@ that is the rewriting in terms of the so-called bias, the variance of the model 
 
 
 
-
-
-
-The bias-variance tradeoff summarizes the fundamental tension in
-machine learning, particularly supervised learning, between the
-complexity of a model and the amount of training data needed to train
-it.  Since data is often limited, in practice it is often useful to
-use a less-complex model with higher bias -- a model whose asymptotic
-performance is worse than another model -- because it is easier to
-train and less sensitive to sampling noise arising from having a
-finite-sized training dataset (smaller variance). 
 
 
 !split
@@ -2888,7 +2979,7 @@ for degree in range(maxdegree):
     print('Var:', variance[degree])
     print('{} >= {} + {} = {}'.format(error[degree], bias[degree], variance[degree], bias[degree]+variance[degree]))
 
-#plt.plot(polydegree, np.log10(error), label='Error')
+plt.plot(polydegree, np.log10(error), label='Error')
 plt.plot(polydegree, bias, label='bias')
 plt.plot(polydegree, variance, label='Variance')
 plt.legend()
@@ -2899,11 +2990,22 @@ plt.show()
 
 !ec
 
-#improve quality of model, better plots to organize
-
-
 !split 
 ===== Summing up ===== 
+
+
+
+
+The bias-variance tradeoff summarizes the fundamental tension in
+machine learning, particularly supervised learning, between the
+complexity of a model and the amount of training data needed to train
+it.  Since data is often limited, in practice it is often useful to
+use a less-complex model with higher bias, that is  a model whose asymptotic
+performance is worse than another model because it is easier to
+train and less sensitive to sampling noise arising from having a
+finite-sized training dataset (smaller variance). 
+
+
 
 The above equations tell us that in
 order to minimize the expected test error, we need to select a
@@ -3191,10 +3293,241 @@ plt.show()
 !ec
 
 From the above figure we can see that LASSO with $\lambda = 10^{-2}$
-achieves a very good accuracy on the test set. This by far surpases the
+achieves a very good accuracy on the test set. This by far surpasses the
 other models for all values of $\lambda$.
 
 
 
+!split
+===== Further Exercises =====
 
+=== Exercise 1  ===
+
+We will generate our own dataset for a function $y(x)$ where $x \in [0,1]$ and defined by random numbers computed with the uniform distribution. The function $y$ is a quadratic polynomial in $x$ with added stochastic noise according to the normal distribution $\cal {N}(0,1)$.
+The following simple Python instructions define our $x$ and $y$ values (with 100 data points).
+!bc pycod
+x = np.random.rand(100,1)
+y = 5*x*x+0.1*np.random.randn(100,1)
+!ec
+
+o Write your own code (following the examples above)  for computing the parametrization of the data set fitting a second-order polynomial. 
+o Use thereafter _scikit-learn_ (see again the examples in the regression slides) and compare with your own code.   
+o Using scikit-learn, compute also the mean square error, a risk metric corresponding to the expected value of the squared (quadratic) error defined as
+!bt 
+\[ MSE(\hat{y},\hat{\tilde{y}}) = \frac{1}{n}
+\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2, 
+\] 
+!et 
+and the $R^2$ score function.
+If $\tilde{\hat{y}}_i$ is the predicted value of the $i-th$ sample and $y_i$ is the corresponding true value, then the score $R^2$ is defined as
+!bt
+\[
+R^2(\hat{y}, \tilde{\hat{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
+\]
+!et
+where we have defined the mean value  of $\hat{y}$ as
+!bt
+\[
+\bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
+\]
+!et
+
+You can use the functionality included in scikit-learn. If you feel
+for it, you can use your own program and define functions which
+compute the above two functions.  Discuss the meaning of these
+results. Try also to vary the coefficient in front of the added
+stochastic noise term and discuss the quality of the fits.
+
+
+
+
+=== Exercise 2, variance of the parameters $\beta$ in linear regression  ===
+
+Show that the variance of the parameters $\beta$ in the linear regression method (chapter 3, equation (3.8) of "Trevor Hastie, Robert Tibshirani, Jerome H. Friedman, The Elements of Statistical Learning, Springer":"https://www.springer.com/gp/book/9780387848570") is given as 
+
+!bt
+\[
+\mathrm{Var}(\hat{\beta}) = \left(\hat{X}^T\hat{X}\right)^{-1}\sigma^2,
+\]
+!et
+with 
+!bt
+\[
+\sigma^2 = \frac{1}{N-p-1}\sum_{i=1}^{N} (y_i-\tilde{y}_i)^2,
+\]
+!et
+where we have assumed that we fit a function of degree $p-1$ (for example a polynomial in $x$). 
+
+
+
+=== Exercise 3  ===
+
+This exercise is a continuation of exercise 1. We will
+use the same function to generate our data set, still staying with a
+simple function $y(x)$ which we want to fit using linear regression,
+but now extending the analysis to include the Ridge and the Lasso
+regression methods. You can use the code under the Regression as an example on how to use the Ridge and the Lasso methods.
+
+We will thus again generate our own dataset for a function $y(x)$ where 
+$x \in [0,1]$ and defined by random numbers computed with the uniform
+distribution. The function $y$ is a quadratic polynomial in $x$ with
+added stochastic noise according to the normal distribution $\cal{N}(0,1)$.
+
+The following simple Python instructions define our $x$ and $y$ values (with 100 data points).
+!bc pycod
+x = np.random.rand(100,1)
+y = 5*x*x+0.1*np.random.randn(100,1)
+!ec
+
+o Write your own code for the Ridge method and compute the parametrization for different values of $\lambda$. Compare and analyze your results with those from exercise 1. Study the dependence on $\lambda$ while also varying the strength of the noise in your expression for $y(x)$. 
+
+o Repeat the above but using the functionality of _scikit-learn_. Compare your code with the results from _scikit-learn_. Remember to run with the same random numbers for generating $x$ and $y$. 
+
+o Our next step is to study the variance of the parameters $\beta_1$ and $\beta_2$ (assuming that we are parametrizing our function with a second-order polynomial. We will use standard linear regression and the Ridge regression.  You can now opt for either writing your own function that calculates the variance of these paramaters (recall that this is equal to the diagonal elements of the matrix $(\hat{X}^T\hat{X})+\lambda\hat{I})^{-1}$) or use the functionality of _scikit-learn_ and compute their variances. Discuss the results of these variances as functions 
+
+o Repeat the previous step but add now the Lasso method. Discuss your results and compare with standard regression and the Ridge regression results.
+
+o Try to implement the cross-validation as well. 
+
+o Finally, using _scikit-learn_ or your own code, compute also the mean square error, a risk metric corresponding to the expected value of the squared (quadratic) error defined as
+!bt 
+\[ MSE(\hat{y},\hat{\tilde{y}}) = \frac{1}{n}
+\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2, 
+\] 
+!et 
+and the $R^2$ score function.
+If $\tilde{\hat{y}}_i$ is the predicted value of the $i-th$ sample and $y_i$ is the corresponding true value, then the score $R^2$ is defined as
+!bt
+\[
+R^2(\hat{y}, \tilde{\hat{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
+\]
+!et
+where we have defined the mean value  of $\hat{y}$ as
+!bt
+\[
+\bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
+\]
+!et
+Discuss these quantities as functions of the variable $\lambda$ in the Ridge and Lasso regression methods. 
+
+=== Exercise 4  ===
+
+We will study how
+to fit polynomials to a specific two-dimensional function called
+"Franke's
+function":"http://www.dtic.mil/dtic/tr/fulltext/u2/a081688.pdf".  This
+is a function which has been widely used when testing various  interpolation and fitting
+algorithms. Furthermore, after having established the model and the
+method, we will employ resamling techniques such as the  cross-validation and/or
+the bootstrap methods, in order to perform a proper assessment of our models.
+
+
+The Franke function, which is a weighted sum of four exponentials  reads as follows
+!bt
+\begin{align*}
+f(x,y) &= \frac{3}{4}\exp{\left(-\frac{(9x-2)^2}{4} - \frac{(9y-2)^2}{4}\right)}+\frac{3}{4}\exp{\left(-\frac{(9x+1)^2}{49}- \frac{(9y+1)}{10}\right)} \\
+&+\frac{1}{2}\exp{\left(-\frac{(9x-7)^2}{4} - \frac{(9y-3)^2}{4}\right)} -\frac{1}{5}\exp{\left(-(9x-4)^2 - (9y-7)^2\right) }.
+\end{align*}
+!et
+
+The function will be defined for $x,y\in [0,1]$.  Our first step will
+be to perform an OLS regression analysis of this function, trying out
+a polynomial fit with an $x$ and $y$ dependence of the form $[x, y,
+x^2, y^2, xy, \dots]$. We will also include cross-validation and
+bootstrap as resampling techniques.  As in homeworks 1 and 2, we
+can use a uniform distribution to set up the arrays of values for $x$
+and $y$, or as in the example below just a fix values for $x$ and $y$ with a given step size.
+In this case we will have two predictors and need to fit a
+function (for example a polynomial) of $x$ and $y$.  Thereafter we will
+repeat much of the same procedure using the the Ridge and
+Lasso regression methods, introducing thus a dependence on the bias
+(penalty) $\lambda$.
+
+
+The Python fucntion for the Franke function is included here (it performs also a three-dimensional plot of it)
+!bc pycod
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+import numpy as np
+from random import random, seed
+
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+
+# Make data.
+x = np.arange(0, 1, 0.05)
+y = np.arange(0, 1, 0.05)
+x, y = np.meshgrid(x,y)
+
+
+def FrankeFunction(x,y):
+    term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
+    term2 = 0.75*np.exp(-((9*x+1)**2)/49.0 - 0.1*(9*y+1))
+    term3 = 0.5*np.exp(-(9*x-7)**2/4.0 - 0.25*((9*y-3)**2))
+    term4 = -0.2*np.exp(-(9*x-4)**2 - (9*y-7)**2)
+    return term1 + term2 + term3 + term4
+
+
+z = FrankeFunction(x, y)
+
+# Plot the surface.
+surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+
+# Customize the z axis.
+ax.set_zlim(-0.10, 1.40)
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+
+# Add a color bar which maps values to colors.
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.show()
+
+!ec
+
+
+We will thus again generate our own dataset for a function $\mathrm{FrankeFunction}(x,y)$ where 
+$x,y \in [0,1]$ could be defined by random numbers computed with the uniform
+distribution. The function $f(x,y)$ is the Franke function. You should explore also the addition
+an added stochastic noise to this function using  the normal distribution $\cal{N}(0,1)$.
+
+Write your own code (using either a matrix inversion or a singular value decomposition from e.g., _numpy_ )  or use your code from exercises 1 and 3
+and perform a standard least square regression analysis using polynomials in $x$ and $y$ up to fifth order. Find the confidence intervals of the parameters $\beta$ by computing their variances, evaluate the Mean Squared error (MSE)
+!bt 
+\[ MSE(\hat{y},\hat{\tilde{y}}) = \frac{1}{n}
+\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2, 
+\] 
+!et 
+and the $R^2$ score function.
+If $\tilde{\hat{y}}_i$ is the predicted value of the $i-th$ sample and $y_i$ is the corresponding true value, then the score $R^2$ is defined as
+!bt
+\[
+R^2(\hat{y}, \tilde{\hat{y}}) = 1 - \frac{\sum_{i=0}^{n - 1} (y_i - \tilde{y}_i)^2}{\sum_{i=0}^{n - 1} (y_i - \bar{y})^2},
+\]
+!et
+where we have defined the mean value  of $\hat{y}$ as
+!bt
+\[
+\bar{y} =  \frac{1}{n} \sum_{i=0}^{n - 1} y_i.
+\]
+!et
+
+Perform a resampling of the data where you split the data in training data and test data. Implement the $k$-fold cross-validation algorithm and/or the bootstrap algorithm
+and evaluate again the MSE and the $R^2$ functions resulting from the test data. Evaluate also the bias and variance of the final models.
+
+
+Write then your own code for the Ridge method, either using matrix
+inversion or the singular value decomposition as done for standard OLS. Perform the same analysis as in the
+previous exercise (for the same polynomials and include resampling
+techniques) but now for different values of $\lambda$. Compare and
+analyze your results with those obtained with standard OLS. Study the
+dependence on $\lambda$ while also varying eventually the strength of
+the noise in your expression for $\mathrm{FrankeFunction}(x,y)$.
+
+Then perform the same studies but now with Lasso regression. Use the functionalities of
+_scikit-learn_. Give a critical discussion of the three methods and a
+judgement of which model fits the data best.
 
