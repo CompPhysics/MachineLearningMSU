@@ -230,23 +230,27 @@ div { text-align: justify; text-justify: inter-word; }
               ('Example code for Bias-Variance tradeoff', 2, None, '___sec89'),
               ('Understanding what happens', 2, None, '___sec90'),
               ('Summing up', 2, None, '___sec91'),
-              ('The one-dimensional Ising model', 2, None, '___sec92'),
-              ('Ridge regression', 2, None, '___sec93'),
-              ('LASSO regression', 2, None, '___sec94'),
+              ("Another Example rom Scikit-Learn's Repository",
+               2,
+               None,
+               '___sec92'),
+              ('The one-dimensional Ising model', 2, None, '___sec93'),
+              ('Ridge regression', 2, None, '___sec94'),
+              ('LASSO regression', 2, None, '___sec95'),
               ('Performance as  function of the regularization parameter',
                2,
                None,
-               '___sec95'),
-              ('Finding the optimal value of $\\lambda$', 2, None, '___sec96'),
-              ('Further Exercises', 2, None, '___sec97'),
-              ('Exercise 1', 3, None, '___sec98'),
+               '___sec96'),
+              ('Finding the optimal value of $\\lambda$', 2, None, '___sec97'),
+              ('Further Exercises', 2, None, '___sec98'),
+              ('Exercise 1', 3, None, '___sec99'),
               ('Exercise 2, variance of the parameters $\\beta$ in linear '
                'regression',
                3,
                None,
-               '___sec99'),
-              ('Exercise 3', 3, None, '___sec100'),
-              ('Exercise 4', 3, None, '___sec101')]}
+               '___sec100'),
+              ('Exercise 3', 3, None, '___sec101'),
+              ('Exercise 4', 3, None, '___sec102')]}
 end of tocinfo -->
 
 <body>
@@ -3633,7 +3637,86 @@ flexible statistical methods have higher variance.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec92">The one-dimensional Ising model </h2>
+<h2 id="___sec92">Another Example rom Scikit-Learn's Repository </h2>
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "default" -->
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%"><span></span><span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;</span>
+<span style="color: #BA2121; font-style: italic">============================</span>
+<span style="color: #BA2121; font-style: italic">Underfitting vs. Overfitting</span>
+<span style="color: #BA2121; font-style: italic">============================</span>
+
+<span style="color: #BA2121; font-style: italic">This example demonstrates the problems of underfitting and overfitting and</span>
+<span style="color: #BA2121; font-style: italic">how we can use linear regression with polynomial features to approximate</span>
+<span style="color: #BA2121; font-style: italic">nonlinear functions. The plot shows the function that we want to approximate,</span>
+<span style="color: #BA2121; font-style: italic">which is a part of the cosine function. In addition, the samples from the</span>
+<span style="color: #BA2121; font-style: italic">real function and the approximations of different models are displayed. The</span>
+<span style="color: #BA2121; font-style: italic">models have polynomial features of different degrees. We can see that a</span>
+<span style="color: #BA2121; font-style: italic">linear function (polynomial with degree 1) is not sufficient to fit the</span>
+<span style="color: #BA2121; font-style: italic">training samples. This is called **underfitting**. A polynomial of degree 4</span>
+<span style="color: #BA2121; font-style: italic">approximates the true function almost perfectly. However, for higher degrees</span>
+<span style="color: #BA2121; font-style: italic">the model will **overfit** the training data, i.e. it learns the noise of the</span>
+<span style="color: #BA2121; font-style: italic">training data.</span>
+<span style="color: #BA2121; font-style: italic">We evaluate quantitatively **overfitting** / **underfitting** by using</span>
+<span style="color: #BA2121; font-style: italic">cross-validation. We calculate the mean squared error (MSE) on the validation</span>
+<span style="color: #BA2121; font-style: italic">set, the higher, the less likely the model generalizes correctly from the</span>
+<span style="color: #BA2121; font-style: italic">training data.</span>
+<span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;</span>
+
+<span style="color: #008000; font-weight: bold">print</span>(<span style="color: #19177C">__doc__</span>)
+
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">numpy</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">np</span>
+<span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">matplotlib.pyplot</span> <span style="color: #008000; font-weight: bold">as</span> <span style="color: #0000FF; font-weight: bold">plt</span>
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.pipeline</span> <span style="color: #008000; font-weight: bold">import</span> Pipeline
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.preprocessing</span> <span style="color: #008000; font-weight: bold">import</span> PolynomialFeatures
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.linear_model</span> <span style="color: #008000; font-weight: bold">import</span> LinearRegression
+<span style="color: #008000; font-weight: bold">from</span> <span style="color: #0000FF; font-weight: bold">sklearn.model_selection</span> <span style="color: #008000; font-weight: bold">import</span> cross_val_score
+
+
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">true_fun</span>(X):
+    <span style="color: #008000; font-weight: bold">return</span> np<span style="color: #666666">.</span>cos(<span style="color: #666666">1.5</span> <span style="color: #666666">*</span> np<span style="color: #666666">.</span>pi <span style="color: #666666">*</span> X)
+
+np<span style="color: #666666">.</span>random<span style="color: #666666">.</span>seed(<span style="color: #666666">0</span>)
+
+n_samples <span style="color: #666666">=</span> <span style="color: #666666">30</span>
+degrees <span style="color: #666666">=</span> [<span style="color: #666666">1</span>, <span style="color: #666666">4</span>, <span style="color: #666666">15</span>]
+
+X <span style="color: #666666">=</span> np<span style="color: #666666">.</span>sort(np<span style="color: #666666">.</span>random<span style="color: #666666">.</span>rand(n_samples))
+y <span style="color: #666666">=</span> true_fun(X) <span style="color: #666666">+</span> np<span style="color: #666666">.</span>random<span style="color: #666666">.</span>randn(n_samples) <span style="color: #666666">*</span> <span style="color: #666666">0.1</span>
+
+plt<span style="color: #666666">.</span>figure(figsize<span style="color: #666666">=</span>(<span style="color: #666666">14</span>, <span style="color: #666666">5</span>))
+<span style="color: #008000; font-weight: bold">for</span> i <span style="color: #AA22FF; font-weight: bold">in</span> <span style="color: #008000">range</span>(<span style="color: #008000">len</span>(degrees)):
+    ax <span style="color: #666666">=</span> plt<span style="color: #666666">.</span>subplot(<span style="color: #666666">1</span>, <span style="color: #008000">len</span>(degrees), i <span style="color: #666666">+</span> <span style="color: #666666">1</span>)
+    plt<span style="color: #666666">.</span>setp(ax, xticks<span style="color: #666666">=</span>(), yticks<span style="color: #666666">=</span>())
+
+    polynomial_features <span style="color: #666666">=</span> PolynomialFeatures(degree<span style="color: #666666">=</span>degrees[i],
+                                             include_bias<span style="color: #666666">=</span><span style="color: #008000">False</span>)
+    linear_regression <span style="color: #666666">=</span> LinearRegression()
+    pipeline <span style="color: #666666">=</span> Pipeline([(<span style="color: #BA2121">&quot;polynomial_features&quot;</span>, polynomial_features),
+                         (<span style="color: #BA2121">&quot;linear_regression&quot;</span>, linear_regression)])
+    pipeline<span style="color: #666666">.</span>fit(X[:, np<span style="color: #666666">.</span>newaxis], y)
+
+    <span style="color: #408080; font-style: italic"># Evaluate the models using crossvalidation</span>
+    scores <span style="color: #666666">=</span> cross_val_score(pipeline, X[:, np<span style="color: #666666">.</span>newaxis], y,
+                             scoring<span style="color: #666666">=</span><span style="color: #BA2121">&quot;neg_mean_squared_error&quot;</span>, cv<span style="color: #666666">=10</span>)
+
+    X_test <span style="color: #666666">=</span> np<span style="color: #666666">.</span>linspace(<span style="color: #666666">0</span>, <span style="color: #666666">1</span>, <span style="color: #666666">100</span>)
+    plt<span style="color: #666666">.</span>plot(X_test, pipeline<span style="color: #666666">.</span>predict(X_test[:, np<span style="color: #666666">.</span>newaxis]), label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;Model&quot;</span>)
+    plt<span style="color: #666666">.</span>plot(X_test, true_fun(X_test), label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;True function&quot;</span>)
+    plt<span style="color: #666666">.</span>scatter(X, y, edgecolor<span style="color: #666666">=</span><span style="color: #BA2121">&#39;b&#39;</span>, s<span style="color: #666666">=20</span>, label<span style="color: #666666">=</span><span style="color: #BA2121">&quot;Samples&quot;</span>)
+    plt<span style="color: #666666">.</span>xlabel(<span style="color: #BA2121">&quot;x&quot;</span>)
+    plt<span style="color: #666666">.</span>ylabel(<span style="color: #BA2121">&quot;y&quot;</span>)
+    plt<span style="color: #666666">.</span>xlim((<span style="color: #666666">0</span>, <span style="color: #666666">1</span>))
+    plt<span style="color: #666666">.</span>ylim((<span style="color: #666666">-2</span>, <span style="color: #666666">2</span>))
+    plt<span style="color: #666666">.</span>legend(loc<span style="color: #666666">=</span><span style="color: #BA2121">&quot;best&quot;</span>)
+    plt<span style="color: #666666">.</span>title(<span style="color: #BA2121">&quot;Degree {}</span><span style="color: #BB6622; font-weight: bold">\n</span><span style="color: #BA2121">MSE = {:.2e}(+/- {:.2e})&quot;</span><span style="color: #666666">.</span>format(
+        degrees[i], <span style="color: #666666">-</span>scores<span style="color: #666666">.</span>mean(), scores<span style="color: #666666">.</span>std()))
+plt<span style="color: #666666">.</span>show()
+</pre></div>
+<p>
+<!-- !split --><br><br><br><br><br><br><br><br><br><br>
+
+<h2 id="___sec93">The one-dimensional Ising model </h2>
 
 <p>
 Let us bring back the Ising model again, but now with an additional
@@ -3767,7 +3850,7 @@ The results perfectly with our previous discussion where we used our own code.
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec93">Ridge regression </h2>
+<h2 id="___sec94">Ridge regression </h2>
 
 <p>
 Having explored the ordinary least squares we move on to ridge
@@ -3802,7 +3885,7 @@ plt<span style="color: #666666">.</span>show()
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec94">LASSO regression </h2>
+<h2 id="___sec95">LASSO regression </h2>
 
 <p>
 In the <b>Least Absolute Shrinkage and Selection Operator</b> (LASSO)-method we get a third cost function.
@@ -3840,7 +3923,7 @@ constant as opposed to ridge and OLS. We get a sparse solution with
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec95">Performance as  function of the regularization parameter </h2>
+<h2 id="___sec96">Performance as  function of the regularization parameter </h2>
 
 <p>
 We see how the different models perform for a different set of values for \( \lambda \).
@@ -3894,7 +3977,7 @@ much. Ridge is more stable over a larger range of values for
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec96">Finding the optimal value of \( \lambda \) </h2>
+<h2 id="___sec97">Finding the optimal value of \( \lambda \) </h2>
 
 <p>
 To determine which value of \( \lambda \) is best we plot the accuracy of
@@ -3946,9 +4029,9 @@ other models for all values of \( \lambda \).
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
 
-<h2 id="___sec97">Further Exercises </h2>
+<h2 id="___sec98">Further Exercises </h2>
 
-<h3 id="___sec98">Exercise 1  </h3>
+<h3 id="___sec99">Exercise 1  </h3>
 
 <p>
 We will generate our own dataset for a function \( y(x) \) where \( x \in [0,1] \) and defined by random numbers computed with the uniform distribution. The function \( y \) is a quadratic polynomial in \( x \) with added stochastic noise according to the normal distribution \( \cal {N}(0,1) \).
@@ -3987,7 +4070,7 @@ compute the above two functions.  Discuss the meaning of these
 results. Try also to vary the coefficient in front of the added
 stochastic noise term and discuss the quality of the fits.
 
-<h3 id="___sec99">Exercise 2, variance of the parameters \( \beta \) in linear regression  </h3>
+<h3 id="___sec100">Exercise 2, variance of the parameters \( \beta \) in linear regression  </h3>
 
 <p>
 Show that the variance of the parameters \( \beta \) in the linear regression method (chapter 3, equation (3.8) of <a href="https://www.springer.com/gp/book/9780387848570" target="_blank">Trevor Hastie, Robert Tibshirani, Jerome H. Friedman, The Elements of Statistical Learning, Springer</a>) is given as 
@@ -4003,7 +4086,7 @@ $$
 
 where we have assumed that we fit a function of degree \( p-1 \) (for example a polynomial in \( x \)).
 
-<h3 id="___sec100">Exercise 3  </h3>
+<h3 id="___sec101">Exercise 3  </h3>
 
 <p>
 This exercise is a continuation of exercise 1. We will
@@ -4052,7 +4135,7 @@ $$
 
 Discuss these quantities as functions of the variable \( \lambda \) in the Ridge and Lasso regression methods.
 
-<h3 id="___sec101">Exercise 4  </h3>
+<h3 id="___sec102">Exercise 4  </h3>
 
 <p>
 We will study how
