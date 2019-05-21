@@ -79,7 +79,7 @@ _Tuesday May 21, 2019_:
 - 11am-12pm: Convolutional Neural Networks (CNNs) (MK and RR)
 - 12pm-1pm: Lunch
 - 1pm-2pm: Implementation and practical advice for CNNs (MK and RR)
-- 2pm-3pm: Autoenconders and other NN architectures  (MK and RR)
+- 2pm-3pm: Q&A panel  (MK, RR, MHJ, TAs)
 - 3pm-330pm: Break, coffee, tea etc
 - 330pm-6pm: Hands-on sessions with examples from nuclear physics experiments
 
