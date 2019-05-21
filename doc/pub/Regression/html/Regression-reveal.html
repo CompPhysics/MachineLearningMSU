@@ -148,7 +148,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>&nbsp;<br>
-<center><h4>May 19, 2019</h4></center> <!-- date -->
+<center><h4>May 21, 2019</h4></center> <!-- date -->
 <br>
 <p>
 
@@ -959,14 +959,14 @@ $$
 By computing the derivatives of \( \chi^2 \) with respect to \( \beta_0 \) and \( \beta_1 \) show that these are given by
 <p>&nbsp;<br>
 $$
-\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \beta_0} = -2\left[ \sum_{i=0}^{n-1}\left(\frac{y_i-\beta_0-\beta_1x_{i}}{\sigma_i^2}\right)\right]=0,
+\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \beta_0} = -2\left[ \frac{1}{n}\sum_{i=0}^{n-1}\left(\frac{y_i-\beta_0-\beta_1x_{i}}{\sigma_i^2}\right)\right]=0,
 $$
 <p>&nbsp;<br>
 
 and
 <p>&nbsp;<br>
 $$
-\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \beta_0} = -2\left[ \sum_{i=0}^{n-1}x_i\left(\frac{y_i-\beta_0-\beta_1x_{i}}{\sigma_i^2}\right)\right]=0.
+\frac{\partial \chi^2(\boldsymbol{\beta})}{\partial \beta_1} = -\frac{2}{n}\left[ \sum_{i=0}^{n-1}x_i\left(\frac{y_i-\beta_0-\beta_1x_{i}}{\sigma_i^2}\right)\right]=0.
 $$
 <p>&nbsp;<br>
 </div>
@@ -1966,7 +1966,7 @@ For Ridge regression this becomes
 
 <p>&nbsp;<br>
 $$
-\boldsymbol{X}\boldsymbol{\beta}^{\mathrm{Ridge}} = \boldsymbol{U\Sigma V^T}\left(\boldsymbol{V}\boldsymbol{D}\boldsymbol{V}^T+\lambda\boldsymbol{I} \right)^{-1}(\boldsymbol{U\Sigma V^T})^T\boldsymbol{y}=\sum_{j=0}^{p-1}\boldsymbol{u}_j\boldsymbol{u}_j^T\frac{\sigma_j^2}{\sigma_j^2+1}\boldsymbol{y},
+\boldsymbol{X}\boldsymbol{\beta}^{\mathrm{Ridge}} = \boldsymbol{U\Sigma V^T}\left(\boldsymbol{V}\boldsymbol{D}\boldsymbol{V}^T+\lambda\boldsymbol{I} \right)^{-1}(\boldsymbol{U\Sigma V^T})^T\boldsymbol{y}=\sum_{j=0}^{p-1}\boldsymbol{u}_j\boldsymbol{u}_j^T\frac{\sigma_j^2}{\sigma_j^2+\lambda}\boldsymbol{y},
 $$
 <p>&nbsp;<br>
 
@@ -1983,13 +1983,13 @@ Since \( \lambda \geq 0 \), it means that compared to OLS, we have
 
 <p>&nbsp;<br>
 $$
-\frac{\sigma_j^2}{\sigma_j^2+1} \leq 1. 
+\frac{\sigma_j^2}{\sigma_j^2+\lambda} \leq 1. 
 $$
 <p>&nbsp;<br>
 
 <p>
 Ridge regression finds the coordinates of \( \boldsymbol{y} \) with respect to the orthonormal basis \( \boldsymbol{U} \), it then shrinks the coordinates by 
-\( \frac{\sigma_j^2}{\sigma_j^2+1} \). Recall that the SVD has eigenvalues ordered in a descending way, that is \( \sigma_i \geq \sigma_{i+1} \).
+\( \frac{\sigma_j^2}{\sigma_j^2+\lambda} \). Recall that the SVD has eigenvalues ordered in a descending way, that is \( \sigma_i \geq \sigma_{i+1} \).
 
 <p>
 For small eigenvalues \( \sigma_i \) it means that their contribution become less important, a fact which can be used to reduce the number of degrees of freedom.
