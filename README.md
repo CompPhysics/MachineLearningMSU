@@ -85,7 +85,7 @@ _Tuesday May 21, 2019_:
 
 _Wednesday May 22, 2019_:
 
-- 830am-930am: Reinforcement learning  (MK) 
+- 830am-930am: Generative Models  (MK) 
 - 930am-1030am:  Introduction to exploratory data analysis and unsupervised learning: PCA  (MH)
 - 1030am-11am: Break, coffee, tea etc
 - 11am-12pm: Clustering and introduction to nonlinear dimension reduction: k-means and t-SNE  (MH)
