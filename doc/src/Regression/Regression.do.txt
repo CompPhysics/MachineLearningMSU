@@ -1240,7 +1240,7 @@ A cheap  *ad hoc* approach is  simply to add a small diagonal component to the m
 \bm{X}^{T} \bm{X} \rightarrow \bm{X}^{T} \bm{X}+\lambda \bm{I},
 \]
 !et 
-where $\bm{I}$ is the identity matrix.  When we discuss _Ridge_ regression this actually what we end up evaluating. The parameter $\lambda$ is called a hyperparameter. More about this later. 
+where $\bm{I}$ is the identity matrix.  When we discuss _Ridge_ regression this is actually what we end up evaluating. The parameter $\lambda$ is called a hyperparameter. More about this later. 
 
 
 
@@ -1372,7 +1372,9 @@ In general the economy-size SVD leads to less FLOPS and still conserving the des
 !split
 ===== Mathematical Properties =====
 
-There are several interesting mathematical properties which will be relevant when we are going to discuss the differences between say ordinary least squares (OLS) and _ridge_ regression.
+There are several interesting mathematical properties which will be
+relevant when we are going to discuss the differences between say
+ordinary least squares (OLS) and _Ridge_ regression.
 
 We have from OLS that the parameters of the linear approximation are given by
 !bt
@@ -1423,7 +1425,7 @@ We will come back to this expression when we discuss Ridge regression.
 !split
 ===== Ridge and LASSO Regression =====
 
-Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function and the equations for the ordinary least sqaures (OLS) method, that is 
+Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function and the equations for the ordinary least squares (OLS) method, that is 
 our optimization problem is
 !bt
 \[
@@ -1475,7 +1477,7 @@ we have a new optimization equation
 !et
 which leads to Lasso regression. Lasso stands for least absolute shrinkage and selection operator. 
 
-Here we have define the norm-1 as 
+Here we have defined the norm-1 as 
 !bt
 \[
 \vert\vert \bm{x}\vert\vert_1 = \sum_i \vert x_i\vert. 
@@ -1494,7 +1496,9 @@ C(\bm{X},\bm{\beta})=\frac{1}{n}\left\{(\bm{y}-\bm{X}\bm{\beta})^T(\bm{y}-\bm{X}
 \]
 !et
 
-by taking the derivatives with respect to $\bm{\beta}$ we obtain then a slightly modified matrix inversion problem which for finite values of $\lambda$ does not sffer from singularity problems. We obtain
+by taking the derivatives with respect to $\bm{\beta}$ we obtain then
+a slightly modified matrix inversion problem which for finite values
+of $\lambda$ does not suffer from singularity problems. We obtain
 
 !bt
 \[
@@ -1502,7 +1506,7 @@ by taking the derivatives with respect to $\bm{\beta}$ we obtain then a slightly
 \]
 !et
 
-with $\bm{I}$ being the $p\times p$ identity matrix with the constraint that
+with $\bm{I}$ being a $p\times p$ identity matrix with the constraint that
 
 !bt
 \[
@@ -1512,16 +1516,19 @@ with $\bm{I}$ being the $p\times p$ identity matrix with the constraint that
 
 with $t$ a finite positive number. 
 
-We see that Ridge regression in practice is nothing but the standard OLS with a modified diagonal added to $\bm{X}^T\bm{X}$. The consequences, in particular for 
-our discussion of the bias-variance are rather interesting. 
+We see that Ridge regression is nothing but the standard
+OLS with a modified diagonal term added to $\bm{X}^T\bm{X}$. The
+consequences, in particular for our discussion of the bias-variance
+are rather interesting.
 
 Furthermore, if we use the result above in terms of the SVD decomposition (our analysis was done for the OLS method), we had
 !bt
 \[
-(\bm{X}\bm{X}^T)\bm{U} = \bm{U}\bm{D},
+(\bm{X}\bm{X}^T)\bm{U} = \bm{U}\bm{D}.
 \]
 !et
-and then we could analysis the OLS solutions in terms of the eigenvectors (the columns) of the right singular value matrix $\bm{U}$ as
+
+We can  analyse the OLS solutions in terms of the eigenvectors (the columns) of the right singular value matrix $\bm{U}$ as
 !bt
 \[
 \bm{X}\bm{\beta} = \bm{X}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}\bm{X}^T\bm{y}=\bm{U\Sigma V^T}\left(\bm{V}\bm{D}\bm{V}^T \right)^{-1}(\bm{U\Sigma V^T})^T\bm{y}=\bm{U}\bm{U}^T\bm{y}
@@ -1550,11 +1557,14 @@ Since $\lambda \geq 0$, it means that compared to OLS, we have
 \]
 !et
 
-Ridge regression finds the coordinates of $\bm{y}$ with respect to the orthonormal basis $\bm{U}$, it then shrinks the coordinates by 
-$\frac{\sigma_j^2}{\sigma_j^2+\lambda}$. Recall that the SVD has eigenvalues ordered in a descending way, that is $\sigma_i \geq \sigma_{i+1}$.
+Ridge regression finds the coordinates of $\bm{y}$ with respect to the
+orthonormal basis $\bm{U}$, it then shrinks the coordinates by
+$\frac{\sigma_j^2}{\sigma_j^2+\lambda}$. Recall that the SVD has
+eigenvalues ordered in a descending way, that is $\sigma_i \geq
+\sigma_{i+1}$.
 
-For small eigenvalues $\sigma_i$ it means that their contribution become less important, a fact which can be used to reduce the number of degrees of freedom.
-Actually, calculating the variance of $\bm{X}\bm{v}_j$ shows that this quantity is equal to (see exercise below) $\sigma_j^2/n$.
+For small eigenvalues $\sigma_i$ it means that their contributions become less important, a fact which can be used to reduce the number of degrees of freedom.
+Actually, calculating the variance of $\bm{X}\bm{v}_j$ shows that this quantity is equal to $\sigma_j^2/n$.
 With a parameter $\lambda$ we can thus shrink the role of specific parameters.  
 
 
@@ -1575,6 +1585,7 @@ In this case the standard OLS results in
 \bm{\beta}^{\mathrm{OLS}} = \bm{X}^T\bm{y}=\sum_{i=0}^{p-1}\bm{u}_j\bm{u}_j^T\bm{y},
 \]
 !et
+
 and
 
 !bt
@@ -1583,7 +1594,9 @@ and
 \]
 !et
 
-that is the Ridge estimator scales the OLS estimator by a factor, and the Ridge estimator converges to zero when the hyperparameter goes to infinity.
+that is the Ridge estimator scales the OLS estimator by the inverse of a factor $1+\lambda$, and
+the Ridge estimator converges to zero when the hyperparameter goes to
+infinity.
 
 We will come back to more interpreations after we have gone through some of the statistical analysis part. 
 
