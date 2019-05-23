@@ -287,7 +287,7 @@ MathJax.Hub.Config({
 <center>[2] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
 <br>
 <p>
-<center><h4>May 21, 2019</h4></center> <!-- date -->
+<center><h4>May 22, 2019</h4></center> <!-- date -->
 <br>
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -1669,7 +1669,7 @@ $$
 \boldsymbol{X}^{T} \boldsymbol{X} \rightarrow \boldsymbol{X}^{T} \boldsymbol{X}+\lambda \boldsymbol{I},
 $$
 
-where \( \boldsymbol{I} \) is the identity matrix.  When we discuss <b>Ridge</b> regression this actually what we end up evaluating. The parameter \( \lambda \) is called a hyperparameter. More about this later.
+where \( \boldsymbol{I} \) is the identity matrix.  When we discuss <b>Ridge</b> regression this is actually what we end up evaluating. The parameter \( \lambda \) is called a hyperparameter. More about this later.
 
 <p>
 <!-- !split --><br><br><br><br><br><br><br><br><br><br>
@@ -1810,7 +1810,9 @@ In general the economy-size SVD leads to less FLOPS and still conserving the des
 <h2 id="___sec37">Mathematical Properties </h2>
 
 <p>
-There are several interesting mathematical properties which will be relevant when we are going to discuss the differences between say ordinary least squares (OLS) and <b>ridge</b> regression.
+There are several interesting mathematical properties which will be
+relevant when we are going to discuss the differences between say
+ordinary least squares (OLS) and <b>Ridge</b> regression.
 
 <p>
 We have from OLS that the parameters of the linear approximation are given by
@@ -1860,7 +1862,7 @@ We will come back to this expression when we discuss Ridge regression.
 <h2 id="___sec38">Ridge and LASSO Regression </h2>
 
 <p>
-Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function and the equations for the ordinary least sqaures (OLS) method, that is 
+Let us remind ourselves about the expression for the standard Mean Squared Error (MSE) which we used to define our cost function and the equations for the ordinary least squares (OLS) method, that is 
 our optimization problem is
 $$
 {\displaystyle \min_{\boldsymbol{\beta}\in {\mathbb{R}}^{p}}}\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\beta}\right)\right\}.
@@ -1907,7 +1909,7 @@ $$
 which leads to Lasso regression. Lasso stands for least absolute shrinkage and selection operator.
 
 <p>
-Here we have define the norm-1 as 
+Here we have defined the norm-1 as 
 $$
 \vert\vert \boldsymbol{x}\vert\vert_1 = \sum_i \vert x_i\vert. 
 $$
@@ -1925,14 +1927,16 @@ C(\boldsymbol{X},\boldsymbol{\beta})=\frac{1}{n}\left\{(\boldsymbol{y}-\boldsymb
 $$
 
 <p>
-by taking the derivatives with respect to \( \boldsymbol{\beta} \) we obtain then a slightly modified matrix inversion problem which for finite values of \( \lambda \) does not sffer from singularity problems. We obtain
+by taking the derivatives with respect to \( \boldsymbol{\beta} \) we obtain then
+a slightly modified matrix inversion problem which for finite values
+of \( \lambda \) does not suffer from singularity problems. We obtain
 
 $$
 \boldsymbol{\beta}^{\mathrm{Ridge}} = \left(\boldsymbol{X}^T\boldsymbol{X}+\lambda\boldsymbol{I}\right)^{-1}\boldsymbol{X}^T\boldsymbol{y},
 $$
 
 <p>
-with \( \boldsymbol{I} \) being the \( p\times p \) identity matrix with the constraint that
+with \( \boldsymbol{I} \) being a \( p\times p \) identity matrix with the constraint that
 
 $$
 \sum_{i=0}^{p-1} \beta_i^2 \leq t,
@@ -1942,16 +1946,19 @@ $$
 with \( t \) a finite positive number.
 
 <p>
-We see that Ridge regression in practice is nothing but the standard OLS with a modified diagonal added to \( \boldsymbol{X}^T\boldsymbol{X} \). The consequences, in particular for 
-our discussion of the bias-variance are rather interesting.
+We see that Ridge regression is nothing but the standard
+OLS with a modified diagonal term added to \( \boldsymbol{X}^T\boldsymbol{X} \). The
+consequences, in particular for our discussion of the bias-variance
+are rather interesting.
 
 <p>
 Furthermore, if we use the result above in terms of the SVD decomposition (our analysis was done for the OLS method), we had
 $$
-(\boldsymbol{X}\boldsymbol{X}^T)\boldsymbol{U} = \boldsymbol{U}\boldsymbol{D},
+(\boldsymbol{X}\boldsymbol{X}^T)\boldsymbol{U} = \boldsymbol{U}\boldsymbol{D}.
 $$
 
-and then we could analysis the OLS solutions in terms of the eigenvectors (the columns) of the right singular value matrix \( \boldsymbol{U} \) as
+<p>
+We can  analyse the OLS solutions in terms of the eigenvectors (the columns) of the right singular value matrix \( \boldsymbol{U} \) as
 $$
 \boldsymbol{X}\boldsymbol{\beta} = \boldsymbol{X}\left(\boldsymbol{V}\boldsymbol{D}\boldsymbol{V}^T \right)^{-1}\boldsymbol{X}^T\boldsymbol{y}=\boldsymbol{U\Sigma V^T}\left(\boldsymbol{V}\boldsymbol{D}\boldsymbol{V}^T \right)^{-1}(\boldsymbol{U\Sigma V^T})^T\boldsymbol{y}=\boldsymbol{U}\boldsymbol{U}^T\boldsymbol{y}
 $$
@@ -1979,12 +1986,15 @@ $$
 $$
 
 <p>
-Ridge regression finds the coordinates of \( \boldsymbol{y} \) with respect to the orthonormal basis \( \boldsymbol{U} \), it then shrinks the coordinates by 
-\( \frac{\sigma_j^2}{\sigma_j^2+\lambda} \). Recall that the SVD has eigenvalues ordered in a descending way, that is \( \sigma_i \geq \sigma_{i+1} \).
+Ridge regression finds the coordinates of \( \boldsymbol{y} \) with respect to the
+orthonormal basis \( \boldsymbol{U} \), it then shrinks the coordinates by
+\( \frac{\sigma_j^2}{\sigma_j^2+\lambda} \). Recall that the SVD has
+eigenvalues ordered in a descending way, that is \( \sigma_i \geq
+\sigma_{i+1} \).
 
 <p>
-For small eigenvalues \( \sigma_i \) it means that their contribution become less important, a fact which can be used to reduce the number of degrees of freedom.
-Actually, calculating the variance of \( \boldsymbol{X}\boldsymbol{v}_j \) shows that this quantity is equal to (see exercise below) \( \sigma_j^2/n \).
+For small eigenvalues \( \sigma_i \) it means that their contributions become less important, a fact which can be used to reduce the number of degrees of freedom.
+Actually, calculating the variance of \( \boldsymbol{X}\boldsymbol{v}_j \) shows that this quantity is equal to \( \sigma_j^2/n \).
 With a parameter \( \lambda \) we can thus shrink the role of specific parameters.
 
 <p>
@@ -2005,6 +2015,7 @@ $$
 \boldsymbol{\beta}^{\mathrm{OLS}} = \boldsymbol{X}^T\boldsymbol{y}=\sum_{i=0}^{p-1}\boldsymbol{u}_j\boldsymbol{u}_j^T\boldsymbol{y},
 $$
 
+<p>
 and
 
 $$
@@ -2012,7 +2023,9 @@ $$
 $$
 
 <p>
-that is the Ridge estimator scales the OLS estimator by a factor, and the Ridge estimator converges to zero when the hyperparameter goes to infinity.
+that is the Ridge estimator scales the OLS estimator by the inverse of a factor \( 1+\lambda \), and
+the Ridge estimator converges to zero when the hyperparameter goes to
+infinity.
 
 <p>
 We will come back to more interpreations after we have gone through some of the statistical analysis part.
