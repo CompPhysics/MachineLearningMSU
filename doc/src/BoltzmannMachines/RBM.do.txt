@@ -320,6 +320,7 @@ manner as we discussed for say linear regression.
 ===== RBMs for the quantum many body problem =====
 
 The idea of applying RBMs to quantum many body problems was presented by G. Carleo and M. Troyer, working with ETH Zurich and Microsoft Research.
+There are several interesting articles that follow up the research presented by Carleo and Troyer, see for example "Saito's work using neural networks":"https://journals.jps.jp/doi/full/10.7566/JPSJ.87.074002".
 
 Some of their motivation included
 
