@@ -6,7 +6,7 @@ AUTHOR: "Raghuram Ramanujan":"https://www.davidson.edu/academics/mathematics-and
 
 <%
 pub_url = 'https://compphysics.github.io/MachineLearningMSU/doc/pub'
-published = ['Introduction', 'Regression', 'LogReg', 'GradientOptim', 'DecisionTrees', 'svm', 'NeuralNet',  'CNN', 'RBM', 'Recurrent', 'Autoencoders', 'Reinforce',]
+published = ['Introduction', 'Regression', 'LogReg', 'GradientOptim', 'DecisionTrees', 'svm', 'NeuralNet',  'CNN', 'RBM', 'Bayesian', 'Recurrent', 'Autoencoders', 'Reinforce',]
 chapters = {
  'Introduction': 'Introduction to Data Analysis and Machine Learning',
  'Regression': 'Regression Methods',
@@ -17,6 +17,7 @@ chapters = {
  'NeuralNet': 'Neural Networks',
  'CNN': 'Convolutional Neural Networks',
  'RBM': 'Unsupervised Learning, Boltzmann Machines',
+ 'Bayesian': 'Bayesian Statistics and Bayesian Neural Networks',
  'Recurrent': 'Recurrent Neural Networks',
  'Autoencoders': 'Autoencoders',
  'Reinforce': 'Reinforcement Learning',
