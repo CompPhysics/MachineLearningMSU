@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="DocOnce: https://github.com/hplgit/doconce/" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Data Analysis and Machine Learning: Elements of Bayesian theory and Bayesian Neural Networks">
+
+<title>Data Analysis and Machine Learning: Elements of Bayesian theory and Bayesian Neural Networks</title>
+
+
+
+
+
+
+
+<!-- reveal.js: http://lab.hakim.se/reveal-js/ -->
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+<link rel="stylesheet" href="reveal.js/css/reveal.css">
+<link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme">
+<!--
+<link rel="stylesheet" href="reveal.js/css/reveal.css">
+<link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/beigesmall.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/solarized.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/serif.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/night.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/moon.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/simple.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/sky.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/darkgray.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/default.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/cbc.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/simula.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/black.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/white.css" id="theme">
+<link rel="stylesheet" href="reveal.js/css/theme/league.css" id="theme">
+-->
+
+<!-- For syntax highlighting -->
+<link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+
+<!-- Printing and PDF exports -->
+<script>
+var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+</script>
+
+<style type="text/css">
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    p.caption { width: 80%; font-size: 60%; font-style: italic; text-align: left; }
+    hr.figure { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .reveal .alert-text-small   { font-size: 80%;  }
+    .reveal .alert-text-large   { font-size: 130%; }
+    .reveal .alert-text-normal  { font-size: 90%;  }
+    .reveal .alert {
+             padding:8px 35px 8px 14px; margin-bottom:18px;
+             text-shadow:0 1px 0 rgba(255,255,255,0.5);
+             border:5px solid #bababa;
+             -webkit-border-radius: 14px; -moz-border-radius: 14px;
+             border-radius:14px;
+             background-position: 10px 10px;
+             background-repeat: no-repeat;
+             background-size: 38px;
+             padding-left: 30px; /* 55px; if icon */
+     }
+     .reveal .alert-block {padding-top:14px; padding-bottom:14px}
+     .reveal .alert-block > p, .alert-block > ul {margin-bottom:1em}
+     /*.reveal .alert li {margin-top: 1em}*/
+     .reveal .alert-block p+p {margin-top:5px}
+     /*.reveal .alert-notice { background-image: url(http://hplgit.github.io/doconce/bundled/html_images/small_gray_notice.png); }
+     .reveal .alert-summary  { background-image:url(http://hplgit.github.io/doconce/bundled/html_images/small_gray_summary.png); }
+     .reveal .alert-warning { background-image: url(http://hplgit.github.io/doconce/bundled/html_images/small_gray_warning.png); }
+     .reveal .alert-question {background-image:url(http://hplgit.github.io/doconce/bundled/html_images/small_gray_question.png); } */
+
+</style>
+
+
+
+<!-- Styles for table layout of slides -->
+<style type="text/css">
+td.padding {
+  padding-top:20px;
+  padding-bottom:20px;
+  padding-right:50px;
+  padding-left:50px;
+}
+</style>
+
+</head>
+
+<body>
+<div class="reveal">
+
+<!-- Any section element inside the <div class="slides"> container
+     is displayed as a slide -->
+
+<div class="slides">
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: {
+     equationNumbers: {  autoNumber: "none"  },
+     extensions: ["AMSmath.js", "AMSsymbols.js", "autobold.js", "color.js"]
+  }
+});
+</script>
+<script type="text/javascript" async
+ src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+    
+
+
+
+<section>
+<!-- ------------------- main content ---------------------- -->
+
+
+
+<center><h1 style="text-align: center;">Data Analysis and Machine Learning: Elements of Bayesian theory and Bayesian Neural Networks</h1></center>  <!-- document title -->
+
+<p>
+<!-- author(s): Christian Forss&#233;n, and Morten Hjorth-Jensen -->
+
+<center>
+<b>Christian Forss&#233;n</b> [1]
+</center>
+
+<center>
+<b>Morten Hjorth-Jensen</b> [2, 3]
+</center>
+
+<p>&nbsp;<br>
+<!-- institution(s) -->
+
+<center>[1] <b>Department of Physics, Chalmers University of Technology, Sweden</b></center>
+<center>[2] <b>Department of Physics, University of Oslo</b></center>
+<center>[3] <b>Department of Physics and Astronomy and National Superconducting Cyclotron Laboratory, Michigan State University</b></center>
+<br>
+<p>&nbsp;<br>
+<center><h4>Jul 10, 2019</h4></center> <!-- date -->
+<br>
+<p>
+
+<center style="font-size:80%">
+<!-- copyright --> &copy; 1999-2019, Morten Hjorth-Jensen. Released under CC Attribution-NonCommercial 4.0 license
+</center>
+</section>
+
+
+<section>
+<h2 id="___sec0">Why Bayesian Statistics?  </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+We have already made ourselves familiar with elements of a statistical
+data analysis via quantities like the bias-variance tradeoff as well
+as some central distribution functions such as the Normal
+distribution, the binomial distribution and other probability
+distribution functions.
+
+<p>
+In essentially all the Machine Learning algorithms we have studied,
+our focus has been on a so-called <b>frequentist approach</b>, where
+knowledge of an underlying likelihood function has not been
+emphasized. Our data, whether we had a classification or a regression
+problem, have been our central points of departure.
+
+<p>
+Here we wish to merge this approach with the derivation of a
+likelihood function which can be used to make prediction on how our
+system under study evolves.  We will venture into the realm of what is
+called Bayesian Neural Networks. To get an overarching view on what
+this entails, the following figure conveys the essential differences
+between a standard Neural network that we have met earlier and a
+Bayesian Neural Network. In order to get there, we need to present
+some of the basic elements of Bayesian statistics, starting with the
+product rule and Bayes' theorem.
+
+
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec1">Inference  </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+
+<dl>
+<dt>Inference:<dd> 
+  &quot;the act of passing from one proposition, statement or judgment considered as true to another whose truth is believed to follow from that of the former&quot; (Webster) <br />
+  Do premises \( A, B, \ldots \to \) hypothesis, \( H \)? 
+<dt>Deductive inference:<dd> 
+  Premises allow definite determination of truth/falsity of H (syllogisms, symbolic logic, Boolean algebra) <br />
+  \( B(H|A,B,...) = 0 \) or \( 1 \)
+<dt>Inductive inference:<dd> 
+  Premises bear on truth/falsity of H, but don&#8217;t allow its definite determination (weak syllogisms, analogies)<br />
+  \( A, B, C, D \) share properties \( x, y, z \); \( E \) has properties \( x, y \)<br />
+  \( \to \) $E$ probably has property \( z \).
+</dl>
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec2">Statistical Inference  </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<ul>
+<p><li> Quantify the strength of inductive inferences from facts, in the form of data (\( D \)), and other premises, e.g. models, to hypotheses about the phenomena producing the data.</li>
+<p><li> Quantify via probabilities, or averages calculated using probabilities. Frequentists (\( \mathcal{F} \)) and Bayesians (\( \mathcal{B} \)) use probabilities very differently for this.</li>
+<p><li> To the pioneers such as Bernoulli, Bayes and Laplace, a probability represented a <em>degree-of-belief</em> or plausability: how much they thought that something as true based on the evidence at hand. This is the Bayesian approach.</li>
+<p><li> To the 19th century scholars, this seemed too vague and subjective. They redefined probability as the <em>long run relative frequency</em> with which an event occurred, given (infinitely) many repeated (experimental) trials.</li>
+</ul>
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec3">Some history </h2>
+Adapted from D.S. Sivia [<a id="link_footnote_1" href="#def_footnote_1">1</a>]:
+
+<p id="def_footnote_1"><a href="#link_footnote_1"><b>1:</b></a> Sivia, Devinderjit, and John Skilling. Data Analysis : A Bayesian Tutorial, OUP Oxford, 2006</p>
+
+<p>
+<blockquote>
+    Although the frequency definition appears to be more objective, its range of validity is also far more limited. For example, Laplace used (his) probability theory to estimate the mass of Saturn, given orbital data that were available to him from various astronomical observatories. In essence, he computed the posterior pdf for the mass M , given the data and all the relevant background information I (such as a knowledge of the laws of classical mechanics): prob(M|{data},I); this is shown schematically in the figure [Fig. 1.2].
+</blockquote>
+</section>
+
+
+<section>
+<br /><br /><center><p><img src="fig/sivia_fig_1_2.png" align="bottom" width=700></p></center><br /><br />
+</section>
+
+
+<section>
+<blockquote>
+    To Laplace, the (shaded) area under the posterior pdf curve between \( m_1 \) and \( m_2 \) was a measure of how much he believed that the mass of Saturn lay in the range \( m_1 \le M \le m_2 \). As such, the position of the maximum of the posterior pdf represents a best estimate of the mass; its width, or spread, about this optimal value gives an indication of the uncertainty in the estimate. Laplace stated that: &#8216; . . . it is a bet of 11,000 to 1 that the error of this result is not 1/100th of its value.&#8217; He would have won the bet, as another 150 years&#8217; accumulation of data has changed the estimate by only 0.63%!
+</blockquote>
+</section>
+
+
+<section>
+<blockquote>
+    According to the frequency definition, however, we are not permitted to use probability theory to tackle this problem. This is because the mass of Saturn is a constant and not a random variable; therefore, it has no frequency distribution and so probability theory cannot be used.
+
+<p>
+    If the pdf [of Fig. 1.2] had to be interpreted in terms of the frequency definition, we would have to imagine a large ensemble of universes in which everything remains constant apart from the mass of Saturn.
+</blockquote>
+</section>
+
+
+<section>
+<blockquote>
+    As this scenario appears quite far-fetched, we might be inclined to think of [Fig. 1.2] in terms of the distribution of the measurements of the mass in many repetitions of the experiment. Although we are at liberty to think about a problem in any way that facilitates its solution, or our understanding of it, having to seek a frequency interpretation for every data analysis problem seems rather perverse.
+    For example, what do we mean by the &#8216;measurement of the mass&#8217; when the data consist of orbital periods? Besides, why should we have to think about many repetitions of an experiment that never happened? What we really want to do is to make the best inference of the mass given the (few) data that we actually have; this is precisely the Bayes and Laplace view of probability.
+</blockquote>
+</section>
+
+
+<section>
+<blockquote>
+    Faced with the realization that the frequency definition of probability theory did not permit most real-life scientific problems to be addressed, a new subject was invented &#8212; statistics! To estimate the mass of Saturn, for example, one has to relate the mass to the data through some function called the statistic; since the data are subject to &#8216;random&#8217; noise, the statistic becomes the random variable to which the rules of probability the- ory can be applied. But now the question arises: How should we choose the statistic? The frequentist approach does not yield a natural way of doing this and has, therefore, led to the development of several alternative schools of orthodox or conventional statis- tics. The masters, such as Fisher, Neyman and Pearson, provided a variety of different principles, which has merely resulted in a plethora of tests and procedures without any clear underlying rationale. This lack of unifying principles is, perhaps, at the heart of the shortcomings of the cook-book approach to statistics that students are often taught even today.
+</blockquote>
+</section>
+
+
+<section>
+<h2 id="___sec4">The Bayesian recipe </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+Assess hypotheses by calculating their probabilities \( p(H_i | \ldots) \) conditional on known and/or presumed information using the rules of probability theory.
+</div>
+
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+Probability Theory Axioms:
+
+<dl>
+<dt>Product (AND) rule :<dd> 
+  \( p(A, B | I) = p(A|I) p(B|A, I) = p(B|I)p(A|B,I) \)<br />
+  Should read \( p(A,B|I) \) as the probability for propositions \( A \) AND \( B \) being true given that \( I \) is true.
+<dt>Sum (OR) rule:<dd> 
+  \( p(A + B | I) = p(A | I) + p(B | I) - p(A, B | I) \)<br />
+  \( p(A+B|I) \) is the probability that proposition \( A \) OR \( B \) is true given that \( I \) is true.
+<dt>Normalization:<dd> 
+  \( p(A|I) + p(\bar{A}|I) = 1 \)<br />
+  \( \bar{A} \) denotes the proposition that \( A \) is false.
+</dl>
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec5">Bayes' theorem </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+Bayes' theorem follows directly from the product rule
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+p(A|B,I) = \frac{p(B|A,I) p(A|I)}{p(B|I)}.
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+
+The importance of this property to data analysis becomes apparent if we replace \( A \) and \( B \) by hypothesis(\( H \)) and data(\( D \)):
+<p>&nbsp;<br>
+$$
+\begin{align}
+p(H|D,I) &= \frac{p(D|H,I) p(H|I)}{p(D|I)}.
+\tag{1}
+\end{align}
+$$
+<p>&nbsp;<br>
+
+The power of Bayes&#8217; theorem lies in the fact that it relates the quantity of interest, the probability that the hypothesis is true given the data, to the term we have a better chance of being able to assign, the probability that we would have observed the measured data if the hypothesis was true.
+</div>
+</section>
+
+
+<section>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+The various terms in Bayes&#8217; theorem have formal names. 
+
+<ul>
+<p><li> The quantity on the far right, \( p(H|I) \), is called the <em>prior</em> probability; it represents our state of knowledge (or ignorance) about the truth of the hypothesis before we have analysed the current data.</li> 
+<p><li> This is modified by the experimental measurements through \( p(D|H,I) \), the <em>likelihood</em> function,</li> 
+<p><li> The denominator \( p(D|I) \) is called the <em>evidence</em>. It does not depend on the hypothesis and can be regarded as a normalization constant.</li>
+<p><li> Together, these yield the <em>posterior</em> probability, \( p(H|D, I ) \), representing our state of knowledge about the truth of the hypothesis in the light of the data.</li> 
+</ul>
+<p>
+
+In a sense, Bayes&#8217; theorem encapsulates the process of learning.
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec6">The friends of Bayes' theorem </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+
+<dl>
+<dt>Normalization:<dd> 
+  \( \sum_i p(H_i|\ldots) = 1 \).
+<dt>Marginalization:<dd> 
+  \( \sum_i p(A,H_i|I) = \sum_i p(H_i|A,I) p(A|I) = p(A|I) \).
+<dt>Marginalization (continuum limit):<dd> 
+  \( \int dx p(A,H(x)|I) = p(A|I) \).
+</dl>
+
+In the above, \( H_i \) is an exclusive and exhaustive list of hypotheses. For example,let&#8217;s imagine that there are five candidates in a presidential election; then \( H_1 \) could be the proposition that the first candidate will win, and so on. The probability that \( A \) is true, for example that unemployment will be lower in a year&#8217;s time (given all relevant information \( I \), but irrespective of whoever becomes president) is then given by \( \sum_i p(A,H_i|I) \).
+
+<p>
+In the continuum limit of propositions we must understand \( p(\ldots) \) as a pdf (probability density function).
+
+<p>
+Marginalization is a very powerful device in data analysis because it enables us to deal with nuisance parameters; that is, quantities which necessarily enter the analysis but are of no intrinsic interest. The unwanted background signal present in many experimental measurements are examples of nuisance parameters.
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec7">Inference With Parametric Models  </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+Inductive inference with parametric models is a very important tool in the natural sciences.
+
+<ul>
+<p><li> Consider \( N \) different models \( M_i \) (\( i = 1, \ldots, N \)), each with parameters \( \boldsymbol{\alpha}_i \). Each of them implies a sampling distribution (conditional predictive distribution for possible data)</li>
+</ul>
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+p(D|\boldsymbol{\alpha}_i, M_i)
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+
+
+<ul>
+<p><li> The \( \boldsymbol{\alpha}_i \) dependence when we fix attention on the actual, observed data (\( D_\mathrm{obs} \)) is the likelihood function:</li>
+</ul>
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+\mathcal{L}_i (\boldsymbol{\alpha}_i) \equiv p(D_\mathrm{obs}|\boldsymbol{\alpha}_i, M_i)
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+
+
+<ul>
+<p><li> We may be uncertain about \( i \) (model uncertainty),</li>
+<p><li> or uncertain about \( \boldsymbol{\alpha}_i \) (parameter uncertainty).</li>
+</ul>
+</div>
+</section>
+
+
+<section>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+
+<dl>
+<dt>Parameter Estimation:<dd> 
+  Premise = choice of model (pick specific \( i \))<br />
+  \( \Rightarrow \) What can we say about \( \boldsymbol{\alpha}_i \)?
+<dt>Model comparison:<dd> 
+  Premise = \( \{M_i\} \)<br />
+  \( \Rightarrow \) What can we say about \( i \)?
+<dt>Model adequacy:<dd> 
+  Premise = \( M_1 \)<br />
+  \( \Rightarrow \) Is \( M_1 \) adequate?
+<dt>Hybrid Uncertainty:<dd> 
+  Models share some common params: \( \boldsymbol{\alpha}_1 = \{ \boldsymbol{\varphi}, \boldsymbol{\eta}_i\} \)<br />
+  \( \Rightarrow \) What can we say about \( \boldsymbol{\varphi} \)? (Systematic error is an example)
+</dl>
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec8">Illustrative examples with python code  </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<ul>
+<p><li> Is this a fair coin? (analytical)</li>
+<p><li> Flux from a star (single parameter, MCMC)</li>
+<p><li> The lighthouse problem (two parameters, MCMC)</li>
+<p><li> Linear fit with outliers (nuisance parameters)</li>
+<p><li> ...</li>
+</ul>
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec9">Example: Is this a fair coin? </h2>
+Let us begin with the analysis of data from a simple coin-tossing experiment. 
+Given that we had observed 6 heads in 8 flips, would you think it was a fair coin? By fair, we mean that we would be prepared to lay an even 1 : 1 bet on the outcome of a flip being a head or a tail. If we decide that the coin was fair, the question which follows naturally is how sure are we that this was so; if it was not fair, how unfair do we think it was? Furthermore, if we were to continue collecting data for this particular coin, observing the outcomes of additional flips, how would we update our belief on the fairness of the coin?
+
+<p>
+A sensible way of formulating this problem is to consider a large number of hypotheses about the range in which the bias-weighting of the coin might lie. If we denote the bias-weighting by \( H \), then \( H = 0 \) and \( H = 1 \) can represent a coin which produces a tail or a head on every flip, respectively. There is a continuum of possibilities for the value of H between these limits, with \( H = 0.5 \) indicating a fair coin. Our state of knowledge about the fairness, or the degree of unfairness, of the coin is then completely summarized by specifying how much we believe these various propositions to be true.
+
+<p>
+Let us perform a computer simulation of a coin-tossing experiment. This provides the data that we will be analysing.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">numpy</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">np</span>
+<span style="color: #8B008B; font-weight: bold">import</span> <span style="color: #008b45; text-decoration: underline">matplotlib.pyplot</span> <span style="color: #8B008B; font-weight: bold">as</span> <span style="color: #008b45; text-decoration: underline">plt</span>
+</pre></div>
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>np.random.seed(<span style="color: #B452CD">999</span>)         <span style="color: #228B22"># for reproducibility</span>
+a=<span style="color: #B452CD">0.6</span>                       <span style="color: #228B22"># biased coin</span>
+flips=np.random.rand(<span style="color: #B452CD">2</span>**<span style="color: #B452CD">12</span>) <span style="color: #228B22"># simulates 4096 coin flips</span>
+heads=flips&lt;a               <span style="color: #228B22"># boolean array, heads[i]=True if flip i is heads</span>
+</pre></div>
+<p>
+In the light of this data, our inference about the fairness of this coin is summarized by the conditional pdf: \( p(H|D,I) \). This is, of course, shorthand for the limiting case of a continuum of propositions for the value of \( H \); that is to say, the probability that \( H \) lies in an infinitesimally narrow range is given by \( p(H|D,I) dH \).
+
+<p>
+To estimate this posterior pdf, we need to use Bayes&#8217; theorem <a href="#mjx-eqn-1">(1)</a>. We will ignore the denominator \( p(D|I) \) as it does not involve bias-weighting explicitly, and it will therefore not affect the shape of the desired pdf. At the end we can evaluate the missing constant subsequently from the normalization condition 
+<p>&nbsp;<br>
+$$
+\begin{equation}
+\int_0^1 p(H|D,I) dH = 1.
+\tag{2}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+<p>
+The prior pdf, \( p(H|I) \), represents what we know about the coin given only the information \( I \) that we are dealing with a &#8216;strange coin&#8217;. We could keep a very open mind about the nature of the coin; a simple probability assignment which reflects this is a uniform, or flat, prior
+<p>&nbsp;<br>
+$$
+\begin{equation}
+p(H|I) = \left\{ \begin{array}{ll}
+1 & 0 \le H \le 1, \\
+0 & \mathrm{otherwise}.
+\end{array} \right.
+\tag{3}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+We will get back later to the choice of prior and its effect on the analysis.
+
+<p>
+This prior state of knowledge, or ignorance, is modified by the data through the likelihood function \( p(D|H,I) \). It is a measure of the chance that we would have obtained the data that we actually observed, if the value of the bias-weighting was given (as known). If, in the conditioning information \( I \), we assume that the flips of the coin were independent events, so that the outcome of one did not influence that of another, then the probability of obtaining the data `R heads in N tosses' is given by the binomial distribution (we leave a formal definition of this to a statistics textbook)
+<p>&nbsp;<br>
+$$
+\begin{equation}
+p(D|H,I) \propto H^R (1-H)^{N-R}.
+\tag{4}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+It seems reasonable because \( H \) is the chance of obtaining a head on any flip, and there were \( R \) of them, and \( 1-H \) is the corresponding probability for a tail, of which there were \( N-R \). We note that this binomial distribution also contains a normalization factor, but we will ignore it since it does not depend explicitly on \( H \), the quantity of interest. It will be absorbed by the normalization condition <a href="#mjx-eqn-2">(2)</a>.
+
+<p>
+We perform the setup of this Bayesian framework on the computer.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">prior</span>(H):
+    p=np.zeros_like(H)
+    p[(<span style="color: #B452CD">0</span>&lt;=x)&amp;(x&lt;=<span style="color: #B452CD">1</span>)]=<span style="color: #B452CD">1</span>      <span style="color: #228B22"># allowed range: 0&lt;=H&lt;=1</span>
+    <span style="color: #8B008B; font-weight: bold">return</span> p                <span style="color: #228B22"># uniform prior</span>
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">likelihood</span>(H,data):
+    N = <span style="color: #658b00">len</span>(data)
+    no_of_heads = <span style="color: #658b00">sum</span>(data)
+    no_of_tails = N - no_of_heads
+    <span style="color: #8B008B; font-weight: bold">return</span> H**no_of_heads * (<span style="color: #B452CD">1</span>-H)**no_of_tails
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">posterior</span>(H,data):
+    p=prior(H)*likelihood(H,data)
+    norm=np.trapz(p,H)
+    <span style="color: #8B008B; font-weight: bold">return</span> p/norm
+</pre></div>
+<p>
+The next step is to confront this setup with the simulated data. To get a feel for the result, it is instructive to see how the posterior pdf evolves as we obtain more and more data pertaining to the coin. The results of such an analyses is shown in Fig. <a href="#fig:coinflipping">1</a>.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>x=np.linspace(<span style="color: #B452CD">0</span>,<span style="color: #B452CD">1</span>,<span style="color: #B452CD">100</span>)
+fig, axs = plt.subplots(nrows=<span style="color: #B452CD">4</span>,ncols=<span style="color: #B452CD">3</span>,sharex=<span style="color: #658b00">True</span>,sharey=<span style="color: #CD5555">&#39;row&#39;</span>)
+axs_vec=np.reshape(axs,-<span style="color: #B452CD">1</span>)
+axs_vec[<span style="color: #B452CD">0</span>].plot(x,prior(x))
+<span style="color: #8B008B; font-weight: bold">for</span> ndouble <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(<span style="color: #B452CD">11</span>):
+    ax=axs_vec[<span style="color: #B452CD">1</span>+ndouble]
+    ax.plot(x,posterior(x,heads[:<span style="color: #B452CD">2</span>**ndouble]))
+    ax.text(<span style="color: #B452CD">0.1</span>, <span style="color: #B452CD">0.8</span>, <span style="color: #CD5555">&#39;$N={0}$&#39;</span>.format(<span style="color: #B452CD">2</span>**ndouble), transform=ax.transAxes)
+<span style="color: #8B008B; font-weight: bold">for</span> row <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(<span style="color: #B452CD">4</span>): axs[row,<span style="color: #B452CD">0</span>].set_ylabel(<span style="color: #CD5555">&#39;$p(H|D_\mathrm{obs},I)$&#39;</span>)
+<span style="color: #8B008B; font-weight: bold">for</span> col <span style="color: #8B008B">in</span> <span style="color: #658b00">range</span>(<span style="color: #B452CD">3</span>): axs[-<span style="color: #B452CD">1</span>,col].set_xlabel(<span style="color: #CD5555">&#39;$H$&#39;</span>)
+</pre></div>
+<p>
+<center> <!-- figure label: --> <div id="fig:coinflipping"></div> <!-- FIGURE -->
+<hr class="figure">
+<center><p class="caption">Figure 1:  The evolution of the posterior pdf for the bias-weighting of a coin, as the number of data available increases. The figure on the top left-hand corner of each panel shows the number of data included in the analysis.  <!-- caption label: fig:coinflipping --> </p></center>
+<p><img src="fig/coinflipping_fig_1.png" align="bottom" width=500></p>
+</center>
+
+<p>
+The panel in the top left-hand corner shows the posterior pdf for \( H \) given no data, i.e., it is the same as the prior pdf of Eq. <a href="#mjx-eqn-3">(3)</a>. It indicates that we have no more reason to believe that the coin is fair than we have to think that it is double-headed, double-tailed, or of any other intermediate bias-weighting.
+
+<p>
+The first flip is obviously tails. At this point we have no evidence that the coin has a side with heads, as indicated by the pdf going to zero as \( H \to 1 \). The second flip is obviously heads and we have now excluded both extreme options \( H=0 \) (double-tailed) and \( H=1 \) (double-headed). We can note that the posterior at this point has the simple form \( p(H|D,I) = H(1-H) \) for \( 0 \le H \le 1 \).
+
+<p>
+The remainder of Fig. <a href="#fig:coinflipping">1</a> shows how the posterior pdf evolves as the number of data analysed becomes larger and larger. We see that the position of the maximum moves around, but that the amount by which it does so decreases with the increasing number of observations. The width of the posterior pdf also becomes narrower with more data, indicating that we are becoming increasingly confident in our estimate of the bias-weighting. For the coin in this example, the best estimate of \( H \) eventually converges to 0.6, which, of course, was the value chosen to simulate the flips.
+</section>
+
+
+<section>
+<h2 id="___sec10">A few words on different priors </h2>
+
+<ul>
+<p><li> uniform</li>
+<p><li> Gaussian</li>
+<p><li> Jeffrey's prior</li>
+</ul>
+<p>
+
+Repeat the coin flipping experiment with other priors.
+</section>
+
+
+<section>
+<h2 id="___sec11">Bayesian parameter estimation (single parameter) </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<p>
+We will now consider the very important task of model parameter estimation using statistical inference. 
+
+<!-- begin inline comment -->
+<font color="red">(<b>CF 1</b>: maybe stress that model parameters are not random variables, and the meaning of parameter estimation is therefore very different between frequentist and bayesian approaches.)</font>
+<!-- end inline comment -->
+
+<p>
+Throughout this section we will consider a specific example that involves a model with a single parameter: &quot;Measured flux from a star&quot;.
+</div>
+</section>
+
+
+<section>
+
+<h3 id="___sec12">Example: Measured flux from a star </h3>
+
+Adapted from the blog <a href="http://jakevdp.github.io" target="_blank">Pythonic Perambulations</a> by Jake VanderPlas.
+
+<p>
+Imagine that we point our telescope to the sky, and observe the light coming from a single star. For the time being, we'll assume that the star's true flux is constant with time, i.e. that is it has a fixed value \( F_\mathrm{true} \) (we'll also ignore effects like sky noise and other sources of systematic error). We'll assume that we perform a series of \( N \) measurements with our telescope, where the ith measurement reports the observed photon flux \( F_i \) and error \( e_i \) [<a id="link_footnote_2" href="#def_footnote_2">2</a>].
+The question is, given this set of measurements \( D = \{F_i, e_i\} \), what is our best estimate of the true flux \( F_\mathrm{true} \)?
+
+<p id="def_footnote_2"><a href="#link_footnote_2"><b>2:</b></a> We'll make the reasonable assumption that errors are Gaussian. In a Frequentist perspective, \( e_i \) is the standard deviation of the results of a single measurement event in the limit of repetitions of <em>that event</em>. In the Bayesian perspective, \( e_i \) is the standard deviation of the (Gaussian) probability distribution describing our knowledge of that particular measurement given its observed value.</p>
+
+<p>
+Because the measurements are number counts, a Poisson distribution is a good approximation to the measurement process:
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>np.random.seed(<span style="color: #B452CD">1</span>)      <span style="color: #228B22"># for repeatability</span>
+F_true = <span style="color: #B452CD">1000</span>          <span style="color: #228B22"># true flux, say number of photons measured in 1 second</span>
+N = <span style="color: #B452CD">50</span>                 <span style="color: #228B22"># number of measurements</span>
+F = stats.poisson(F_true).rvs(N)
+                       <span style="color: #228B22"># N measurements of the flux</span>
+e = np.sqrt(F)         <span style="color: #228B22"># errors on Poisson counts estimated via square root</span>
+</pre></div>
+<p>
+Now let's make a simple visualization of the &quot;observed&quot; data, see Fig. <a href="#fig:flux">2</a>.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>fig, ax = plt.subplots()
+ax.errorbar(F, np.arange(N), xerr=e, fmt=<span style="color: #CD5555">&#39;ok&#39;</span>, ecolor=<span style="color: #CD5555">&#39;gray&#39;</span>, alpha=<span style="color: #B452CD">0.5</span>)
+ax.vlines([F_true], <span style="color: #B452CD">0</span>, N, linewidth=<span style="color: #B452CD">5</span>, alpha=<span style="color: #B452CD">0.2</span>)
+ax.set_xlabel(<span style="color: #CD5555">&quot;Flux&quot;</span>);ax.set_ylabel(<span style="color: #CD5555">&quot;measurement number&quot;</span>);
+</pre></div>
+<p>
+<center> <!-- figure label: --> <div id="fig:flux"></div> <!-- FIGURE -->
+<hr class="figure">
+<center><p class="caption">Figure 2:  Single photon counts (flux measurements).  <!-- caption label: fig:flux --> </p></center>
+<p><img src="fig/singlephotoncount_fig_1.png" align="bottom" width=400></p>
+</center>
+
+<p>
+These measurements each have a different error \( e_i \) which is estimated from Poisson statistics using the standard square-root rule. In this toy example we already know the true flux \( F_\mathrm{true} \), but the question is this: given our measurements and errors, what is our best estimate of the true flux?
+
+<p>
+Let's take a look at the frequentist and Bayesian approaches to solving this.
+
+<h3 id="___sec13">Simple Photon Counts: Frequentist Approach </h3>
+
+We'll start with the classical frequentist maximum likelihood approach. Given a single observation \( D_i = (F_i, e_i) \), we can compute the probability distribution of the measurement given the true flux Ftrue given our assumption of Gaussian errors
+<p>&nbsp;<br>
+$$
+\begin{equation}
+p(D_i | F_\mathrm{true}, I) = \frac{1}{\sqrt{2\pi e_i^2}} \exp \left( \frac{-(F_i-F_\mathrm{true})^2}{2e_i^2} \right).
+\tag{5}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+This should be read &quot;the probability of \( D_i \) given \( F_\mathrm{true} \)
+equals ...&quot;. You should recognize this as a normal distribution with mean \( F_\mathrm{true} \) and standard deviation \( e_i \).
+
+<p>
+We construct the <em>likelihood function</em> by computing the product of the probabilities for each data point
+<p>&nbsp;<br>
+$$
+\begin{equation}
+\mathcal{L}(D | F_\mathrm{true}, I) = \prod_{i=1}^N p(D_i | F_\mathrm{true}, I),
+\tag{6}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+here \( D = \{D_i\} \) represents the entire set of measurements. Because the value of the likelihood can become very small, it is often more convenient to instead compute the log-likelihood. Combining the previous two equations and computing the log, we have
+<p>&nbsp;<br>
+$$
+\begin{equation}
+\log\mathcal{L} = -\frac{1}{2} \sum_{i=1}^N \left[ \log(2\pi e_i^2) +  \frac{(F_i-F_\mathrm{true})^2}{e_i^2} \right].
+\tag{7}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+<p>
+What we'd like to do is determine \( F_\mathrm{true} \) such that the likelihood is maximized. For this simple problem, the maximization can be computed analytically (i.e. by setting \( d\log\mathcal{L}/d F_\mathrm{true} = 0 \)). This results in the following observed estimate of \( F_\mathrm{true} \)
+<p>&nbsp;<br>
+$$
+\begin{equation}
+F_\mathrm{est} = \sum_{i=1}^N w_i F_i; \quad w_i = 1/e_i^2.
+\tag{8}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+Notice that in the special case of all errors \( e_i \) being equal, this reduces to
+<p>&nbsp;<br>
+$$
+\begin{equation}
+F_\mathrm{est} = \frac{1}{N} \sum_{i=1} F_i.
+\tag{9}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+That is, in agreement with intuition, \( F_\mathrm{est} \) is simply the mean of the observed data when errors are equal.
+
+<p>
+We can go further and ask what the error of our estimate is. In the frequentist approach, this can be accomplished by fitting a Gaussian approximation to the likelihood curve at maximum; in this simple case this can also be solved analytically (the sum of Gaussians is also a Gaussian). It can be shown that the standard deviation of this Gaussian approximation is
+<p>&nbsp;<br>
+$$
+\begin{equation}
+\sigma_\mathrm{est} = \sum_{i=1}^N w_i.
+\tag{10}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+These results are fairly simple calculations; let's evaluate them for our toy dataset:
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>w=<span style="color: #B452CD">1.</span>/e**<span style="color: #B452CD">2</span>
+<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&quot;&quot;&quot;</span>
+<span style="color: #CD5555">F_true = {0}</span>
+<span style="color: #CD5555">F_est = {1:.0f} +/- {2:.0f} (based on {3} measurements) &quot;&quot;&quot;</span>\ 
+          .format(F_true, (w * F).sum() / w.sum(), w.sum() ** -<span style="color: #B452CD">0.5</span>, N))
+</pre></div>
+<p>
+<code>F_true = 1000</code> <br />
+<code>F_est = 998 +/- 4 (based on 50 measurements)</code> <br />
+
+<p>
+We find that for 50 measurements of the flux, our estimate has an error of about 0.4% and is consistent with the input value.
+
+<h3 id="___sec14">Simple Photon Counts: Bayesian Approach </h3>
+
+The Bayesian approach, as you might expect, begins and ends with probabilities. Our hypothesis is that the star has a constant flux \( F_\mathrm{true} \). It recognizes that what we fundamentally want to compute is our knowledge of the parameters in question given the data and other information (such as our knowledge of uncertainties for the observed values), i.e. in this case, \( p(F_\mathrm{true} | D,I) \).
+Note that this formulation of the problem is fundamentally contrary to the frequentist philosophy, which says that probabilities have no meaning for model parameters like \( F_\mathrm{true} \). Nevertheless, within the Bayesian philosophy this is perfectly acceptable.
+
+<p>
+To compute this result, Bayesians next apply Bayes' Theorem <a href="#mjx-eqn-1">(1)</a>.
+If we set the prior \( p(F_\mathrm{true}|I) \propto 1 \) (a flat prior), we find
+\( p(F_\mathrm{true}|D,I) \propto p(D | F_\mathrm{true},I) \equiv \mathcal{L}(D | F_\mathrm{true},I) \)
+and the Bayesian probability is maximized at precisely the same value as the frequentist result! So despite the philosophical differences, we see that (for this simple problem at least) the Bayesian and frequentist point estimates are equivalent.
+
+<h3 id="___sec15">A note about priors </h3>
+
+The prior allows inclusion of other information into the computation, which becomes very useful in cases where multiple measurement strategies are being combined to constrain a single model. The necessity to specify a prior, however, is one of the more controversial pieces of Bayesian analysis.
+A frequentist will point out that the prior is problematic when no true prior information is available. Though it might seem straightforward to use a noninformative prior like the flat prior mentioned above, there are some <a href="http://normaldeviate.wordpress.com/2013/07/13/lost-causes-in-statistics-ii-noninformative- priors/comment-page-1/" target="_blank">surprisingly subtleties</a> involved. It turns out that in many situations, a truly noninformative prior does not exist! Frequentists point out that the subjective choice of a prior which necessarily biases your result has no place in statistical data analysis.
+A Bayesian would counter that frequentism doesn't solve this problem, but simply skirts the question. Frequentism can often be viewed as simply a special case of the Bayesian approach for some (implicit) choice of the prior: a Bayesian would say that it's better to make this implicit choice explicit, even if the choice might include some subjectivity.
+
+<h3 id="___sec16">Simple Photon Counts: Bayesian approach in practice </h3>
+
+Leaving these philosophical debates aside for the time being, let's address how Bayesian results are generally computed in practice. For a one parameter problem like the one considered here, it's as simple as computing the posterior probability \( p(F_\mathrm{true} | D,I) \) as a function of \( F_\mathrm{true} \): this is the distribution reflecting our knowledge of the parameter \( F_\mathrm{true} \).
+But as the dimension of the model grows, this direct approach becomes increasingly intractable. For this reason, Bayesian calculations often depend on sampling methods such as Markov Chain Monte Carlo (MCMC). For this practical example, let us apply an MCMC approach using Dan Foreman-Mackey's <a href="http://dan.iel.fm/emcee/current/" target="_blank">emcee</a> package. Keep in mind here that the goal is to generate a set of points drawn from the posterior probability distribution, and to use those points to determine the answer we seek.
+To perform this MCMC, we start by defining Python functions for the prior \( p(F_\mathrm{true} | I) \), the likelihood \( p(D | F_\mathrm{true},I) \), and the posterior \( p(F_\mathrm{true} | D,I) \), noting that none of these need be properly normalized. Our model here is one-dimensional, but to handle multi-dimensional models we'll define the model in terms of an array of parameters \( \boldsymbol{\alpha} \), which in this case is \( \boldsymbol{\alpha} = [F_\mathrm{true}] \)
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span><span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">log_prior</span>(alpha):
+    <span style="color: #8B008B; font-weight: bold">return</span> <span style="color: #B452CD">0</span> <span style="color: #228B22"># flat prior</span>
+
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">log_likelihood</span>(alpha, F, e):
+    <span style="color: #8B008B; font-weight: bold">return</span> -<span style="color: #B452CD">0.5</span> * np.sum(np.log(<span style="color: #B452CD">2</span> * np.pi * e ** <span style="color: #B452CD">2</span>) \ 
+                             + (F - alpha[<span style="color: #B452CD">0</span>]) ** <span style="color: #B452CD">2</span> / e ** <span style="color: #B452CD">2</span>)
+                             
+<span style="color: #8B008B; font-weight: bold">def</span> <span style="color: #008b45">log_posterior</span>(alpha, F, e):
+    <span style="color: #8B008B; font-weight: bold">return</span> log_prior(alpha) + log_likelihood(alpha, F, e)
+</pre></div>
+<p>
+Now we set up the problem, including generating some random starting guesses for the multiple chains of points.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>ndim = <span style="color: #B452CD">1</span>      <span style="color: #228B22"># number of parameters in the model</span>
+nwalkers = <span style="color: #B452CD">50</span> <span style="color: #228B22"># number of MCMC walkers</span>
+nburn = <span style="color: #B452CD">1000</span>  <span style="color: #228B22"># &quot;burn-in&quot; period to let chains stabilize</span>
+nsteps = <span style="color: #B452CD">2000</span> <span style="color: #228B22"># number of MCMC steps to take</span>
+<span style="color: #228B22"># we&#39;ll start at random locations between 0 and 2000</span>
+starting_guesses = <span style="color: #B452CD">2000</span> * np.random.rand(nwalkers, ndim)
+sampler = emcee.EnsembleSampler(nwalkers, ndim, log_posterior, args=[F,e])
+sampler.run_mcmc(starting_guesses, nsteps)
+<span style="color: #228B22"># Shape of sampler.chain  = (nwalkers, nsteps, ndim)</span>
+<span style="color: #228B22"># Flatten the sampler chain and discard burn-in points:</span>
+samples = sampler.chain[:, nburn:, :].reshape((-<span style="color: #B452CD">1</span>, ndim))
+</pre></div>
+<p>
+If this all worked correctly, the array sample should contain a series of 50,000 points drawn from the posterior. Let's plot them and check. See results in Fig. <a href="#fig:flux-bayesian">3</a>.
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>fig, ax = plt.subplots()
+ax.hist(samples, bins=<span style="color: #B452CD">50</span>, histtype=<span style="color: #CD5555">&quot;stepfilled&quot;</span>, alpha=<span style="color: #B452CD">0.3</span>, normed=<span style="color: #658b00">True</span>)
+ax.set_xlabel(<span style="color: #CD5555">r&#39;$F_\mathrm{est}$&#39;</span>)
+ax.set_ylabel(<span style="color: #CD5555">r&#39;$p(F_\mathrm{est}|D,I)$&#39;</span>)
+</pre></div>
+<p>
+<center> <!-- figure label: --> <div id="fig:flux-bayesian"></div> <!-- FIGURE -->
+<hr class="figure">
+<center><p class="caption">Figure 3:  Bayesian posterior pdf (represented by a histogram of MCMC samples) from flux measurements.  <!-- caption label: fig:flux-bayesian --> </p></center>
+<p><img src="fig/singlephotoncount_fig_2.png" align="bottom" width=400></p>
+</center>
+
+<h3 id="___sec17">Best estimates and confidence intervals </h3>
+
+The posterior distribution from our Bayesian data analysis is the key quantity that encodes our inference about the values of the model parameters, given the data and the relevant background information. Often, however, we wish to summarize this result with just a few numbers: the best estimate and a measure of its reliability.
+
+<p>
+There are a few different options for this. The choice of the most appropriate one depends mainly on the shape of the posterior distribution:
+
+<p>
+<em>Symmetric posterior pdfs</em>: Since the probability (density) associated with any particular value of the parameter is a measure of how much we believe that it lies in the neighbourhood of that point, our best estimate is given by the maximum of the posterior pdf. If we denote the quantity of interest by \( X \), with a posterior pdf \( P =p(X|D,I) \), then the best estimate of its value \( X_0 \) is given by the condition \( dP/dX|_{X=X_0}=0 \). Strictly speaking, we should also check the sign of the second derivative to ensure that \( X_0 \) represents a maximum.
+
+<p>
+To obtain a measure of the reliability of this best estimate, we need to look at the width or spread of the posterior pdf about \( X_0 \). When considering the behaviour of any function in the neighbourhood of a particular point, it is often helpful to carry out a Taylor series expansion; this is simply a standard tool for (locally) approximating a complicated function by a low-order polynomial. The linear term is zero at the maximum and the quadratic term is often the dominating one determining the width of the posterior pdf. Ignoring all the higher-order terms we arrive at the Gaussian approximation
+<p>&nbsp;<br>
+$$
+\begin{equation}
+p(X|D,I) \approx \frac{1}{\sigma\sqrt{2\pi}} \exp \left[ -\frac{(x-\mu)^2}{2\sigma^2} \right],
+\tag{11}
+\end{equation}
+$$
+<p>&nbsp;<br>
+
+where the mean \( \mu = X_0 \) and the variance \( \sigma = \left( - \left. \frac{d^2L}{dX^2} \right|_{X_0} \right)^{-1/2} \), where \( L \) is the logarithm of the posterior \( P \). Our inference about the quantity of interest is conveyed very concisely, therefore, by the statement \( X = X_0 \pm \sigma \), and 
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+p(X_0-\sigma < X < X_0+\sigma | D,I) = \int_{X_0-\sigma}^{X_0+\sigma} p(X|D,I) dX \approx 0.67.
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+
+<p>
+<em>Asymmetric posterior pdfs</em>: While the maximum of the posterior (\( X_0 \)) can still be regarded as giving the best estimate, the true value is now more likely to be on one side of this rather than the other. Alternatively one can compute the mean value, \( \langle X \rangle = \int X p(X|D,I) dX \), although this tends to overemphasise very long tails. The best option is probably a compromise that can be employed when having access to a large sample from the posterior (as provided by an MCMC), namely to give the median of this ensamble.
+
+<p>
+Furthermore, the concept of an error-bar does not seem appropriate in this case, as it implicitly entails the idea of symmetry. A good way of expressing the reliability with which a parameter can be inferred, for an asymmetric posterior pdf, is rather through a <em>confidence interval</em>. Since the area under the posterior pdf between \( X_1 \) and \( X_2 \) is proportional to how much we believe that \( X \) lies in that range, the shortest interval that encloses 67% of the area represents a sensible measure of the uncertainty of the estimate. Obviously we can choose to provide some other degree-of-belief that we think is relevant for the case at hand. Assuming that the posterior pdf has been normalized, to have unit area, we need to find \( X_1 \) and \( X_2 \) such that: 
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+p(X_1 < X < X_2 | D,I) = \int_{X_1}^{X_2} p(X|D,I) dX \approx 0.67, 
+<p>&nbsp;<br>
+$$
+$$
+<p>&nbsp;<br>
+
+where the difference \( X_2 - X_1 \) is as small as possible. The region \( X_1 < X < X_2 \) is then called the shortest 67% confidence interval.
+
+<p>
+<em>Multimodal posterior pdfs</em>: We can sometimes obtain posteriors which are multimodal; i.e. contains several disconnected regions with large probabilities. There is no difficulty when one of the maxima is very much larger than the others: we can simply ignore the subsidiary solutions, to a good approximation, and concentrate on the global maximum. The problem arises when there are several maxima of comparable magnitude. What do we now mean by a best estimate, and how should we quantify its reliability? The idea of a best estimate and an error-bar, or even a confidence interval, is merely an attempt to summarize the posterior with just two or three numbers; sometimes this just can&#8217;t be done, and so these concepts are not valid. For the bimodal case we might be able to characterize the posterior in terms of a few numbers: two best estimates and their associated error-bars, or disjoint confidence intervals. For a general multimodal pdf, the most honest thing we can do is just display the posterior itself.
+
+<h3 id="___sec18">Simple Photon Counts: Best estimates and confidence intervals </h3>
+
+To compute these numbers for our example, you would run:
+
+<p>
+
+<!-- code=python (!bc pycod) typeset with pygments style "perldoc" -->
+<div class="highlight" style="background: #eeeedd"><pre style="font-size: 80%; line-height: 125%"><span></span>sampper=np.percentile(samples, [<span style="color: #B452CD">2.5</span>, <span style="color: #B452CD">16.5</span>, <span style="color: #B452CD">50</span>, <span style="color: #B452CD">83.5</span>, <span style="color: #B452CD">97.5</span>],axis=<span style="color: #B452CD">0</span>).flatten()
+<span style="color: #8B008B; font-weight: bold">print</span>(<span style="color: #CD5555">&quot;&quot;&quot;</span>
+<span style="color: #CD5555">F_true = {0}</span>
+<span style="color: #CD5555">Based on {1} measurements the posterior point estimates are:</span>
+<span style="color: #CD5555">...F_est = {2:.0f} +/- {3:.0f}</span>
+<span style="color: #CD5555">or using credible intervals:</span>
+<span style="color: #CD5555">...F_est = {4:.0f}          (posterior median) </span>
+<span style="color: #CD5555">...F_est in [{5:.0f}, {6:.0f}] (67% credible interval) </span>
+<span style="color: #CD5555">...F_est in [{7:.0f}, {8:.0f}] (95% credible interval) &quot;&quot;&quot;</span>\ 
+          .format(F_true, N, np.mean(samples), np.std(samples), \ 
+                      sampper[<span style="color: #B452CD">2</span>], sampper[<span style="color: #B452CD">1</span>], sampper[<span style="color: #B452CD">3</span>], sampper[<span style="color: #B452CD">0</span>], sampper[<span style="color: #B452CD">4</span>]))
+</pre></div>
+<p>
+<code>F_true = 1000</code> <br />
+<code>Based on 50 measurements the posterior point estimates are:</code> <br />
+<code>...F_est = 998 +/- 4</code> <br />
+<code>or using credible intervals:</code> <br />
+<code>...F_est = 998          (posterior median)</code>  <br />
+<code>...F_est in [993, 1002] (67% credible interval)</code>  <br />
+<code>...F_est in [989, 1006] (95% credible interval)</code>  <br />
+
+<p>
+In this particular example, the posterior pdf is actually a Gaussian (since it is constructed as a product of Gaussians), and the mean and variance from the quadratic approximation will agree exactly with the frequentist approach.
+
+<p>
+From this final result you might come away with the impression that the Bayesian method is unnecessarily complicated, and in this case it certainly is. Using an MCMC sampler to characterize a one-dimensional normal distribution is a bit like using the Death Star to destroy a beach ball, but we did this here because it demonstrates an approach that can scale to complicated posteriors in many, many dimensions, and can provide nice results in more complicated situations where an analytic likelihood approach is not possible.
+
+<p>
+Furthermore, as data and models grow in complexity, the two approaches can diverge greatly.
+</section>
+
+
+<section>
+<h2 id="___sec19">Bayesian parameter estimation (multiple parameters, covariance) </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<ul>
+<p><li> multidimensional posterior pdf:s</li>
+<p><li> nuisance parameters (e.g. background subtraction?)</li>
+<p><li> corner plots, covariance, correlations</li>
+<p><li> best example?</li>
+</ul>
+</div>
+</section>
+
+
+<section>
+<h2 id="___sec20">Bayesian model selection </h2>
+<div class="alert alert-block alert-block alert-text-normal">
+<b></b>
+<ul>
+<p><li> Bayesian evidence</li>
+<p><li> Occam's razor</li>
+<p><li> Best example? How many spectral lines are there?</li>
+</ul>
+</div>
+</section>
+
+
+
+</div> <!-- class="slides" -->
+</div> <!-- class="reveal" -->
+
+<script src="reveal.js/lib/js/head.min.js"></script>
+<script src="reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+    // Display navigation controls in the bottom right corner
+    controls: true,
+
+    // Display progress bar (below the horiz. slider)
+    progress: true,
+
+    // Display the page number of the current slide
+    slideNumber: true,
+
+    // Push each slide change to the browser history
+    history: false,
+
+    // Enable keyboard shortcuts for navigation
+    keyboard: true,
+
+    // Enable the slide overview mode
+    overview: true,
+
+    // Vertical centering of slides
+    //center: true,
+    center: false,
+
+    // Enables touch navigation on devices with touch input
+    touch: true,
+
+    // Loop the presentation
+    loop: false,
+
+    // Change the presentation direction to be RTL
+    rtl: false,
+
+    // Turns fragments on and off globally
+    fragments: true,
+
+    // Flags if the presentation is running in an embedded mode,
+    // i.e. contained within a limited portion of the screen
+    embedded: false,
+
+    // Number of milliseconds between automatically proceeding to the
+    // next slide, disabled when set to 0, this value can be overwritten
+    // by using a data-autoslide attribute on your slides
+    autoSlide: 0,
+
+    // Stop auto-sliding after user input
+    autoSlideStoppable: true,
+
+    // Enable slide navigation via mouse wheel
+    mouseWheel: false,
+
+    // Hides the address bar on mobile devices
+    hideAddressBar: true,
+
+    // Opens links in an iframe preview overlay
+    previewLinks: false,
+
+    // Transition style
+    transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+    // Transition speed
+    transitionSpeed: 'default', // default/fast/slow
+
+    // Transition style for full page slide backgrounds
+    backgroundTransition: 'default', // default/none/slide/concave/convex/zoom
+
+    // Number of slides away from the current that are visible
+    viewDistance: 3,
+
+    // Parallax background image
+    //parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
+
+    // Parallax background size
+    //parallaxBackgroundSize: '' // CSS syntax, e.g. "2100px 900px"
+
+    theme: Reveal.getQueryHash().theme, // available themes are in reveal.js/css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+
+});
+
+Reveal.initialize({
+    dependencies: [
+        // Cross-browser shim that fully implements classList - https://github.com/eligrey/classList.js/
+        { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+
+        // Interpret Markdown in <section> elements
+        { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+
+        // Syntax highlight for <code> elements
+        { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+
+        // Zoom in and out with Alt+click
+        { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        // Speaker notes
+        { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        // Remote control your reveal.js presentation using a touch device
+        //{ src: 'reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
+
+        // MathJax
+        //{ src: 'reveal.js/plugin/math/math.js', async: true }
+    ]
+});
+
+Reveal.initialize({
+
+    // The "normal" size of the presentation, aspect ratio will be preserved
+    // when the presentation is scaled to fit different resolutions. Can be
+    // specified using percentage units.
+    width: 1170,  // original: 960,
+    height: 700,
+
+    // Factor of the display size that should remain empty around the content
+    margin: 0.1,
+
+    // Bounds for smallest/largest possible scale to apply to content
+    minScale: 0.2,
+    maxScale: 1.0
+
+});
+</script>
+
+<!-- begin footer logo
+<div style="position: absolute; bottom: 0px; left: 0; margin-left: 0px">
+<img src="somelogo.png">
+</div>
+     end footer logo -->
+
+
+
+</body>
+</html>
